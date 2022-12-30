@@ -3,3 +3,5 @@ folders
 load
 ckpts
 save
+../.vscode
+../save
