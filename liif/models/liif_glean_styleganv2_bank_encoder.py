@@ -165,7 +165,6 @@ class LiifGleanStyleGANv2(nn.Module):
         ]
         # 4x4 stage
         out = self.generator.constant_input(latent)
-        print(latent[:, 0].shape)
         out = self.generator.conv1(out, latent[:, 0], noise=injected_noise[0])
         skip = self.generator.to_rgb1(out, latent[:, 1])
 
