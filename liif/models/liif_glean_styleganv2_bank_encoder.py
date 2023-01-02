@@ -22,8 +22,9 @@ class LiifGleanStyleGANv2(nn.Module):
                  style_channels=512,
                  edsr_channels=64,
                  imnet_spec=None,
-                 local_ensemble=True, feat_unfold=True, cell_decode=True):
+                 local_ensemble=True, feat_unfold=True, cell_decode=True, device='cuda'):
         super().__init__()
+        self.device = device
         self.local_ensemble = local_ensemble
         self.feat_unfold = feat_unfold
         self.cell_decode = cell_decode
@@ -239,7 +240,7 @@ class LiifGleanStyleGANv2(nn.Module):
         rx = 2 / feat.shape[-2] / 2
         ry = 2 / feat.shape[-1] / 2
 
-        feat_coord = make_coord(feat.shape[-2:], flatten=False).cpu() \
+        feat_coord = make_coord(feat.shape[-2:], flatten=False).to(self.device) \
             .permute(2, 0, 1) \
             .unsqueeze(0).expand(feat.shape[0], 2, *feat.shape[-2:])
 

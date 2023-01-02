@@ -11,8 +11,9 @@ from utils import make_coord
 class LIIF(nn.Module):
 
     def __init__(self, encoder_spec, imnet_spec=None,
-                 local_ensemble=True, feat_unfold=True, cell_decode=True):
+                 local_ensemble=True, feat_unfold=True, cell_decode=True, device='cpu'):
         super().__init__()
+        self.device = device
         self.local_ensemble = local_ensemble
         self.feat_unfold = feat_unfold
         self.cell_decode = cell_decode
@@ -23,7 +24,7 @@ class LIIF(nn.Module):
             imnet_in_dim = self.encoder.out_dim
             if self.feat_unfold:
                 imnet_in_dim *= 9
-            imnet_in_dim += 2 # attach coord
+            imnet_in_dim += 2  # attach coord
             if self.cell_decode:
                 imnet_in_dim += 2
             self.imnet = models.make(imnet_spec, args={'in_dim': imnet_in_dim})
@@ -39,7 +40,7 @@ class LIIF(nn.Module):
 
         if self.imnet is None:
             ret = F.grid_sample(feat, coord.flip(-1).unsqueeze(1),
-                mode='nearest', align_corners=False)[:, :, 0, :] \
+                                mode='nearest', align_corners=False)[:, :, 0, :] \
                 .permute(0, 2, 1)
             return ret
 
@@ -58,7 +59,7 @@ class LIIF(nn.Module):
         rx = 2 / feat.shape[-2] / 2
         ry = 2 / feat.shape[-1] / 2
 
-        feat_coord = make_coord(feat.shape[-2:], flatten=False).cpu() \
+        feat_coord = make_coord(feat.shape[-2:], flatten=False).to(self.device) \
             .permute(2, 0, 1) \
             .unsqueeze(0).expand(feat.shape[0], 2, *feat.shape[-2:])
 
@@ -98,8 +99,12 @@ class LIIF(nn.Module):
 
         tot_area = torch.stack(areas).sum(dim=0)
         if self.local_ensemble:
-            t = areas[0]; areas[0] = areas[3]; areas[3] = t
-            t = areas[1]; areas[1] = areas[2]; areas[2] = t
+            t = areas[0]
+            areas[0] = areas[3]
+            areas[3] = t
+            t = areas[1]
+            areas[1] = areas[2]
+            areas[2] = t
         ret = 0
         for pred, area in zip(preds, areas):
             ret = ret + pred * (area / tot_area).unsqueeze(-1)

@@ -29,7 +29,7 @@ def batched_predict(model, inp, coord, cell, bsize):
 
 
 def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None,
-              verbose=False):
+              verbose=False, device="cuda"):
     model.eval()
 
     if data_norm is None:
@@ -38,11 +38,11 @@ def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None,
             'gt': {'sub': [0], 'div': [1]}
         }
     t = data_norm['inp']
-    inp_sub = torch.FloatTensor(t['sub']).view(1, -1, 1, 1).cpu()
-    inp_div = torch.FloatTensor(t['div']).view(1, -1, 1, 1).cpu()
+    inp_sub = torch.FloatTensor(t['sub']).view(1, -1, 1, 1).to(device)
+    inp_div = torch.FloatTensor(t['div']).view(1, -1, 1, 1).to(device)
     t = data_norm['gt']
-    gt_sub = torch.FloatTensor(t['sub']).view(1, 1, -1).cpu()
-    gt_div = torch.FloatTensor(t['div']).view(1, 1, -1).cpu()
+    gt_sub = torch.FloatTensor(t['sub']).view(1, 1, -1).to(device)
+    gt_div = torch.FloatTensor(t['div']).view(1, 1, -1).to(device)
 
     if eval_type is None:
         metric_fn = utils.calc_psnr
@@ -58,10 +58,10 @@ def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None,
     val_res = utils.Averager()
 
     pbar = tqdm(loader, leave=False, desc='val')
-    #for batch in pbar:
+    # for batch in pbar:
     batch = next(iter(loader))
     for k, v in batch.items():
-        batch[k] = v.cpu()
+        batch[k] = v.to(device)
 
     inp = (batch['inp'] - inp_sub) / inp_div
     if eval_bsize is None:
@@ -69,11 +69,11 @@ def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None,
             pred = model(inp, batch['coord'], batch['cell'])
     else:
         pred = batched_predict(model, inp,
-            batch['coord'], batch['cell'], eval_bsize)
+                               batch['coord'], batch['cell'], eval_bsize)
     pred = pred * gt_div + gt_sub
     pred.clamp_(0, 1)
 
-    if eval_type is not None: # reshape for shaving-eval
+    if eval_type is not None:  # reshape for shaving-eval
         ih, iw = batch['inp'].shape[-2:]
         s = math.sqrt(batch['coord'].shape[1] / (ih * iw))
         shape = [batch['inp'].shape[0], round(ih * s), round(iw * s), 3]
@@ -98,6 +98,10 @@ if __name__ == '__main__':
     parser.add_argument('--gpu', default='0')
     args = parser.parse_args()
 
+    device = torch.device('cuda' if torch.cuda.is_available()
+                          and args.gpu > 0 else 'cpu')
+    print("Run on device: ", device)
+
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
 
     with open(args.config, 'r') as f:
@@ -107,14 +111,16 @@ if __name__ == '__main__':
     dataset = datasets.make(spec['dataset'])
     dataset = datasets.make(spec['wrapper'], args={'dataset': dataset})
     loader = DataLoader(dataset, batch_size=spec['batch_size'],
-        num_workers=8, pin_memory=True)
+                        num_workers=8, pin_memory=True)
 
-    model_spec = torch.load(args.model, map_location=torch.device('cpu'))['model']
-    model = models.make(model_spec, load_sd=True).cpu()
+    model_spec = torch.load(
+        args.model, map_location=torch.device(device))['model']
+    model = models.make(model_spec, load_sd=True).to(device)
 
     res = eval_psnr(loader, model,
-        data_norm=config.get('data_norm'),
-        eval_type=config.get('eval_type'),
-        eval_bsize=config.get('eval_bsize'),
-        verbose=True)
+                    data_norm=config.get('data_norm'),
+                    eval_type=config.get('eval_type'),
+                    eval_bsize=config.get('eval_bsize'),
+                    verbose=True,
+                    device=device)
     print('result: {:.4f}'.format(res))

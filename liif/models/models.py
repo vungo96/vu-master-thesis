@@ -19,7 +19,7 @@ def register(name):
     return decorator
 
 
-def make(model_spec, args=None, load_sd=False, prefix=False):
+def make(model_spec, args=None, load_sd=False, prefix=False, device='cuda'):
     if args is not None:
         model_args = copy.deepcopy(model_spec['args'])
         model_args.update(args)
@@ -29,7 +29,7 @@ def make(model_spec, args=None, load_sd=False, prefix=False):
     if load_sd:
         if prefix:
             state_dict = _load_checkpoint_with_prefix(
-                model_spec['prefix'], model_spec['sd'], 'cpu')
+                model_spec['prefix'], model_spec['sd'], device)
         else:
             state_dict = model_spec['sd']
         model.load_state_dict(state_dict)
