@@ -62,7 +62,8 @@ def make_data_loaders():
 def prepare_training(device):
     if config.get('resume') is not None:
         sv_file = torch.load(config['resume'])
-        model = models.make(sv_file['model'], load_sd=True).cuda()
+        model = models.make(
+            sv_file['model'], load_sd=True).to(device)
         optimizer = utils.make_optimizer(
             model.parameters(), sv_file['optimizer'], load_sd=True)
         epoch_start = sv_file['epoch'] + 1

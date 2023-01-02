@@ -11,7 +11,7 @@ from utils import make_coord
 class LIIF(nn.Module):
 
     def __init__(self, encoder_spec, imnet_spec=None,
-                 local_ensemble=True, feat_unfold=True, cell_decode=True, device='cpu'):
+                 local_ensemble=True, feat_unfold=True, cell_decode=True, device='cuda'):
         super().__init__()
         self.device = device
         self.local_ensemble = local_ensemble

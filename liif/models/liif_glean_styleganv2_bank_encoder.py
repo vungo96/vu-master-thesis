@@ -35,7 +35,8 @@ class LiifGleanStyleGANv2(nn.Module):
                              f'{in_size} and {out_size}.')
 
         # latent bank (StyleGANv2), with weights being fixed
-        self.generator = models.make(generator_spec, load_sd=True, prefix=True)
+        self.generator = models.make(
+            generator_spec, load_sd=True, prefix=True).to(self.device)
         """  dict(
                 type='StyleGANv2Generator',
                 out_size=out_size,
