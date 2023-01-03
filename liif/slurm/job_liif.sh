@@ -18,10 +18,9 @@ cd /n/home08/mngo/vu-master-thesis/liif
 
 ### load modules
 module load Anaconda3/2020.11
-module load CUDA/9.2.88
+module load cuda/10.2.89-fasrc01
  
 ### beginning of executable commands
-source activate liif_glean_experiment_python3.7_gpu
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/n/home08/mngo/.conda/envs/liif_glean_experiment_python3.7_gpu/lib
+source activate liif_glean_experiment_python3.7_a100_gpu
 
 python train_liif.py --config configs/train-celebAHQ/train_celebAHQ-32-256_liif.yaml --gpu 1
