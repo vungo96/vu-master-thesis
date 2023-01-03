@@ -12,6 +12,14 @@ import copy
 models = {}
 
 
+def remove_unexpected_keys(state_dict, model_dict):
+    state_dict_keys = set(state_dict.keys())
+    for key in state_dict_keys:
+        if key not in model_dict.keys():
+            state_dict.pop(key)
+    return state_dict
+
+
 def register(name):
     def decorator(cls):
         models[name] = cls
@@ -32,6 +40,7 @@ def make(model_spec, args=None, load_sd=False, prefix=False):
                 model_spec['prefix'], model_spec['sd'], 'cpu')
         else:
             state_dict = model_spec['sd']
+        state_dict = remove_unexpected_keys(state_dict, model.state_dict())
         model.load_state_dict(state_dict)
     return model
 
