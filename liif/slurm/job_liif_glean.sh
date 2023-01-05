@@ -6,8 +6,8 @@
 #SBATCH -p gpu_test              # Partition to submit to
 #SBATCH --mem-per-cpu=3900M #M is the default and can therefore be omitted, but could also be K(ilo)|G(iga)|T(era)
 #SBATCH --gres=gpu:1
-#SBATCH -o myoutput_%j.out  # File to which STDOUT will be written, %j inserts jobid
-#SBATCH -e myerrors_%j.err  # File to which STDERR will be written, %j inserts jobid
+#SBATCH -o slurm/outputs/myoutput_%j.out  # File to which STDOUT will be written, %j inserts jobid
+#SBATCH -e slurm/outputs/myerrors_%j.err  # File to which STDERR will be written, %j inserts jobid
 
 # name the job
 #SBATCH --job-name=train_liif_test
