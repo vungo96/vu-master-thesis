@@ -1,0 +1,32 @@
+config loaded.
+train dataset: size=25000
+  inp: shape=(3, 32, 32)
+  coord: shape=(1024, 2)
+  cell: shape=(1024, 2)
+  gt: shape=(1024, 3)
+val dataset: size=100
+  inp: shape=(3, 32, 32)
+  coord: shape=(1024, 2)
+  cell: shape=(1024, 2)
+  gt: shape=(1024, 3)
+Run on device:  cuda
+load checkpoint from local path: /n/home08/mngo/vu-master-thesis/liif/ckpts/stylegan2/stylegan2-ffhq-config-f-official_20210327_171224-bce9310c.pth
+model: #params=157.8M
+epoch 1/200, train: loss=0.0797, val: psnr=25.0586, 26.2m 26.2m/87.4h
+epoch 2/200, train: loss=0.0627, val: psnr=25.4644, 26.2m 52.4m/87.4h
+epoch 3/200, train: loss=0.0556, val: psnr=26.1755, 26.2m 1.3h/87.4h
+epoch 4/200, train: loss=8341579.0454, val: psnr=4.8430, 25.9m 1.7h/87.2h
+epoch 5/200, train: loss=4276.2225, val: psnr=5.4053, 25.9m 2.2h/87.0h
+epoch 6/200, train: loss=16481.9482, val: psnr=4.4137, 25.9m 2.6h/86.9h
+epoch 7/200, train: loss=1192.0498, val: psnr=4.3102, 25.9m 3.0h/86.8h
+epoch 8/200, train: loss=489.1416, val: psnr=4.2238, 25.9m 3.5h/86.8h
+epoch 9/200, train: loss=3360753.5395, val: psnr=5.3318, 25.9m 3.9h/86.7h
+epoch 10/200, train: loss=885.5191, val: psnr=4.4553, 25.9m 4.3h/86.7h
+epoch 11/200, train: loss=382.3771, val: psnr=4.0303, 25.9m 4.8h/86.7h
+epoch 12/200, train: loss=168.1928, val: psnr=4.8031, 25.9m 5.2h/86.6h
+epoch 13/200, train: loss=64.3632, val: psnr=5.4273, 25.9m 5.6h/86.6h
+epoch 14/200, train: loss=26.4777, val: psnr=6.0088, 25.9m 6.1h/86.6h
+epoch 15/200, train: loss=11.9603, val: psnr=5.9321, 25.9m 6.5h/86.6h
+epoch 16/200, train: loss=6.1088, val: psnr=6.0587, 25.9m 6.9h/86.6h
+epoch 17/200, train: loss=2.5655, val: psnr=6.9309, 25.9m 7.4h/86.6h
+epoch 18/200, train: loss=1.3829, val: psnr=8.1427, 25.9m 7.8h/86.5h

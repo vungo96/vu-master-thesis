@@ -1,30 +1,0 @@
-/n/home08/mngo/.conda/envs/liif_glean_experiment_python3.7_gpu/lib/python3.7/site-packages/torch/cuda/__init__.py:125: UserWarning: 
-NVIDIA A100-SXM4-40GB with CUDA capability sm_80 is not compatible with the current PyTorch installation.
-The current PyTorch install supports CUDA capabilities sm_37 sm_50 sm_60 sm_61 sm_70 compute_37.
-If you want to use the NVIDIA A100-SXM4-40GB GPU with PyTorch, please check the instructions at https://pytorch.org/get-started/locally/
-
-  warnings.warn(incompatible_device_warn.format(device_name, capability, " ".join(arch_list), device_name))
-train:   0%|          | 0/1563 [00:00<?, ?it/s]                                               Traceback (most recent call last):
-  File "train_liif.py", line 238, in <module>
-    main(config, save_path)
-  File "train_liif.py", line 164, in main
-    train_loss = train(train_loader, model, optimizer, device)
-  File "train_liif.py", line 108, in train
-    pred = model(inp, batch['coord'], batch['cell'])
-  File "/n/home08/mngo/.conda/envs/liif_glean_experiment_python3.7_gpu/lib/python3.7/site-packages/torch/nn/modules/module.py", line 722, in _call_impl
-    result = self.forward(*input, **kwargs)
-  File "/n/home08/mngo/vu-master-thesis/liif/models/liif_glean_styleganv2_bank_encoder.py", line 295, in forward
-    self.gen_feat(inp)
-  File "/n/home08/mngo/vu-master-thesis/liif/models/liif_glean_styleganv2_bank_encoder.py", line 169, in gen_feat
-    skip = self.generator.to_rgb1(out, latent[:, 1])
-  File "/n/home08/mngo/.conda/envs/liif_glean_experiment_python3.7_gpu/lib/python3.7/site-packages/torch/nn/modules/module.py", line 722, in _call_impl
-    result = self.forward(*input, **kwargs)
-  File "/n/home08/mngo/vu-master-thesis/liif/models/stylegan2/modules.py", line 809, in forward
-    out = self.conv(x, style)
-  File "/n/home08/mngo/.conda/envs/liif_glean_experiment_python3.7_gpu/lib/python3.7/site-packages/torch/nn/modules/module.py", line 714, in _call_impl
-    result = hook(self, input)
-  File "/n/home08/mngo/vu-master-thesis/liif/models/stylegan2/modules.py", line 114, in __call__
-    setattr(module, self.name, self.compute_weight(module))
-  File "/n/home08/mngo/vu-master-thesis/liif/models/stylegan2/modules.py", line 108, in compute_weight
-    torch.tensor(1. / fan, device=weight.device)) * self.lr_mul
-RuntimeError: CUDA error: no kernel image is available for execution on the device

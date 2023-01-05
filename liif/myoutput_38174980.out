@@ -1,0 +1,86 @@
+config loaded.
+train dataset: size=25000
+  inp: shape=(3, 32, 32)
+  coord: shape=(1024, 2)
+  cell: shape=(1024, 2)
+  gt: shape=(1024, 3)
+val dataset: size=100
+  inp: shape=(3, 32, 32)
+  coord: shape=(1024, 2)
+  cell: shape=(1024, 2)
+  gt: shape=(1024, 3)
+Run on device:  cuda
+load checkpoint from local path: /n/home08/mngo/vu-master-thesis/liif/ckpts/stylegan2/stylegan2-ffhq-config-f-official_20210327_171224-bce9310c.pth
+model: #params=157.8M
+epoch 1/200, train: loss=0.0790, val: psnr=25.0854, 12.9m 12.9m/43.2h
+epoch 2/200, train: loss=0.0624, val: psnr=25.7394, 12.7m 25.7m/42.8h
+epoch 3/200, train: loss=0.0543, val: psnr=26.2258, 12.7m 38.3m/42.6h
+epoch 4/200, train: loss=11499.6185, val: psnr=4.9868, 12.4m 50.8m/42.3h
+epoch 5/200, train: loss=5.2971, val: psnr=5.2283, 12.4m 1.1h/42.1h
+epoch 6/200, train: loss=2.2669, val: psnr=8.3364, 12.4m 1.3h/42.0h
+epoch 7/200, train: loss=0.7062, val: psnr=13.2920, 12.4m 1.5h/41.9h
+epoch 8/200, train: loss=3248562.6575, val: psnr=5.0276, 12.4m 1.7h/41.9h
+epoch 9/200, train: loss=1746.6743, val: psnr=5.3422, 12.4m 1.9h/41.8h
+epoch 10/200, train: loss=755.3687, val: psnr=5.0193, 12.4m 2.1h/41.8h
+epoch 11/200, train: loss=375.3429, val: psnr=4.1186, 12.4m 2.3h/41.7h
+epoch 12/200, train: loss=179.4187, val: psnr=5.3897, 12.4m 2.5h/41.7h
+epoch 13/200, train: loss=77.1669, val: psnr=5.1892, 12.4m 2.7h/41.7h
+epoch 14/200, train: loss=38.0221, val: psnr=5.4340, 12.4m 2.9h/41.7h
+epoch 15/200, train: loss=16.4535, val: psnr=5.4194, 12.4m 3.1h/41.7h
+epoch 16/200, train: loss=21.0142, val: psnr=6.1775, 12.4m 3.3h/41.6h
+epoch 17/200, train: loss=2.2436, val: psnr=7.9867, 12.4m 3.5h/41.6h
+epoch 18/200, train: loss=1.1659, val: psnr=8.5061, 12.4m 3.7h/41.6h
+epoch 19/200, train: loss=0.6817, val: psnr=10.4452, 12.4m 4.0h/41.6h
+epoch 20/200, train: loss=0.3623, val: psnr=17.0696, 12.4m 4.2h/41.6h
+epoch 21/200, train: loss=6693952.5839, val: psnr=4.8886, 12.4m 4.4h/41.6h
+epoch 22/200, train: loss=6946.7458, val: psnr=5.4966, 12.4m 4.6h/41.6h
+epoch 23/200, train: loss=2956.4384, val: psnr=4.7166, 12.4m 4.8h/41.6h
+epoch 24/200, train: loss=1379.0405, val: psnr=5.3112, 12.4m 5.0h/41.6h
+epoch 25/200, train: loss=677.8968, val: psnr=5.5278, 12.5m 5.2h/41.6h
+epoch 26/200, train: loss=1449606.9966, val: psnr=5.7346, 12.4m 5.4h/41.6h
+epoch 27/200, train: loss=1498.4681, val: psnr=4.9042, 12.4m 5.6h/41.6h
+epoch 28/200, train: loss=427.2234, val: psnr=5.4278, 12.5m 5.8h/41.6h
+epoch 29/200, train: loss=203.4884, val: psnr=3.9701, 12.4m 6.0h/41.5h
+epoch 30/200, train: loss=94.6117, val: psnr=5.4304, 12.4m 6.2h/41.5h
+epoch 31/200, train: loss=46.3390, val: psnr=4.8582, 12.4m 6.4h/41.5h
+epoch 32/200, train: loss=21.0177, val: psnr=5.5900, 12.5m 6.6h/41.5h
+epoch 33/200, train: loss=10.0588, val: psnr=5.6918, 12.5m 6.9h/41.5h
+epoch 34/200, train: loss=4.5348, val: psnr=6.6800, 12.4m 7.1h/41.5h
+epoch 35/200, train: loss=2.5513, val: psnr=7.4924, 12.4m 7.3h/41.5h
+epoch 36/200, train: loss=1.0309, val: psnr=6.1781, 12.4m 7.5h/41.5h
+epoch 37/200, train: loss=1980586037.9139, val: psnr=5.2704, 12.4m 7.7h/41.5h
+epoch 38/200, train: loss=1764861.5984, val: psnr=5.2986, 12.4m 7.9h/41.5h
+epoch 39/200, train: loss=479812.9067, val: psnr=5.7613, 12.4m 8.1h/41.5h
+epoch 40/200, train: loss=313434.7171, val: psnr=4.0803, 12.5m 8.3h/41.5h
+epoch 41/200, train: loss=169644.0622, val: psnr=4.0567, 12.5m 8.5h/41.5h
+epoch 42/200, train: loss=83042.9475, val: psnr=5.4098, 12.4m 8.7h/41.5h
+epoch 43/200, train: loss=37428.9149, val: psnr=4.8000, 12.4m 8.9h/41.5h
+epoch 44/200, train: loss=20592.8989, val: psnr=4.4683, 12.4m 9.1h/41.5h
+epoch 45/200, train: loss=9045.2519, val: psnr=4.4225, 12.4m 9.3h/41.5h
+epoch 46/200, train: loss=6095395197.3822, val: psnr=5.6152, 12.4m 9.5h/41.5h
+epoch 47/200, train: loss=7717382.3505, val: psnr=4.9537, 12.5m 9.8h/41.5h
+epoch 48/200, train: loss=1063246.7280, val: psnr=4.7100, 12.4m 10.0h/41.5h
+epoch 49/200, train: loss=524043.2738, val: psnr=4.8186, 12.4m 10.2h/41.5h
+epoch 50/200, train: loss=242327.3170, val: psnr=4.8382, 12.4m 10.4h/41.5h
+epoch 51/200, train: loss=97482.0824, val: psnr=5.1892, 12.4m 10.6h/41.5h
+epoch 52/200, train: loss=45234.9524, val: psnr=4.8778, 12.5m 10.8h/41.5h
+epoch 53/200, train: loss=23956.0437, val: psnr=4.5215, 12.4m 11.0h/41.5h
+epoch 54/200, train: loss=10790.7904, val: psnr=5.0557, 12.4m 11.2h/41.5h
+epoch 55/200, train: loss=409265790.8933, val: psnr=4.7117, 12.4m 11.4h/41.5h
+epoch 56/200, train: loss=87821.9804, val: psnr=5.7751, 12.5m 11.6h/41.5h
+epoch 57/200, train: loss=40793.2746, val: psnr=4.7004, 12.4m 11.8h/41.5h
+epoch 58/200, train: loss=21522.1645, val: psnr=5.8730, 12.4m 12.0h/41.5h
+epoch 59/200, train: loss=10614.4005, val: psnr=4.4612, 12.5m 12.2h/41.5h
+epoch 60/200, train: loss=7048.2098, val: psnr=4.7873, 12.5m 12.5h/41.5h
+epoch 61/200, train: loss=2639.3606, val: psnr=5.4715, 12.4m 12.7h/41.5h
+epoch 62/200, train: loss=1199.2388, val: psnr=5.2870, 12.4m 12.9h/41.5h
+epoch 63/200, train: loss=598.6686, val: psnr=4.2875, 12.4m 13.1h/41.5h
+epoch 64/200, train: loss=311.9042, val: psnr=4.2006, 12.4m 13.3h/41.5h
+epoch 65/200, train: loss=225125576.9158, val: psnr=4.5992, 12.5m 13.5h/41.5h
+epoch 66/200, train: loss=42094.9077, val: psnr=4.6056, 12.4m 13.7h/41.5h
+epoch 67/200, train: loss=20878.8196, val: psnr=4.8696, 12.4m 13.9h/41.5h
+epoch 68/200, train: loss=10140.5530, val: psnr=4.2371, 12.5m 14.1h/41.5h
+epoch 69/200, train: loss=6335.9664, val: psnr=4.5122, 12.4m 14.3h/41.5h
+epoch 70/200, train: loss=3241.7184, val: psnr=4.8835, 12.5m 14.5h/41.5h
+epoch 71/200, train: loss=1798.3248, val: psnr=5.4304, 12.5m 14.7h/41.5h
+epoch 72/200, train: loss=743.8341, val: psnr=4.6549, 12.4m 14.9h/41.5h
