@@ -100,9 +100,17 @@ def train(train_loader, model, optimizer, device):
     gt_sub = torch.FloatTensor(t['sub']).view(1, 1, -1).to(device)
     gt_div = torch.FloatTensor(t['div']).view(1, 1, -1).to(device)
 
+    first = True
+
     for batch in tqdm(train_loader, leave=False, desc='train'):
         for k, v in batch.items():
             batch[k] = v.to(device)
+
+        # inspect model
+        if first:
+            writer.add_graph(
+                model, (batch['inp'], batch['coord'], batch['cell']))
+            first = False
 
         inp = (batch['inp'] - inp_sub) / inp_div
         pred = model(inp, batch['coord'], batch['cell'])
