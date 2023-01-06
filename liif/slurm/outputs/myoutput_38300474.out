@@ -15,3 +15,4 @@ model: #params=157.8M
 epoch 1/200, train: loss=0.0793, val: psnr=24.8701, 26.4m 26.4m/87.9h
 epoch 2/200, train: loss=0.0624, val: psnr=25.4860, 26.3m 52.7m/87.8h
 epoch 3/200, train: loss=0.0550, val: psnr=26.1286, 26.3m 1.3h/87.8h
+epoch 4/200, train: loss=0.0504, val: psnr=26.5977, 26.3m 1.8h/87.8h
