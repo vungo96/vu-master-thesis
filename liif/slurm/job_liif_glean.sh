@@ -1,10 +1,10 @@
 #!/bin/bash
 
 ### Start of Slurm SBATCH definitions
-#SBATCH -c 8                # Number of cores (-c)
-#SBATCH -t 0-8:00          # Runtime in D-HH:MM, minimum of t minutes
-#SBATCH -p gpu_test              # Partition to submit to
-#SBATCH --mem-per-cpu=3900M #M is the default and can therefore be omitted, but could also be K(ilo)|G(iga)|T(era)
+#SBATCH -c 10                # Number of cores (-c)
+#SBATCH -t 2-00:00          # Runtime in D-HH:MM, minimum of t minutes
+#SBATCH -p gpu_mig              # Partition to submit to
+#SBATCH --mem-per-cpu=10000M #M is the default and can therefore be omitted, but could also be K(ilo)|G(iga)|T(era)
 #SBATCH --gres=gpu:1
 #SBATCH -o slurm/outputs/myoutput_%j.out  # File to which STDOUT will be written, %j inserts jobid
 #SBATCH -e slurm/outputs/myerrors_%j.err  # File to which STDERR will be written, %j inserts jobid
@@ -14,7 +14,7 @@
 
 ### end of Slurm SBATCH definitions
 
-cd /n/home08/mngo/vu-master-thesis/liif
+cd /n/pfister_lab2/Lab/mngo/vu-master-thesis/liif
 
 ### load modules
 module load Anaconda3/2020.11

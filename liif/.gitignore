@@ -4,4 +4,4 @@ load
 ckpts
 save
 .vscode
-slurm/outputs
+slurm
