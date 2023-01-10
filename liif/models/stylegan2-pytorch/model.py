@@ -8,6 +8,7 @@ from torch import nn
 from torch.nn import functional as F
 from torch.autograd import Function
 
+from models import register
 from op import FusedLeakyReLU, fused_leaky_relu, upfirdn2d, conv2d_gradfix
 
 
@@ -387,8 +388,8 @@ class ToRGB(nn.Module):
 
         return out
 
-
-class Generator(nn.Module):
+@register('stylegan2')
+class StyleGAN2Generator(nn.Module):
     def __init__(
         self,
         size,
@@ -636,7 +637,7 @@ class ResBlock(nn.Module):
         return out
 
 
-class Discriminator(nn.Module):
+class StyleGAN2Discriminator(nn.Module):
     def __init__(self, size, channel_multiplier=2, blur_kernel=[1, 3, 3, 1]):
         super().__init__()
 

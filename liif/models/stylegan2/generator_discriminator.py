@@ -14,7 +14,7 @@ from .modules import (ConstantInput, ConvDownLayer, EqualLinearActModule,
                       PixelNorm, ResBlock)
 
 
-@register('stylegan2')
+# @register('stylegan2')
 class StyleGANv2Generator(nn.Module):
     r"""StyleGAN2 Generator.
 
@@ -403,7 +403,7 @@ class StyleGANv2Generator(nn.Module):
             return img
 
 
-@register('stylegan2_discriminator')
+# @register('stylegan2_discriminator')
 class StyleGAN2Discriminator(nn.Module):
     """StyleGAN2 Discriminator.
 
