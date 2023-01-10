@@ -39,8 +39,8 @@ def make(model_spec, args=None, load_sd=False, prefix=False):
             state_dict = _load_checkpoint_with_prefix(
                 model_spec['prefix'], model_spec['sd'], 'cpu')
         else:
-            state_dict = model_spec['sd']
-        state_dict = remove_unexpected_keys(state_dict, model.state_dict())
+            state_dict = torch.load(model_spec['sd'], map_location='cpu')
+        # state_dict = remove_unexpected_keys(state_dict, model.state_dict())
         model.load_state_dict(state_dict)
     return model
 

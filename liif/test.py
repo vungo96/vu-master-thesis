@@ -58,35 +58,34 @@ def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None,
     val_res = utils.Averager()
 
     pbar = tqdm(loader, leave=False, desc='val')
-    # for batch in pbar:
-    batch = next(iter(loader))
-    for k, v in batch.items():
-        batch[k] = v.to(device)
+    for batch in pbar:
+        for k, v in batch.items():
+            batch[k] = v.to(device)
 
-    inp = (batch['inp'] - inp_sub) / inp_div
-    if eval_bsize is None:
-        with torch.no_grad():
-            pred = model(inp, batch['coord'], batch['cell'])
-    else:
-        pred = batched_predict(model, inp,
-                               batch['coord'], batch['cell'], eval_bsize)
-    pred = pred * gt_div + gt_sub
-    pred.clamp_(0, 1)
+        inp = (batch['inp'] - inp_sub) / inp_div
+        if eval_bsize is None:
+            with torch.no_grad():
+                pred = model(inp, batch['coord'], batch['cell'])
+        else:
+            pred = batched_predict(model, inp,
+                                batch['coord'], batch['cell'], eval_bsize)
+        pred = pred * gt_div + gt_sub
+        pred.clamp_(0, 1)
 
-    if eval_type is not None:  # reshape for shaving-eval
-        ih, iw = batch['inp'].shape[-2:]
-        s = math.sqrt(batch['coord'].shape[1] / (ih * iw))
-        shape = [batch['inp'].shape[0], round(ih * s), round(iw * s), 3]
-        pred = pred.view(*shape) \
-            .permute(0, 3, 1, 2).contiguous()
-        batch['gt'] = batch['gt'].view(*shape) \
-            .permute(0, 3, 1, 2).contiguous()
+        if eval_type is not None:  # reshape for shaving-eval
+            ih, iw = batch['inp'].shape[-2:]
+            s = math.sqrt(batch['coord'].shape[1] / (ih * iw))
+            shape = [batch['inp'].shape[0], round(ih * s), round(iw * s), 3]
+            pred = pred.view(*shape) \
+                .permute(0, 3, 1, 2).contiguous()
+            batch['gt'] = batch['gt'].view(*shape) \
+                .permute(0, 3, 1, 2).contiguous()
 
-    res = metric_fn(pred, batch['gt'])
-    val_res.add(res.item(), inp.shape[0])
+        res = metric_fn(pred, batch['gt'])
+        val_res.add(res.item(), inp.shape[0])
 
-    if verbose:
-        pbar.set_description('val {:.4f}'.format(val_res.item()))
+        if verbose:
+            pbar.set_description('val {:.4f}'.format(val_res.item()))
 
     return val_res.item()
 
@@ -99,7 +98,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     device = torch.device('cuda' if torch.cuda.is_available()
-                          and args.gpu > 0 else 'cpu')
+                          and int(args.gpu) > 0 else 'cpu')
     print("Run on device: ", device)
 
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
@@ -114,7 +113,7 @@ if __name__ == '__main__':
                         num_workers=8, pin_memory=True)
 
     model_spec = torch.load(
-        args.model, map_location=torch.device(device))['model']
+        args.model, map_location="cpu")['model']
     model = models.make(model_spec, load_sd=True).to(device)
 
     res = eval_psnr(loader, model,

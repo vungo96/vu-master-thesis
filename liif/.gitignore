@@ -3,5 +3,6 @@ folders
 load
 ckpts
 save
+save_test
 .vscode
 slurm

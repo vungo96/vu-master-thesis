@@ -3,7 +3,7 @@
 ### Start of Slurm SBATCH definitions
 #SBATCH -c 10                # Number of cores (-c)
 #SBATCH -t 2-00:00          # Runtime in D-HH:MM, minimum of t minutes
-#SBATCH -p gpu_mig              # Partition to submit to
+#SBATCH -p gpu              # Partition to submit to
 #SBATCH --mem-per-cpu=10000M #M is the default and can therefore be omitted, but could also be K(ilo)|G(iga)|T(era)
 #SBATCH --gres=gpu:1
 #SBATCH -o slurm/outputs/myoutput_%j.out  # File to which STDOUT will be written, %j inserts jobid

@@ -48,8 +48,8 @@ model:
         out_size: 256
         style_channels: 512
       sd: ckpts/stylegan2/stylegan2-ffhq-config-f-official_20210327_171224-bce9310c.pth
-      # /n/home08/mngo/vu-master-thesis/liif/ckpts/stylegan2/stylegan2-cat-config-f-official_20210327_172444-15bc485b.pth
-      # /n/home08/mngo/vu-master-thesis/liif/ckpts/stylegan2/stylegan2-ffhq-config-f-official_20210327_171224-bce9310c.pth
+      # ckpts/stylegan2/stylegan2-cat-config-f-official_20210327_172444-15bc485b.pth
+      # ckpts/stylegan2/stylegan2-ffhq-config-f-official_20210327_171224-bce9310c.pth
       prefix: 'generator_ema'
     imnet_spec:
       name: mlp
