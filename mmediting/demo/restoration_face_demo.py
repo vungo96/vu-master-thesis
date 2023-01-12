@@ -5,6 +5,9 @@ import os
 import mmcv
 import torch
 
+from PIL import Image
+from torchvision import transforms
+
 from mmedit.apis import init_model, restoration_face_inference
 from mmedit.utils import modify_args
 
@@ -49,8 +52,21 @@ def main():
 
     model = init_model(args.config, args.checkpoint, device=device)
 
-    output = restoration_face_inference(model, args.img_path,
-                                        args.upscale_factor, args.face_size)
+    device = next(model.parameters()).device
+
+    img = transforms.ToTensor()(Image.open(args.img_path).convert('RGB'))
+    img = torch.unsqueeze(img, 0).to(device)
+
+    with torch.no_grad():
+
+        output = model(img, test_mode=True)
+        output = torch.clamp(output, min=0, max=1)
+
+        output = output.squeeze(0).permute(1, 2, 0)[:, :, [2, 1, 0]]
+        output = output.cpu().numpy() * 255  # (0, 255)
+
+    # output = restoration_face_inference(model, args.img_path,
+                                        # args.upscale_factor, args.face_size)
 
     mmcv.imwrite(output, args.save_path)
     if args.imshow:
