@@ -103,7 +103,7 @@ class StyleGANv2Generator(nn.Module):
         self.mix_prob = mix_prob
         self.bgr2rgb = bgr2rgb
 
-        print("init old stylegan2")
+        print("init stylegan2")
 
         # define style mapping layers
         mapping_layers = [PixelNorm()]

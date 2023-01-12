@@ -400,7 +400,7 @@ class StyleGAN2Generator(nn.Module):
         lr_mlp=0.01,
     ):
         super().__init__()
-        print("init stylegan2", size)
+        print("init deprecated stylegan2", size)
         self.size = size
 
         self.style_dim = style_dim

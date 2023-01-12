@@ -12,14 +12,6 @@ import copy
 models = {}
 
 
-def remove_unexpected_keys(state_dict, model_dict):
-    state_dict_keys = set(state_dict.keys())
-    for key in state_dict_keys:
-        if key not in model_dict.keys():
-            state_dict.pop(key)
-    return state_dict
-
-
 def register(name):
     def decorator(cls):
         models[name] = cls
@@ -40,9 +32,7 @@ def make(model_spec, args=None, load_sd=False, prefix=False):
             state_dict = _load_checkpoint_with_prefix(
                 model_spec['prefix'], model_spec['sd'], 'cpu')
         else:
-            state_dict = torch.load(model_spec['sd'], map_location='cpu')
-        # state_dict = remove_unexpected_keys(state_dict, model.state_dict())
-        print(state_dict.keys())
+            state_dict = model_spec['sd']
         model.load_state_dict(state_dict, strict=False)
     return model
 
