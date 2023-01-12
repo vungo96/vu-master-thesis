@@ -20,8 +20,9 @@ class LiifGleanStyleGANv2(nn.Module):
                  rrdb_channels=64,
                  num_rrdbs=23,
                  style_channels=512,
+                 edsr_channels=64,
                  imnet_spec=None,
-                 local_ensemble=True, feat_unfold=True, cell_decode=True, device='cuda'):
+                 local_ensemble=True, feat_unfold=True, cell_decode=True, device='cpu'):
         super().__init__()
         self.device = device
         self.local_ensemble = local_ensemble
@@ -34,7 +35,8 @@ class LiifGleanStyleGANv2(nn.Module):
                              f'{in_size} and {out_size}.')
 
         # latent bank (StyleGANv2), with weights being fixed
-        self.generator = models.make(generator_spec, load_sd=True, prefix=True)
+        self.generator = models.make(
+            generator_spec, load_sd=True, prefix=True).to(self.device)
         """  dict(
                 type='StyleGANv2Generator',
                 out_size=out_size,
@@ -85,17 +87,50 @@ class LiifGleanStyleGANv2(nn.Module):
 
         # additional modules for StyleGANv2
         self.fusion_out = nn.ModuleList()
-        self.fusion_skip = nn.ModuleList()
+        #self.fusion_skip = nn.ModuleList()
         for res in encoder_res[::-1]:
             num_channels = channels[res]
             self.fusion_out.append(
                 nn.Conv2d(num_channels * 2, num_channels, 3, 1, 1, bias=True))
-            self.fusion_skip.append(
-                nn.Conv2d(num_channels + 3, 3, 3, 1, 1, bias=True))
+            # self.fusion_skip.append(
+            #    nn.Conv2d(num_channels + 3, 3, 3, 1, 1, bias=True))
+
+        # latent bank encoder
+        encoder_bank_res = [
+            2**i for i in range(int(np.log2(out_size)), int(np.log2(in_size)), -1)]
+        self.encoder_bank = nn.ModuleList()
+        """ self.encoder_bank.append(
+            nn.Sequential(
+                # TODO: might remove this feature extractor
+                RRDBFeatureExtractor(
+                    channels[out_size], rrdb_channels, num_blocks=num_rrdbs),
+                nn.Conv2d(
+                    rrdb_channels, channels[in_size], 3, 1, 1, bias=True),
+                nn.LeakyReLU(negative_slope=0.2, inplace=True))) """
+        for res in encoder_bank_res:
+            # TODO: addapt to channels of edsr in liif?
+            in_channels = channels[res]
+            out_channels = channels[res // 2]
+            block = nn.Sequential(
+                nn.Conv2d(in_channels, out_channels, 3, 2, 1, bias=True),
+                nn.LeakyReLU(negative_slope=0.2, inplace=True),
+                nn.Conv2d(out_channels, out_channels, 3, 1, 1, bias=True),
+                nn.LeakyReLU(negative_slope=0.2, inplace=True))
+            self.encoder_bank.append(block)
+
+        # additional modules for fusing first encoder and latent bank to second encoder
+        self.fusion_bank_out = nn.ModuleList()
+        #self.fusion_bank_skip = nn.ModuleList()
+        for res in encoder_bank_res:
+            num_channels = channels[res]
+            self.fusion_bank_out.append(
+                nn.Conv2d(num_channels * 2, num_channels, 3, 1, 1, bias=True))
+            # self.fusion_bank_skip.append(
+            #    nn.Conv2d(num_channels + 3, 3, 3, 1, 1, bias=True))
 
         if imnet_spec is not None:
             # TODO: concat features of encoder and generator and different layers
-            imnet_in_dim = self.generator.channels[out_size]
+            imnet_in_dim = out_channels
             if self.feat_unfold:
                 imnet_in_dim *= 9
             imnet_in_dim += 2  # attach coord
@@ -130,7 +165,6 @@ class LiifGleanStyleGANv2(nn.Module):
         ]
         # 4x4 stage
         out = self.generator.constant_input(latent)
-        print(latent[:, 0].shape)
         out = self.generator.conv1(out, latent[:, 0], noise=injected_noise[0])
         skip = self.generator.to_rgb1(out, latent[:, 1])
 
@@ -151,13 +185,13 @@ class LiifGleanStyleGANv2(nn.Module):
                 out = torch.cat([out, feat], dim=1)
                 out = self.fusion_out[fusion_index](out)
 
-                skip = torch.cat([skip, feat], dim=1)
-                skip = self.fusion_skip[fusion_index](skip)
+                #skip = torch.cat([skip, feat], dim=1)
+                #skip = self.fusion_skip[fusion_index](skip)
 
             # original StyleGAN operations
             out = up_conv(out, latent[:, _index], noise=noise1)
             out = conv(out, latent[:, _index + 1], noise=noise2)
-            skip = to_rgb(out, latent[:, _index + 2], skip)
+            #skip = to_rgb(out, latent[:, _index + 2], skip)
 
             # store features for decoder
             if out.size(2) > self.in_size:
@@ -166,7 +200,19 @@ class LiifGleanStyleGANv2(nn.Module):
             _index += 2
 
         # TODO: concat features of encoder and generator and different layers
-        self.feat = generator_features[-1]
+        # bank encoder
+        out = generator_features[-1]
+        encoder_bank_features = []
+        for i, block in enumerate(self.encoder_bank):
+            if i > 0 and i < len(generator_features):
+                out = torch.cat(
+                    [out, generator_features[len(generator_features)-i-1]], dim=1)
+                # TODO: i-1? oder i?
+                out = self.fusion_bank_out[i](out)
+            out = block(out)
+            encoder_bank_features.append(out)
+        # encoder_bank_features = encoder_bank_features[::-1]
+        self.feat = encoder_bank_features[-1]
 
         return self.feat
 

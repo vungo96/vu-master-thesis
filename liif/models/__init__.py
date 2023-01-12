@@ -7,5 +7,4 @@ from .rrdb_net import RRDB
 from . import glean_styleganv2
 from . import stylegan2
 from . import liif_glean_styleganv2
-from . import liif_glean_styleganv2_bank_encoder
 

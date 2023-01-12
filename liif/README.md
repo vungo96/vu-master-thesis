@@ -1,5 +1,7 @@
 # LIIF and LIIF_GLEAN
 
+Repo is based on https://github.com/yinboc/liif and https://github.com/open-mmlab/mmediting
+
 ### Environment
 - Python 3.7
 - Pytorch 1.13.1

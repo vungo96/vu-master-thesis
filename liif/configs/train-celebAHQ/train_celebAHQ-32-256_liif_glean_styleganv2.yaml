@@ -47,7 +47,10 @@ model:
       args:
         out_size: 256
         style_channels: 512
-      sd: /Users/vungo/Desktop/harvard_code/liif/ckpts/stylegan2/stylegan2-cat-config-f-official_20210327_172444-15bc485b.pth
+      sd: ckpts/stylegan2/stylegan2-ffhq-config-f-official_20210327_171224-bce9310c.pth
+      # ckpts/stylegan2/550000.pt
+      # ckpts/stylegan2/stylegan2-cat-config-f-official_20210327_172444-15bc485b.pth
+      # ckpts/stylegan2/stylegan2-ffhq-config-f-official_20210327_171224-bce9310c.pth
       prefix: 'generator_ema'
     imnet_spec:
       name: mlp
@@ -65,4 +68,4 @@ multi_step_lr:
   gamma: 0.1
 
 epoch_val: 1
-epoch_save: 10
+epoch_save: 100
