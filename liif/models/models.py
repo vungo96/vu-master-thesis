@@ -35,11 +35,15 @@ def make(model_spec, args=None, load_sd=False, prefix=False):
         model_args = model_spec['args']
     model = models[model_spec['name']](**model_args)
     if load_sd:
-        state_dict = torch.load(model_spec['sd'], map_location='cpu')
         if prefix:
-            state_dict = state_dict[model_spec['prefix']]
+            # state_dict = state_dict[str(model_spec['prefix'])]
+            state_dict = _load_checkpoint_with_prefix(
+                model_spec['prefix'], model_spec['sd'], 'cpu')
+        else:
+            state_dict = torch.load(model_spec['sd'], map_location='cpu')
         # state_dict = remove_unexpected_keys(state_dict, model.state_dict())
-        model.load_state_dict(state_dict)
+        print(state_dict.keys())
+        model.load_state_dict(state_dict, strict=False)
     return model
 
 

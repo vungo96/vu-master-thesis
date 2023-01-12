@@ -9,7 +9,7 @@ from torch.nn import functional as F
 from torch.autograd import Function
 
 from models import register
-from op import FusedLeakyReLU, fused_leaky_relu, upfirdn2d, conv2d_gradfix
+from .op import FusedLeakyReLU, fused_leaky_relu, upfirdn2d, conv2d_gradfix
 
 
 class PixelNorm(nn.Module):
@@ -388,7 +388,7 @@ class ToRGB(nn.Module):
 
         return out
 
-@register('stylegan2')
+# @register('stylegan2')
 class StyleGAN2Generator(nn.Module):
     def __init__(
         self,
@@ -400,7 +400,7 @@ class StyleGAN2Generator(nn.Module):
         lr_mlp=0.01,
     ):
         super().__init__()
-
+        print("init stylegan2", size)
         self.size = size
 
         self.style_dim = style_dim
@@ -445,6 +445,7 @@ class StyleGAN2Generator(nn.Module):
         in_channel = self.channels[4]
 
         for layer_idx in range(self.num_layers):
+            print("register noises")
             res = (layer_idx + 5) // 2
             shape = [1, 1, 2 ** res, 2 ** res]
             self.noises.register_buffer(f"noise_{layer_idx}", torch.randn(*shape))
@@ -474,6 +475,7 @@ class StyleGAN2Generator(nn.Module):
             in_channel = out_channel
 
         self.n_latent = self.log_size * 2 - 2
+        self.num_injected_noises = self.n_latent - 1
 
     def make_noise(self):
         device = self.input.input.device

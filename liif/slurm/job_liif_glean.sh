@@ -17,9 +17,10 @@
 cd /n/pfister_lab2/Lab/mngo/vu-master-thesis/liif
 
 ### load modules
-module load Anaconda3/2020.11
+module load Anaconda/5.0.1-fasrc02
 module load cuda/11.6.2-fasrc01
 module load cudnn/8.5.0.96_cuda11-fasrc01
+module load GCCcore/6.4.0
  
 ### beginning of executable commands
 source activate liif_glean_experiment_python3.7_torch1.12.0

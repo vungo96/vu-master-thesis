@@ -8,7 +8,7 @@ import torch
 import numpy as np
 from torchvision import utils
 
-from model import Generator, Discriminator
+from model import StyleGAN2Discriminator, StyleGAN2Generator
 
 
 def convert_modconv(vars, source_name, target_name, flip=False):
@@ -243,7 +243,7 @@ if __name__ == "__main__":
         if layer[0].startswith('Dense'):
             n_mlp += 1
 
-    g = Generator(size, 512, n_mlp, channel_multiplier=args.channel_multiplier)
+    g = StyleGAN2Generator(size, 512, n_mlp, channel_multiplier=args.channel_multiplier)
     state_dict = g.state_dict()
     state_dict = fill_statedict(state_dict, g_ema.vars, size, n_mlp)
 
@@ -254,13 +254,13 @@ if __name__ == "__main__":
     ckpt = {"g_ema": state_dict, "latent_avg": latent_avg}
 
     if args.gen:
-        g_train = Generator(size, 512, n_mlp, channel_multiplier=args.channel_multiplier)
+        g_train = StyleGAN2Generator(size, 512, n_mlp, channel_multiplier=args.channel_multiplier)
         g_train_state = g_train.state_dict()
         g_train_state = fill_statedict(g_train_state, generator.vars, size, n_mlp)
         ckpt["g"] = g_train_state
 
     if args.disc:
-        disc = Discriminator(size, channel_multiplier=args.channel_multiplier)
+        disc = StyleGAN2Discriminator(size, channel_multiplier=args.channel_multiplier)
         d_state = disc.state_dict()
         d_state = discriminator_fill_statedict(d_state, discriminator.vars, size)
         ckpt["d"] = d_state

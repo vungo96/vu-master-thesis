@@ -14,7 +14,7 @@ from .modules import (ConstantInput, ConvDownLayer, EqualLinearActModule,
                       PixelNorm, ResBlock)
 
 
-# @register('stylegan2')
+@register('stylegan2')
 class StyleGANv2Generator(nn.Module):
     r"""StyleGAN2 Generator.
 
@@ -102,6 +102,8 @@ class StyleGANv2Generator(nn.Module):
         self.eval_style_mode = eval_style_mode
         self.mix_prob = mix_prob
         self.bgr2rgb = bgr2rgb
+
+        print("init old stylegan2")
 
         # define style mapping layers
         mapping_layers = [PixelNorm()]
