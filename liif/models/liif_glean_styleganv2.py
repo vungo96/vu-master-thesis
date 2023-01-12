@@ -57,7 +57,7 @@ class LiifGleanStyleGANv2(nn.Module):
         self.style_channels = style_channels
         channels = self.generator.channels
 
-        # encoder
+        # first encoder
         num_styles = int(np.log2(out_size)) * 2 - 2
         encoder_res = [2**i for i in range(int(np.log2(in_size)), 1, -1)]
         self.encoder = nn.ModuleList()
@@ -95,7 +95,7 @@ class LiifGleanStyleGANv2(nn.Module):
             # self.fusion_skip.append(
             #    nn.Conv2d(num_channels + 3, 3, 3, 1, 1, bias=True))
 
-        # latent bank encoder
+        # encoder for latent bank such that we can feed into MLP
         encoder_bank_res = [
             2**i for i in range(int(np.log2(out_size)), int(np.log2(in_size)), -1)]
         self.encoder_bank = nn.ModuleList()
@@ -128,6 +128,7 @@ class LiifGleanStyleGANv2(nn.Module):
             # self.fusion_bank_skip.append(
             #    nn.Conv2d(num_channels + 3, 3, 3, 1, 1, bias=True))
 
+        # MLP
         if imnet_spec is not None:
             # TODO: concat features of encoder and generator and different layers
             imnet_in_dim = out_channels
@@ -199,19 +200,16 @@ class LiifGleanStyleGANv2(nn.Module):
 
             _index += 2
 
-        # TODO: concat features of encoder and generator and different layers
-        # bank encoder
+        # Concat features of second encoder and latent bank for same resolution layers
         out = generator_features[-1]
         encoder_bank_features = []
         for i, block in enumerate(self.encoder_bank):
             if i > 0 and i < len(generator_features):
                 out = torch.cat(
                     [out, generator_features[len(generator_features)-i-1]], dim=1)
-                # TODO: i-1? oder i?
                 out = self.fusion_bank_out[i](out)
             out = block(out)
             encoder_bank_features.append(out)
-        # encoder_bank_features = encoder_bank_features[::-1]
         self.feat = encoder_bank_features[-1]
 
         return self.feat

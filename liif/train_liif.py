@@ -138,7 +138,7 @@ def main(config_, save_path):
 
     n_gpus = len(os.environ['CUDA_VISIBLE_DEVICES'].split(','))
 
-    # fix for gpu and cpu
+    # Enable running on cpu as well
     device = torch.device('cuda' if torch.cuda.is_available()
                           and n_gpus > 0 else 'cpu')
     print("Run on device: ", device)
