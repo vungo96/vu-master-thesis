@@ -146,6 +146,7 @@ def main(config_, save_path):
     model, optimizer, epoch_start, lr_scheduler = prepare_training(device)
 
     if n_gpus > 1:
+        print("Use multiple gpus.")
         model = nn.parallel.DataParallel(model)
 
     epoch_max = config['epoch_max']
