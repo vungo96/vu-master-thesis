@@ -59,7 +59,7 @@ def make_data_loaders():
     return train_loader, val_loader
 
 
-def prepare_training(device):
+def prepare_training():
     if config.get('resume') is not None:
         sv_file = torch.load(config['resume'])
         model = models.make(
@@ -87,7 +87,7 @@ def prepare_training(device):
     return model, optimizer, epoch_start, lr_scheduler
 
 
-def train(train_loader, model, optimizer, device):
+def train(train_loader, model, optimizer):
     model.train()
     loss_fn = nn.L1Loss()
     train_loss = utils.Averager()
@@ -123,7 +123,7 @@ def train(train_loader, model, optimizer, device):
 
 
 def main(config_, save_path):
-    global config, log, writer
+    global config, log, writer, device
     config = config_
     log, writer = utils.set_save_path(save_path)
     with open(os.path.join(save_path, 'config.yaml'), 'w') as f:
@@ -143,7 +143,7 @@ def main(config_, save_path):
                           and n_gpus > 0 else 'cpu')
     print("Run on device: ", device)
 
-    model, optimizer, epoch_start, lr_scheduler = prepare_training(device)
+    model, optimizer, epoch_start, lr_scheduler = prepare_training()
 
     if n_gpus > 1:
         print("Use multiple gpus.")
@@ -162,7 +162,7 @@ def main(config_, save_path):
 
         writer.add_scalar('lr', optimizer.param_groups[0]['lr'], epoch)
 
-        train_loss = train(train_loader, model, optimizer, device)
+        train_loss = train(train_loader, model, optimizer)
         if lr_scheduler is not None:
             lr_scheduler.step()
 
@@ -197,7 +197,10 @@ def main(config_, save_path):
             val_res = eval_psnr(val_loader, model_,
                                 data_norm=config['data_norm'],
                                 eval_type=config.get('eval_type'),
-                                eval_bsize=config.get('eval_bsize'))
+                                eval_bsize=config.get('eval_bsize'),
+                                device=device, 
+                                writer=writer,
+                                epoch=epoch)
 
             log_info.append('val: psnr={:.4f}'.format(val_res))
             writer.add_scalars('psnr', {'val': val_res}, epoch)

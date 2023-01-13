@@ -12,6 +12,17 @@ import datasets
 import models
 import utils
 
+def add_images_to_writer(writer, inp, pred, gt, step=0, tag=None):
+    # bring pred and gt back to h x w
+    size = int(math.sqrt(gt.shape[1]))
+    pred = pred.view(pred.shape[0], size, size, 3).permute(0, 3, 1, 2)
+    gt = gt.view(gt.shape[0], size, size, 3).permute(0, 3, 1, 2)
+
+    writer.add_images(f'Input batch #{tag}', inp, step)
+    writer.add_images(f'Pred batch #{tag}', pred, step)
+    writer.add_images(f'GT batch #{tag}', gt, step)
+    writer.flush()
+
 
 def batched_predict(model, inp, coord, cell, bsize):
     with torch.no_grad():
@@ -29,7 +40,7 @@ def batched_predict(model, inp, coord, cell, bsize):
 
 
 def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None,
-              verbose=False, device="cuda"):
+              verbose=False, device="cuda", writer=None, epoch=0):
     model.eval()
 
     if data_norm is None:
@@ -58,7 +69,8 @@ def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None,
     val_res = utils.Averager()
 
     pbar = tqdm(loader, leave=False, desc='val')
-    for batch in pbar:
+    first = True
+    for i, batch in enumerate(pbar):
         for k, v in batch.items():
             batch[k] = v.to(device)
 
@@ -71,6 +83,12 @@ def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None,
                                 batch['coord'], batch['cell'], eval_bsize)
         pred = pred * gt_div + gt_sub
         pred.clamp_(0, 1)
+
+        # save qualitative results
+        if writer is not None and first == True:
+            add_images_to_writer(writer, batch['inp'], pred, batch['gt'],
+                                step=epoch, tag=str(i))
+            first = False
 
         if eval_type is not None:  # reshape for shaving-eval
             ih, iw = batch['inp'].shape[-2:]
@@ -106,6 +124,11 @@ if __name__ == '__main__':
     with open(args.config, 'r') as f:
         config = yaml.load(f, Loader=yaml.FullLoader)
 
+    # writer for saving qualitative results
+    save_name = '_' + args.config.split('/')[-1][:-len('.yaml')]
+    save_path = os.path.join('./save_test', save_name)
+    log, writer = utils.set_save_path(save_path)
+
     spec = config['test_dataset']
     dataset = datasets.make(spec['dataset'])
     dataset = datasets.make(spec['wrapper'], args={'dataset': dataset})
@@ -121,5 +144,6 @@ if __name__ == '__main__':
                     eval_type=config.get('eval_type'),
                     eval_bsize=config.get('eval_bsize'),
                     verbose=True,
-                    device=device)
+                    device=device,
+                    writer=writer)
     print('result: {:.4f}'.format(res))
