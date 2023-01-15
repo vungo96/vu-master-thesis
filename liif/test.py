@@ -18,9 +18,9 @@ def add_images_to_writer(writer, inp, pred, gt, step=0, tag=None):
     pred = pred.view(pred.shape[0], size, size, 3).permute(0, 3, 1, 2)
     gt = gt.view(gt.shape[0], size, size, 3).permute(0, 3, 1, 2)
 
-    writer.add_images(f'Input batch #{tag}', inp, step)
-    writer.add_images(f'Pred batch #{tag}', pred, step)
-    writer.add_images(f'GT batch #{tag}', gt, step)
+    writer.add_images(f'Input epoch #{step} batch #{tag}', inp, step)
+    writer.add_images(f'Pred epoch #{step} batch #{tag}', pred, step)
+    writer.add_images(f'GT epoch #{step} batch #{tag}', gt, step)
     writer.flush()
 
 
@@ -85,7 +85,7 @@ def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None,
         pred.clamp_(0, 1)
 
         # save qualitative results
-        if writer is not None and first == True:
+        if writer is not None:
             add_images_to_writer(writer, batch['inp'], pred, batch['gt'],
                                 step=epoch, tag=str(i))
             first = False
