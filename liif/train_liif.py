@@ -58,7 +58,6 @@ def make_data_loaders():
     val_loader = make_data_loader(config.get('val_dataset'), tag='val')
     return train_loader, val_loader
 
-
 def prepare_training():
     if config.get('resume') is not None:
         sv_file = torch.load(config['resume'])
@@ -92,6 +91,7 @@ def train(train_loader, model, optimizer):
     loss_fn = nn.L1Loss()
     train_loss = utils.Averager()
 
+    # normalize data
     data_norm = config['data_norm']
     t = data_norm['inp']
     inp_sub = torch.FloatTensor(t['sub']).view(1, -1, 1, 1).to(device)
@@ -100,6 +100,7 @@ def train(train_loader, model, optimizer):
     gt_sub = torch.FloatTensor(t['sub']).view(1, 1, -1).to(device)
     gt_div = torch.FloatTensor(t['div']).view(1, 1, -1).to(device)
 
+    # train batches
     for batch in tqdm(train_loader, leave=False, desc='train'):
         for k, v in batch.items():
             batch[k] = v.to(device)
@@ -164,12 +165,16 @@ def main(config_, save_path):
 
         writer.add_scalar('lr', optimizer.param_groups[0]['lr'], epoch)
 
+        # train epoch
         train_loss = train(train_loader, model, optimizer)
         if lr_scheduler is not None:
             lr_scheduler.step()
 
         log_info.append('train: loss={:.4f}'.format(train_loss))
         writer.add_scalars('loss', {'train': train_loss}, epoch)
+        for name, weight in model.named_parameters():
+            writer.add_histogram(name,weight, epoch)
+            writer.add_histogram(f'{name}.grad',weight.grad, epoch)
 
         if n_gpus > 1:
             model_ = model.module
@@ -185,12 +190,14 @@ def main(config_, save_path):
             'epoch': epoch
         }
 
+        # save weights
         torch.save(sv_file, os.path.join(save_path, 'epoch-last.pth'))
 
         if (epoch_save is not None) and (epoch % epoch_save == 0):
             torch.save(sv_file,
                        os.path.join(save_path, 'epoch-{}.pth'.format(epoch)))
 
+        # validate
         if (epoch_val is not None) and (epoch % epoch_val == 0):
             if n_gpus > 1 and (config.get('eval_bsize') is not None):
                 model_ = model.module

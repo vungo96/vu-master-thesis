@@ -20,7 +20,7 @@ class LiifGleanStyleGANv2(nn.Module):
                  rrdb_channels=64,
                  num_rrdbs=23,
                  style_channels=512,
-                 edsr_channels=64,
+                 edsr_channels=64, # remove later (not needed since we use RRDB encoder instead of EDSR)
                  imnet_spec=None,
                  local_ensemble=True, feat_unfold=True, cell_decode=True, device='cuda'):
         super().__init__()
@@ -37,20 +37,6 @@ class LiifGleanStyleGANv2(nn.Module):
         # latent bank (StyleGANv2), with weights being fixed
         self.generator = models.make(
             generator_spec, load_sd=True, prefix=True).to(self.device)
-        """  dict(
-                type='StyleGANv2Generator',
-                out_size=out_size,
-                style_channels=style_channels,
-                num_mlps=num_mlps,
-                channel_multiplier=channel_multiplier,
-                blur_kernel=blur_kernel,
-                lr_mlp=lr_mlp,
-                default_style_mode=default_style_mode,
-                eval_style_mode=eval_style_mode,
-                mix_prob=mix_prob,
-                pretrained=pretrained,
-                bgr2rgb=bgr2rgb) """
-
         self.generator.requires_grad_(False)
 
         self.in_size = in_size

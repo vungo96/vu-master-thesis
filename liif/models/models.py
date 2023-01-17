@@ -28,7 +28,7 @@ def make(model_spec, args=None, load_sd=False, prefix=False):
     model = models[model_spec['name']](**model_args)
     if load_sd:
         if prefix:
-            # state_dict = state_dict[str(model_spec['prefix'])]
+            # loading checkpoint with prefix
             state_dict = _load_checkpoint_with_prefix(
                 model_spec['prefix'], model_spec['sd'], 'cpu')
         else:

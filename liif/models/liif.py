@@ -19,7 +19,7 @@ class LIIF(nn.Module):
         self.cell_decode = cell_decode
 
         self.encoder = models.make(encoder_spec)
-        
+
         if imnet_spec is not None:
             imnet_in_dim = self.encoder.out_dim
             if self.feat_unfold:
