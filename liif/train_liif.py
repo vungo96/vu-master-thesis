@@ -129,6 +129,7 @@ def main(config_, save_path):
     with open(os.path.join(save_path, 'config.yaml'), 'w') as f:
         yaml.dump(config, f, sort_keys=False)
 
+    # get data loaders from config
     train_loader, val_loader = make_data_loaders()
     if config.get('data_norm') is None:
         config['data_norm'] = {
@@ -143,6 +144,7 @@ def main(config_, save_path):
                           and n_gpus > 0 else 'cpu')
     print("Run on device: ", device)
 
+    # get model, optimizer, and lr_scheduler from config
     model, optimizer, epoch_start, lr_scheduler = prepare_training()
 
     if n_gpus > 1:

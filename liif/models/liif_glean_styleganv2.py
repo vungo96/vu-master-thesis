@@ -57,7 +57,7 @@ class LiifGleanStyleGANv2(nn.Module):
         self.style_channels = style_channels
         channels = self.generator.channels
 
-        # first encoder
+        # first RRDB encoder from GLEAN paper
         num_styles = int(np.log2(out_size)) * 2 - 2
         encoder_res = [2**i for i in range(int(np.log2(in_size)), 1, -1)]
         self.encoder = nn.ModuleList()
@@ -128,7 +128,7 @@ class LiifGleanStyleGANv2(nn.Module):
             # self.fusion_bank_skip.append(
             #    nn.Conv2d(num_channels + 3, 3, 3, 1, 1, bias=True))
 
-        # MLP
+        # MLP takes features from last layer of 2nd encoder
         if imnet_spec is not None:
             # TODO: concat features of encoder and generator and different layers
             imnet_in_dim = out_channels
@@ -148,7 +148,7 @@ class LiifGleanStyleGANv2(nn.Module):
                 f'Spatial resolution must equal in_size ({self.in_size}).'
                 f' Got ({h}, {w}).')
 
-        # encoder
+        # RRDB encoder
         feat = lq
         encoder_features = []
         for block in self.encoder:
@@ -159,7 +159,7 @@ class LiifGleanStyleGANv2(nn.Module):
         latent = encoder_features[0].view(lq.size(0), -1, self.style_channels)
         encoder_features = encoder_features[1:]
 
-        # generator
+        # generator (latent bank)
         injected_noise = [
             getattr(self.generator, f'injected_noise_{i}')
             for i in range(self.generator.num_injected_noises)
@@ -167,7 +167,7 @@ class LiifGleanStyleGANv2(nn.Module):
         # 4x4 stage
         out = self.generator.constant_input(latent)
         out = self.generator.conv1(out, latent[:, 0], noise=injected_noise[0])
-        skip = self.generator.to_rgb1(out, latent[:, 1])
+        # skip = self.generator.to_rgb1(out, latent[:, 1])
 
         _index = 1
 
@@ -201,6 +201,7 @@ class LiifGleanStyleGANv2(nn.Module):
             _index += 2
 
         # Concat features of second encoder and latent bank for same resolution layers
+        # EDSR from liif paper is replaced by RRDB encoder from GLEAN paper
         out = generator_features[-1]
         encoder_bank_features = []
         for i, block in enumerate(self.encoder_bank):
@@ -215,6 +216,8 @@ class LiifGleanStyleGANv2(nn.Module):
         return self.feat
 
     def query_rgb(self, coord, cell=None):
+        # copied from original repo take care of querying rgb for coordinates
+        # check paper for more information on feature unfolding, local ensemble and cell decoding
         feat = self.feat
 
         if self.imnet is None:
@@ -223,10 +226,12 @@ class LiifGleanStyleGANv2(nn.Module):
                 .permute(0, 2, 1)
             return ret
 
+        # feature unfolding
         if self.feat_unfold:
             feat = F.unfold(feat, 3, padding=1).view(
                 feat.shape[0], feat.shape[1] * 9, feat.shape[2], feat.shape[3])
 
+        # local ensemble
         if self.local_ensemble:
             vx_lst = [-1, 1]
             vy_lst = [-1, 1]
@@ -263,6 +268,7 @@ class LiifGleanStyleGANv2(nn.Module):
                 rel_coord[:, :, 1] *= feat.shape[-1]
                 inp = torch.cat([q_feat, rel_coord], dim=-1)
 
+                # cell decoding for taking shape of the query pixel as addtional input
                 if self.cell_decode:
                     rel_cell = cell.clone()
                     rel_cell[:, :, 0] *= feat.shape[-2]
@@ -277,6 +283,7 @@ class LiifGleanStyleGANv2(nn.Module):
                 areas.append(area + 1e-9)
 
         tot_area = torch.stack(areas).sum(dim=0)
+        # local ensemble
         if self.local_ensemble:
             t = areas[0]
             areas[0] = areas[3]

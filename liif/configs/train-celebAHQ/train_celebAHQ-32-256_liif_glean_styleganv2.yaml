@@ -8,7 +8,7 @@ train_dataset:
       split_key: train
       cache: bin # in-memory
   wrapper:
-    name: sr-implicit-uniform-varied
+    name: sr-implicit-uniform-varied # resizes output image for training
     args:
       size_min: 32
       size_max: 256
