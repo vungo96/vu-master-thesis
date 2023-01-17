@@ -100,6 +100,8 @@ def train(train_loader, model, optimizer):
     gt_sub = torch.FloatTensor(t['sub']).view(1, 1, -1).to(device)
     gt_div = torch.FloatTensor(t['div']).view(1, 1, -1).to(device)
 
+    first = True
+
     # train batches
     for batch in tqdm(train_loader, leave=False, desc='train'):
         for k, v in batch.items():
@@ -173,8 +175,11 @@ def main(config_, save_path):
         log_info.append('train: loss={:.4f}'.format(train_loss))
         writer.add_scalars('loss', {'train': train_loss}, epoch)
         for name, weight in model.named_parameters():
-            writer.add_histogram(name,weight, epoch)
-            writer.add_histogram(f'{name}.grad',weight.grad, epoch)
+            if weight.grad is not None:
+                writer.add_histogram(name, weight, epoch)
+                writer.add_histogram(f'{name}.grad', weight.grad, epoch)
+            else:
+                print(f"Warning: {name} has no gradient")
 
         if n_gpus > 1:
             model_ = model.module

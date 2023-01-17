@@ -85,7 +85,7 @@ def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None,
         pred.clamp_(0, 1)
 
         # save qualitative results
-        if writer is not None:
+        if writer is not None and first:
             add_images_to_writer(writer, batch['inp'], pred, batch['gt'],
                                 step=epoch, tag=str(i))
             first = False
