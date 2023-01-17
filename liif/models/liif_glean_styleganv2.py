@@ -203,7 +203,7 @@ class LiifGleanStyleGANv2(nn.Module):
 
     def query_rgb(self, coord, cell=None):
         # copied from original repo take care of querying rgb for coordinates
-        # check paper for more information on feature unfolding, local ensemble and cell decoding
+        # see paper for more information on feature unfolding, local ensemble and cell decoding
         feat = self.feat
 
         if self.imnet is None:
