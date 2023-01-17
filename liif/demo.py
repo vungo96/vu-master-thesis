@@ -22,8 +22,7 @@ if __name__ == '__main__':
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
 
     # Enable running on cpu as well
-    device = torch.device('cuda' if torch.cuda.is_available()
-                          and args.gpu > 0 else 'cpu')
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print("Run on device: ", device)
 
     img = transforms.ToTensor()(Image.open(args.input).convert('RGB'))
