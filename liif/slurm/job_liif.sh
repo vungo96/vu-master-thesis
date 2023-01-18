@@ -14,7 +14,7 @@
 
 ### end of Slurm SBATCH definitions
 
-cd /n/pfister_lab2/Lab/mngo/vu-master-thesis/liif
+cd /n/holylfs05/LABS/pfister_lab/Lab/coxfs01/pfister_lab2/Lab/mngo/vu-master-thesis/liif
 
 ### load modules
 module load Anaconda/5.0.1-fasrc02
