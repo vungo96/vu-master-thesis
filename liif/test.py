@@ -18,9 +18,9 @@ def add_images_to_writer(writer, inp, pred, gt, step=0, tag=None):
     pred = pred.view(pred.shape[0], size, size, 3).permute(0, 3, 1, 2)
     gt = gt.view(gt.shape[0], size, size, 3).permute(0, 3, 1, 2)
 
-    writer.add_images(f'Input epoch #{step} batch #{tag}', inp, step)
-    writer.add_images(f'Pred epoch #{step} batch #{tag}', pred, step)
-    writer.add_images(f'GT epoch #{step} batch #{tag}', gt, step)
+    writer.add_images(f'Epoch {step} batch {tag} GT', inp, step)
+    writer.add_images(f'Epoch {step} batch {tag} pred', pred, step)
+    writer.add_images(f'Epoch {step} batch {tag} input', gt, step)
     writer.flush()
 
 
