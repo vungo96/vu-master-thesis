@@ -61,6 +61,7 @@ model:
 optimizer:
   name: adam
   args:
+    # lower base lr with pre-trained stylegan2
     lr: 1.e-5
 epoch_max: 200
 multi_step_lr:

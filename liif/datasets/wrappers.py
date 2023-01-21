@@ -61,6 +61,7 @@ class SRImplicitPaired(Dataset):
 
         hr_coord, hr_rgb = to_pixel_samples(crop_hr.contiguous())
 
+        # sample q coordinates
         if self.sample_q is not None:
             sample_lst = np.random.choice(
                 len(hr_coord), self.sample_q, replace=False)
@@ -139,6 +140,7 @@ class SRImplicitDownsampled(Dataset):
 
         hr_coord, hr_rgb = to_pixel_samples(crop_hr.contiguous())
 
+        # sample q coordinates
         if self.sample_q is not None:
             sample_lst = np.random.choice(
                 len(hr_coord), self.sample_q, replace=False)
@@ -190,6 +192,7 @@ class SRImplicitUniformVaried(Dataset):
 
         hr_coord, hr_rgb = to_pixel_samples(img_hr)
 
+        # sample q coordinates
         if self.sample_q is not None:
             sample_lst = np.random.choice(
                 len(hr_coord), self.sample_q, replace=False)
