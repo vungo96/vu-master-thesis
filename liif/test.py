@@ -3,6 +3,9 @@ import os
 import math
 from functools import partial
 
+from PIL import Image
+from torchvision import transforms
+
 import yaml
 import torch
 from torch.utils.data import DataLoader
@@ -11,6 +14,16 @@ from tqdm import tqdm
 import datasets
 import models
 import utils
+
+def save_images_to_dir(out_dir, inp, pred, gt, step=0):
+    # bring pred and gt back to h x w
+    size = int(math.sqrt(gt.shape[1]))
+    pred = pred.view(pred.shape[0], size, size, 3).permute(0, 3, 1, 2)
+    gt = gt.view(gt.shape[0], size, size, 3).permute(0, 3, 1, 2)
+
+    transforms.ToPILImage()(inp[0]).save(f'{out_dir}/{step}_inp.png')
+    transforms.ToPILImage()(pred[0]).save(f'{out_dir}/{step}_pred.png')
+    transforms.ToPILImage()(gt[0]).save(f'{out_dir}/{step}_gt.png')
 
 def add_images_to_writer(writer, inp, pred, gt, step=0, tag=None):
     # bring pred and gt back to h x w
@@ -40,7 +53,7 @@ def batched_predict(model, inp, coord, cell, bsize):
 
 
 def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None,
-              verbose=False, device="cuda", writer=None, epoch=0):
+              verbose=False, device="cuda", writer=None, epoch=0, out_dir=None):
     model.eval()
 
     if data_norm is None:
@@ -89,6 +102,9 @@ def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None,
             add_images_to_writer(writer, batch['inp'], pred, batch['gt'],
                                 step=epoch, tag=str(i))
             first = False
+        
+        if out_dir is not None:
+            save_images_to_dir(out_dir, batch['inp'], pred, batch['gt'], step=i)
 
         if eval_type is not None:  # reshape for shaving-eval
             ih, iw = batch['inp'].shape[-2:]
@@ -112,6 +128,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--config')
     parser.add_argument('--model')
+    parser.add_argument('--out_dir', default=None)
     parser.add_argument('--gpu', default='0')
     args = parser.parse_args()
 
@@ -127,6 +144,11 @@ if __name__ == '__main__':
     save_name = '_' + args.config.split('/')[-1][:-len('.yaml')]
     save_path = os.path.join('./save_test', save_name)
     log, writer = utils.set_save_path(save_path)
+
+    if args.out_dir is not None:
+        out_dir = os.path.join(args.out_dir, save_name)
+        os.makedirs(out_dir, exist_ok=True)
+        
 
     spec = config['test_dataset']
     dataset = datasets.make(spec['dataset'])
@@ -144,5 +166,6 @@ if __name__ == '__main__':
                     eval_bsize=config.get('eval_bsize'),
                     verbose=True,
                     device=device,
-                    writer=writer)
+                    writer=writer,
+                    out_dir=out_dir)
     print('result: {:.4f}'.format(res))
