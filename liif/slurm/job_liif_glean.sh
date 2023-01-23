@@ -24,4 +24,4 @@ module load cudnn/8.5.0.96_cuda11-fasrc01
 ### beginning of executable commands
 source activate liif_glean_experiment_python3.7_torch1.12.0
 
-python train_liif.py --config configs/train-celebAHQ/train_celebAHQ-32-256_liif_glean_styleganv2.yaml --gpu 0,1
+python train_liif.py --config configs/train-celebAHQ/train_celebAHQ-32-256_liif_glean_styleganv2.yaml --gpu 0,1 --tag cats

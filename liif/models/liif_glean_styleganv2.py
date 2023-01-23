@@ -22,7 +22,7 @@ class LiifGleanStyleGANv2(nn.Module):
                  style_channels=512,
                  edsr_channels=64, # remove later (not needed since we use RRDB encoder instead of EDSR)
                  imnet_spec=None,
-                 local_ensemble=True, feat_unfold=True, cell_decode=True, device='cpu'):
+                 local_ensemble=True, feat_unfold=True, cell_decode=True, device='cuda'):
         super().__init__()
         self.device = device
         self.local_ensemble = local_ensemble

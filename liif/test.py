@@ -125,7 +125,7 @@ if __name__ == '__main__':
 
     # writer for saving qualitative results
     save_name = '_' + args.config.split('/')[-1][:-len('.yaml')]
-    save_path = os.path.join('./save_test', save_name)
+    save_path = os.path.join('./save', save_name)
     log, writer = utils.set_save_path(save_path)
 
     spec = config['test_dataset']

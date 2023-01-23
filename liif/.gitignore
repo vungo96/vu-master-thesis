@@ -4,5 +4,6 @@ load
 ckpts
 save
 save_test
+save_test_tag
 .vscode
 slurm

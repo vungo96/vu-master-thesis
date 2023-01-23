@@ -47,7 +47,7 @@ model:
       args:
         out_size: 256
         style_channels: 512
-      sd: ckpts/stylegan2/stylegan2-ffhq-config-f-official_20210327_171224-bce9310c.pth # path downloaded from https://github.com/open-mmlab/mmediting/blob/master/configs/restorers/glean/glean_in128out1024_4x2_300k_ffhq_celebahq.py
+      sd: ckpts/stylegan2/stylegan2-cat-config-f-official_20210327_172444-15bc485b.pth # path downloaded from https://github.com/open-mmlab/mmediting/blob/master/configs/restorers/glean/glean_in128out1024_4x2_300k_ffhq_celebahq.py
       # ckpts/stylegan2/550000.pt
       # ckpts/stylegan2/stylegan2-cat-config-f-official_20210327_172444-15bc485b.pth
       # ckpts/stylegan2/stylegan2-ffhq-config-f-official_20210327_171224-bce9310c.pth
@@ -62,7 +62,7 @@ optimizer:
   name: adam
   args:
     # lower base lr with pre-trained stylegan2
-    lr: 1.e-5
+    lr: 1.e-4
 epoch_max: 200
 multi_step_lr:
   milestones: [100]
