@@ -103,7 +103,7 @@ def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None,
                                 step=epoch, tag=str(i))
             first = False
         
-        if out_dir is not None:
+        if out_dir is not None and (i % 500) == 0:
             save_images_to_dir(out_dir, batch['inp'], pred, batch['gt'], step=i)
 
         if eval_type is not None:  # reshape for shaving-eval
@@ -129,6 +129,7 @@ if __name__ == '__main__':
     parser.add_argument('--config')
     parser.add_argument('--model')
     parser.add_argument('--out_dir', default=None)
+    parser.add_argument('--tag', default=None)
     parser.add_argument('--gpu', default='0')
     args = parser.parse_args()
 
@@ -142,6 +143,8 @@ if __name__ == '__main__':
 
     # writer for saving qualitative results
     save_name = '_' + args.config.split('/')[-1][:-len('.yaml')]
+    if args.tag is not None:
+        save_name += '_' + args.tag
     save_path = os.path.join('./save', save_name)
     log, writer = utils.set_save_path(save_path)
 
