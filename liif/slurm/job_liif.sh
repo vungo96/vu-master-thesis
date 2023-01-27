@@ -5,7 +5,7 @@
 #SBATCH -t 2-00:00          # Runtime in D-HH:MM, minimum of t minutes
 #SBATCH -p gpu              # Partition to submit to
 #SBATCH --mem-per-cpu=10000M #M is the default and can therefore be omitted, but could also be K(ilo)|G(iga)|T(era)
-#SBATCH --gres=gpu:1
+#SBATCH --gres=gpu:3
 #SBATCH -o slurm/outputs/myoutput_%j.out  # File to which STDOUT will be written, %j inserts jobid
 #SBATCH -e slurm/outputs/myerrors_%j.err  # File to which STDERR will be written, %j inserts jobid
 
@@ -24,5 +24,4 @@ module load cudnn/8.5.0.96_cuda11-fasrc01
 ### beginning of executable commands
 source activate liif_glean_experiment_python3.7_torch1.12.0
 
-
-python train_liif.py --config configs/train-celebAHQ/train_celebAHQ-32-256_liif.yaml --gpu 0
+python train_liif.py --config configs/train-celebAHQ/train_celebAHQ-64-1024_liif.yaml --gpu 0,1,2

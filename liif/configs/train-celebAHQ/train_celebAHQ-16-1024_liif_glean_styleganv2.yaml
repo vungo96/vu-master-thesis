@@ -2,7 +2,7 @@ train_dataset:
   dataset:
     name: paired-image-folders
     args:
-      root_path_1: ./load/celebAHQ/16
+      root_path_1: ./load/celebAHQ/64
       root_path_2: ./load/celebAHQ/1024
       split_file: ./load/celebAHQ/split.json
       split_key: train
@@ -10,17 +10,17 @@ train_dataset:
   wrapper:
     name: sr-implicit-uniform-varied # resizes output image for training
     args:
-      size_min: 16
+      size_min: 64
       size_max: 1024
       sample_q: 4096
       augment: true
-  batch_size: 32
+  batch_size: 16
 
 val_dataset:
   dataset:
     name: paired-image-folders
     args:
-      root_path_1: ./load/celebAHQ/16
+      root_path_1: ./load/celebAHQ/64
       root_path_2: ./load/celebAHQ/1024
       split_file: ./load/celebAHQ/split.json
       split_key: val
@@ -30,7 +30,7 @@ val_dataset:
     name: sr-implicit-paired
     args: # {}
       sample_q: 4096
-  batch_size: 8
+  batch_size: 4
 
 data_norm:
   inp: {sub: [0.5], div: [0.5]}
@@ -39,7 +39,7 @@ data_norm:
 model:
   name: liif_glean_styleganv2
   args:
-    in_size: 16
+    in_size: 64
     out_size: 1024
     style_channels: 512
     generator_spec:

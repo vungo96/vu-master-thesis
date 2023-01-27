@@ -6,9 +6,9 @@ train_dataset:
       root_path_2: ./load/celebAHQ/1024
       split_file: ./load/celebAHQ/split.json
       split_key: train
-      cache: bin # in-memory
+      cache: bin
   wrapper:
-    name: sr-implicit-uniform-varied # resizes output image for training
+    name: sr-implicit-uniform-varied
     args:
       size_min: 16
       size_max: 1024
@@ -28,7 +28,7 @@ val_dataset:
       cache: bin
   wrapper:
     name: sr-implicit-paired
-    args: # {}
+    args:
       sample_q: 4096
   batch_size: 8
 
@@ -37,21 +37,12 @@ data_norm:
   gt: {sub: [0.5], div: [0.5]}
 
 model:
-  name: liif_glean_styleganv2
+  name: liif
   args:
-    in_size: 16
-    out_size: 1024
-    style_channels: 512
-    generator_spec:
-      name: stylegan2
+    encoder_spec:
+      name: edsr-baseline
       args:
-        out_size: 1024
-        style_channels: 512
-      sd: ckpts/stylegan2/stylegan2-ffhq-config-f-official_20210327_171224-bce9310c.pth # path downloaded from https://github.com/open-mmlab/mmediting/blob/master/configs/restorers/glean/glean_in128out1024_4x2_300k_ffhq_celebahq.py
-      # ckpts/stylegan2/550000.pt
-      # ckpts/stylegan2/stylegan2-cat-config-f-official_20210327_172444-15bc485b.pth
-      # ckpts/stylegan2/stylegan2-ffhq-config-f-official_20210327_171224-bce9310c.pth
-      prefix: 'generator_ema'
+        no_upsampling: true
     imnet_spec:
       name: mlp
       args:
@@ -61,8 +52,7 @@ model:
 optimizer:
   name: adam
   args:
-    # lower base lr with pre-trained stylegan2
-    lr: 1.e-5
+    lr: 1.e-4
 epoch_max: 200
 multi_step_lr:
   milestones: [50]
