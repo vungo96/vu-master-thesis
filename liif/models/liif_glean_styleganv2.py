@@ -22,7 +22,7 @@ class LiifGleanStyleGANv2(nn.Module):
                  style_channels=512,
                  edsr_channels=64, # remove later (not needed since we use RRDB encoder instead of EDSR)
                  imnet_spec=None,
-                 local_ensemble=True, feat_unfold=True, cell_decode=True, device='cuda'):
+                 local_ensemble=True, feat_unfold=True, cell_decode=True, device='cpu'):
         super().__init__()
         self.device = device
         self.local_ensemble = local_ensemble
@@ -116,7 +116,7 @@ class LiifGleanStyleGANv2(nn.Module):
 
         # MLP takes features from last layer of 2nd encoder
         if imnet_spec is not None:
-            imnet_in_dim = out_channels + rrdb_channels
+            imnet_in_dim = out_channels #+ channels[in_size]
             if self.feat_unfold:
                 imnet_in_dim *= 9
             imnet_in_dim += 2  # attach coord
@@ -200,7 +200,8 @@ class LiifGleanStyleGANv2(nn.Module):
 
         # concat with input
         enriched_inp = self.encoder[0](lq)
-        self.feat = torch.cat([out, enriched_inp], dim=1)
+        # self.feat = torch.cat([out, enriched_inp], dim=1)
+        self.feat = out
 
         return self.feat
 
