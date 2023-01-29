@@ -71,7 +71,7 @@ class LiifGleanStyleGANv2(nn.Module):
                     nn.Linear(16 * in_channels, num_styles * style_channels))
             self.encoder.append(block)
 
-        # additional modules for StyleGANv2
+        # additional modules for StyleGANv2 for fusing first encoder with latent bank
         self.fusion_out = nn.ModuleList()
         #self.fusion_skip = nn.ModuleList()
         for res in encoder_res[::-1]:
@@ -104,7 +104,7 @@ class LiifGleanStyleGANv2(nn.Module):
                 nn.LeakyReLU(negative_slope=0.2, inplace=True))
             self.encoder_bank.append(block)
 
-        # additional modules for fusing first encoder and latent bank to second encoder
+        # additional modules for fusing latent bank and second encoder
         self.fusion_bank_out = nn.ModuleList()
         #self.fusion_bank_skip = nn.ModuleList()
         for res in encoder_bank_res:
@@ -116,8 +116,7 @@ class LiifGleanStyleGANv2(nn.Module):
 
         # MLP takes features from last layer of 2nd encoder
         if imnet_spec is not None:
-            # TODO: concat features of encoder and generator and different layers
-            imnet_in_dim = out_channels
+            imnet_in_dim = out_channels + rrdb_channels
             if self.feat_unfold:
                 imnet_in_dim *= 9
             imnet_in_dim += 2  # attach coord
@@ -197,7 +196,11 @@ class LiifGleanStyleGANv2(nn.Module):
                 out = self.fusion_bank_out[i](out)
             out = block(out)
             encoder_bank_features.append(out)
-        self.feat = encoder_bank_features[-1]
+        out = encoder_bank_features[-1]
+
+        # concat with input
+        enriched_inp = self.encoder[0](lq)
+        self.feat = torch.cat([out, enriched_inp], dim=1)
 
         return self.feat
 
