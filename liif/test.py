@@ -106,7 +106,7 @@ def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None,
                                 step=epoch, tag=str(i))
             first = False
         
-        if out_dir is not None and (i % 500) == 0:
+        if out_dir is not None and (i % 250) == 0:
             save_images_to_dir(out_dir, batch['inp'], pred, batch['gt'], step=i)
 
         if eval_type is not None:  # reshape for shaving-eval
@@ -136,7 +136,7 @@ if __name__ == '__main__':
     parser.add_argument('--gpu', default='0')
     args = parser.parse_args()
 
-    device = 'cpu' #torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print("Run on device: ", device)
 
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
