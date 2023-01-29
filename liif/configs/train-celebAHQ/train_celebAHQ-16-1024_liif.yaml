@@ -12,7 +12,7 @@ train_dataset:
     args:
       size_min: 16
       size_max: 1024
-      sample_q: 4096
+      sample_q: 256
       augment: true
   batch_size: 32
 
@@ -29,8 +29,8 @@ val_dataset:
   wrapper:
     name: sr-implicit-paired
     args:
-      sample_q: 4096
-  batch_size: 8
+      sample_q: 256
+  batch_size: 16
 
 data_norm:
   inp: {sub: [0.5], div: [0.5]}

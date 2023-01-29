@@ -3,8 +3,9 @@ import os
 import math
 from functools import partial
 
-from PIL import Image
 from torchvision import transforms
+import torch.nn as nn
+import gc
 
 import yaml
 import torch
@@ -84,6 +85,8 @@ def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None,
     pbar = tqdm(loader, leave=False, desc='val')
     first = True
     for i, batch in enumerate(pbar):
+        gc.collect()
+        torch.cuda.empty_cache()
         for k, v in batch.items():
             batch[k] = v.to(device)
 
@@ -137,6 +140,7 @@ if __name__ == '__main__':
     print("Run on device: ", device)
 
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
+    n_gpus = len(os.environ['CUDA_VISIBLE_DEVICES'].split(','))
 
     with open(args.config, 'r') as f:
         config = yaml.load(f, Loader=yaml.FullLoader)
@@ -162,6 +166,10 @@ if __name__ == '__main__':
     model_spec = torch.load(
         args.model, map_location="cpu")['model']
     model = models.make(model_spec, load_sd=True).to(device)
+
+    if n_gpus > 1:
+        print("Use multiple gpus.")
+        model = nn.parallel.DataParallel(model)
 
     res = eval_psnr(loader, model,
                     data_norm=config.get('data_norm'),
