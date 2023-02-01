@@ -3,17 +3,17 @@ from PIL import Image
 from tqdm import tqdm
 
 save_folder = 'concatenated_images'
-image_folder1 = './_test-celebAHQ-32-256_liif'
-image_folder2 = './_test-celebAHQ-32-256_liif_glean_enhanced'
-size = 256
+image_folder1 = './_test-celebAHQ-16-1024_liif'
+image_folder2 = './_test-celebAHQ-16-1024_liif_glean'
+size = 1024
 # the number of epochs passed until we save images -> set in test.py
-num_epochs = 500
+num_epochs = 1
 
 filenames1 = sorted(os.listdir(image_folder1))
 filesnames2 = sorted(os.listdir(image_folder2))
 
-if len(filenames1) != len(filesnames2):
-    raise ValueError('Number of images in folders do not match')
+#if len(filenames1) != len(filesnames2):
+#    raise ValueError('Number of images in folders do not match')
 
 images1 = [Image.open(os.path.join(image_folder1, filename)).resize((size, size)) for filename in filenames1]
 images2 = [Image.open(os.path.join(image_folder2, filename)).resize((size, size)) for filename in filesnames2]
