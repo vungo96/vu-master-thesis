@@ -18,9 +18,10 @@ import utils
 
 def save_images_to_dir(out_dir, inp, pred, gt, step=0):
     # bring pred and gt back to h x w
-    size = int(math.sqrt(gt.shape[1]))
-    pred = pred.view(pred.shape[0], size, size, 3).permute(0, 3, 1, 2)
-    gt = gt.view(gt.shape[0], size, size, 3).permute(0, 3, 1, 2)
+    h, w = inp.shape[2:]
+    s = int(math.sqrt(pred.shape[1] // (h*w)))
+    pred = pred.view(pred.shape[0], h*s, w*s, 3).permute(0, 3, 1, 2)
+    gt = gt.view(gt.shape[0], h*s, w*s, 3).permute(0, 3, 1, 2)
 
     transforms.ToPILImage()(inp[0]).save(f'{out_dir}/{step}_inp.png')
     transforms.ToPILImage()(pred[0]).save(f'{out_dir}/{step}_pred.png')
@@ -28,9 +29,10 @@ def save_images_to_dir(out_dir, inp, pred, gt, step=0):
 
 def add_images_to_writer(writer, inp, pred, gt, step=0, tag=None):
     # bring pred and gt back to h x w
-    size = int(math.sqrt(gt.shape[1]))
-    pred = pred.view(pred.shape[0], size, size, 3).permute(0, 3, 1, 2)
-    gt = gt.view(gt.shape[0], size, size, 3).permute(0, 3, 1, 2)
+    h, w = inp.shape[2:]
+    s = int(math.sqrt(pred.shape[1] // (h*w)))
+    pred = pred.view(pred.shape[0], h*s, w*s, 3).permute(0, 3, 1, 2)
+    gt = gt.view(gt.shape[0], h*s, w*s, 3).permute(0, 3, 1, 2)
 
     writer.add_images(f'Epoch {step} batch {tag} GT', inp, step)
     writer.add_images(f'Epoch {step} batch {tag} pred', pred, step)
