@@ -9,7 +9,7 @@ train_dataset:
     name: sr-implicit-downsampled
     args:
       inp_size: 48
-      scale_max: 4
+      scale_max: 12
       augment: true
       sample_q: 2304
   batch_size: 16
@@ -26,7 +26,7 @@ val_dataset:
     name: sr-implicit-downsampled
     args:
       inp_size: 48
-      scale_max: 4
+      scale_max: 12
       sample_q: 2304
   batch_size: 16
 

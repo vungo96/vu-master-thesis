@@ -108,7 +108,7 @@ def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None,
                                 step=epoch, tag=str(i))
             first = False
         
-        if out_dir is not None: # and (i % 250) == 0:
+        if out_dir is not None and (i % 5) == 0:
             save_images_to_dir(out_dir, batch['inp'], pred, batch['gt'], step=i)
 
         if eval_type is not None:  # reshape for shaving-eval
