@@ -86,7 +86,7 @@ def prepare_training():
     return model, optimizer, epoch_start, lr_scheduler
 
 
-def train(train_loader, model, optimizer):
+def train(train_loader, model, optimizer, gradient_accumulation_steps):
     model.train()
     loss_fn = nn.L1Loss()
     train_loss = utils.Averager()
@@ -100,27 +100,32 @@ def train(train_loader, model, optimizer):
     gt_sub = torch.FloatTensor(t['sub']).view(1, 1, -1).to(device)
     gt_div = torch.FloatTensor(t['div']).view(1, 1, -1).to(device)
 
-    first = True
-
     # train batches
-    for batch in tqdm(train_loader, leave=False, desc='train'):
+    for step, batch in tqdm(enumerate(train_loader), leave=False, desc='train', total=len(train_loader)):
         for k, v in batch.items():
             batch[k] = v.to(device)
 
         inp = (batch['inp'] - inp_sub) / inp_div
-        pred = model(inp, batch['coord'], batch['cell'])
 
-        gt = (batch['gt'] - gt_sub) / gt_div
-        loss = loss_fn(pred, gt)
+        if step % gradient_accumulation_steps != 0:
+            # with model.no_sync():
+            pred = model(inp, batch['coord'], batch['cell'])
+            gt = (batch['gt'] - gt_sub) / gt_div
+            loss = loss_fn(pred, gt)
+            loss = loss / gradient_accumulation_steps
+            loss.backward()
+        else:
+            pred = model(inp, batch['coord'], batch['cell'])
+            gt = (batch['gt'] - gt_sub) / gt_div
+            loss = loss_fn(pred, gt)
+            loss = loss / gradient_accumulation_steps
 
-        train_loss.add(loss.item())
+            train_loss.add(loss.item())
+            loss.backward()
+            optimizer.step()
+            optimizer.zero_grad()
 
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
-
-        pred = None
-        loss = None
+            pred = None; loss = None
 
     return train_loss.item()
 
@@ -158,6 +163,8 @@ def main(config_, save_path):
     epoch_save = config.get('epoch_save')
     max_val_v = -1e18
 
+    gradient_accumulation_steps = config.get('gradient_accumulation_steps')
+
     timer = utils.Timer()
 
     for epoch in range(epoch_start, epoch_max + 1):
@@ -167,7 +174,7 @@ def main(config_, save_path):
         writer.add_scalar('lr', optimizer.param_groups[0]['lr'], epoch)
 
         # train epoch
-        train_loss = train(train_loader, model, optimizer)
+        train_loss = train(train_loader, model, optimizer, gradient_accumulation_steps)
         if lr_scheduler is not None:
             lr_scheduler.step()
 
