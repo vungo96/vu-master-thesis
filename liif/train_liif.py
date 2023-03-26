@@ -46,6 +46,8 @@ def make_data_loader(spec, tag=''):
 
     log('{} dataset: size={}'.format(tag, len(dataset)))
     for k, v in dataset[0].items():
+        if k == 'unsample_q':
+            continue
         log('  {}: shape={}'.format(k, tuple(v.shape)))
 
     loader = DataLoader(dataset, batch_size=spec['batch_size'],
@@ -107,21 +109,14 @@ def train(train_loader, model, optimizer, gradient_accumulation_steps):
 
         inp = (batch['inp'] - inp_sub) / inp_div
 
-        if step % gradient_accumulation_steps != 0:
-            # with model.no_sync():
-            pred = model(inp, batch['coord'], batch['cell'])
-            gt = (batch['gt'] - gt_sub) / gt_div
-            loss = loss_fn(pred, gt)
-            loss = loss / gradient_accumulation_steps
-            loss.backward()
-        else:
-            pred = model(inp, batch['coord'], batch['cell'])
-            gt = (batch['gt'] - gt_sub) / gt_div
-            loss = loss_fn(pred, gt)
-            loss = loss / gradient_accumulation_steps
+        pred = model(inp, batch['coord'], batch['cell'])
+        gt = (batch['gt'] - gt_sub) / gt_div
+        loss = loss_fn(pred, gt)
+        loss = loss / gradient_accumulation_steps
+        loss.backward()
 
+        if step % gradient_accumulation_steps == 0:
             train_loss.add(loss.item())
-            loss.backward()
             optimizer.step()
             optimizer.zero_grad()
 

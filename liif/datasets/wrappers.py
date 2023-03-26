@@ -141,6 +141,7 @@ class SRImplicitDownsampled(Dataset):
         hr_coord, hr_rgb = to_pixel_samples(crop_hr.contiguous())
 
         # sample q coordinates
+        mask = torch.ones((self.sample_q, 1)) 
         if self.sample_q is not None:
             # sample q can be set higher 
             sample_q = self.sample_q
@@ -148,8 +149,15 @@ class SRImplicitDownsampled(Dataset):
                 sample_q = len(hr_coord)
             sample_lst = np.random.choice(
                 len(hr_coord), sample_q, replace=False)
+            hr_unsample_coord = torch.full((self.sample_q - sample_q, 2), 0)
+            hr_unsample_rgb = torch.full((self.sample_q - sample_q, 3), 0)
             hr_coord = hr_coord[sample_lst]
             hr_rgb = hr_rgb[sample_lst]
+
+            # artifcially append coordinates that will not be used for loss computation
+            hr_coord = torch.cat((hr_coord, hr_unsample_coord), dim=0)
+            hr_rgb = torch.cat((hr_rgb, hr_unsample_rgb), dim=0)
+            mask[sample_q:] = 0
 
         cell = torch.ones_like(hr_coord)
         cell[:, 0] *= 2 / crop_hr.shape[-2]
@@ -159,7 +167,8 @@ class SRImplicitDownsampled(Dataset):
             'inp': crop_lr,
             'coord': hr_coord,
             'cell': cell,
-            'gt': hr_rgb
+            'gt': hr_rgb,
+            'mask': mask
         }
 
 

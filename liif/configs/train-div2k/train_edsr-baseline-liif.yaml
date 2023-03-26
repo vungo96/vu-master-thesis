@@ -12,9 +12,9 @@ train_dataset:
       scale_max: 36
       augment: true
       sample_q: 2304
-  batch_size: 1
+  batch_size: 16
 
-gradient_accumulation_steps: 16
+gradient_accumulation_steps: 1
 
 val_dataset:
   dataset:
@@ -53,10 +53,10 @@ optimizer:
   name: adam
   args:
     lr: 1.e-4
-epoch_max: 1000
+epoch_max: 5000
 multi_step_lr:
   milestones: [200, 400, 600, 800]
   gamma: 0.5
 
 epoch_val: 1
-epoch_save: 100
+epoch_save: 200
