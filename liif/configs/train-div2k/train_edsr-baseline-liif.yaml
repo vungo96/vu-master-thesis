@@ -29,7 +29,7 @@ val_dataset:
     args:
       inp_size: 16
       scale_max: 36
-      sample_q: 256
+      sample_q: 2304
   batch_size: 16
 
 data_norm:
