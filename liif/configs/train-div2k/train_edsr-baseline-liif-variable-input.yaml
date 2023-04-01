@@ -6,13 +6,12 @@ train_dataset:
       repeat: 20
       cache: in_memory
   wrapper:
-    name: sr-implicit-downsampled
+    name: sr-implicit-downsampled-collate-batch
     args:
-      inp_size: 16
-      scale_max: 36
+      inp_sizes: [32, 40, 48, 56, 64]
       augment: true
       sample_q: 2304
-  collate_batch: false
+  collate_batch: true
   batch_size: 16
 
 gradient_accumulation_steps: 1

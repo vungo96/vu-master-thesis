@@ -44,14 +44,15 @@ def make_data_loader(spec, tag=''):
     dataset = datasets.make(spec['dataset'])
     dataset = datasets.make(spec['wrapper'], args={'dataset': dataset})
 
-    log('{} dataset: size={}'.format(tag, len(dataset)))
-    for k, v in dataset[0].items():
-        if k == 'unsample_q':
-            continue
-        log('  {}: shape={}'.format(k, tuple(v.shape)))
-
-    loader = DataLoader(dataset, batch_size=spec['batch_size'],
-                        shuffle=(tag == 'train'), num_workers=8, pin_memory=True)
+    if spec['collate_batch']:
+        loader = DataLoader(dataset, batch_size=spec['batch_size'],
+                            shuffle=(tag == 'train'), num_workers=8, collate_fn=dataset.collate_batch, pin_memory=True)
+    else:
+        log('{} dataset: size={}'.format(tag, len(dataset)))
+        for k, v in dataset[0].items():
+            log('  {}: shape={}'.format(k, tuple(v.shape)))
+        loader = DataLoader(dataset, batch_size=spec['batch_size'],
+                            shuffle=(tag == 'train'), num_workers=8, pin_memory=True)
     return loader
 
 
