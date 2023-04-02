@@ -8,8 +8,8 @@ train_dataset:
   wrapper:
     name: sr-implicit-downsampled
     args:
-      inp_size: 16
-      scale_max: 36
+      inp_size: 48
+      scale_max: 4
       augment: true
       sample_q: 2304
   collate_batch: false
@@ -28,9 +28,9 @@ val_dataset:
   wrapper:
     name: sr-implicit-downsampled
     args:
-      inp_size: 16
-      scale_max: 36
-      sample_q: 256
+      inp_size: 48
+      scale_max: 4
+      sample_q: 2304
   collate_batch: false
   batch_size: 16
 
