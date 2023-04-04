@@ -85,7 +85,8 @@ def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None,
     val_res = utils.Averager()
 
     pbar = tqdm(loader, leave=False, desc='val')
-    first = True
+    # TODO: change this to activate adding images
+    first = False
     for i, batch in enumerate(pbar):
         gc.collect()
         torch.cuda.empty_cache()

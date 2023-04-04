@@ -12,7 +12,7 @@ train_dataset:
       augment: true
       sample_q: 2304
   collate_batch: true
-  batch_size: 32
+  batch_size: 64
 
 gradient_accumulation_steps: 1
 
@@ -27,10 +27,10 @@ val_dataset:
   wrapper:
     name: sr-implicit-downsampled-collate-batch
     args:
-      inp_size: [48]
+      inp_sizes: [48]
       sample_q: 2304
   collate_batch: true
-  batch_size: 32
+  batch_size: 64
 
 data_norm:
   inp: {sub: [0.5], div: [0.5]}
