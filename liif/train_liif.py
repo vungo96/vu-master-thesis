@@ -77,6 +77,17 @@ def prepare_training():
             lr_scheduler = MultiStepLR(optimizer, **config['multi_step_lr'])
         for _ in range(epoch_start - 1):
             lr_scheduler.step()
+    elif config.get('pretrained') is not None:
+        sv_file = torch.load(config['pretrained'])
+        model = models.make(
+            sv_file['model'], load_sd=True).to(device)
+        optimizer = utils.make_optimizer(
+            model.parameters(), sv_file['optimizer'], load_sd=True)
+        epoch_start = 1
+        if config.get('multi_step_lr') is None:
+            lr_scheduler = None
+        else:
+            lr_scheduler = MultiStepLR(optimizer, **config['multi_step_lr'])
     else:
         model = models.make(config['model']).to(device)
         optimizer = utils.make_optimizer(

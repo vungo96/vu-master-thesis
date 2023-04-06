@@ -59,5 +59,7 @@ multi_step_lr:
   milestones: [200, 400, 600, 800]
   gamma: 0.5
 
+pretrained: ckpts/edsr-baseline-liif.pth
+
 epoch_val: 1
 epoch_save: 200
