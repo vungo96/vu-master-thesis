@@ -78,6 +78,7 @@ def prepare_training():
         for _ in range(epoch_start - 1):
             lr_scheduler.step()
     elif config.get('pretrained') is not None:
+        print("Use pretrained model.")
         sv_file = torch.load(config['pretrained'])
         model = models.make(
             sv_file['model'], load_sd=True).to(device)
