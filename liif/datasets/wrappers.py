@@ -231,13 +231,14 @@ class SRImplicitUniformVaried(Dataset):
 class SRImplicitDownsampled(Dataset):
 
     def __init__(self, dataset, inp_sizes=None, scale_min=1,
-                 augment=False, sample_q=None, plot_scales=False):
+                 augment=False, sample_q=None, plot_scales=False, limit_scale=None):
         self.dataset = dataset
         self.inp_sizes = inp_sizes
         self.scale_min = scale_min
         self.augment = augment
         self.sample_q = sample_q
         self.plot_scales = plot_scales
+        self.limit_scale = limit_scale
 
     def __len__(self):
         return len(self.dataset)
@@ -266,7 +267,10 @@ class SRImplicitDownsampled(Dataset):
         for img in batch:
             min_dim = min(img.size(1), img.size(2))
             scale_max = min_dim // inp_size
-            s = random.uniform(self.scale_min, scale_max)
+            if self.limit_scale is not None:
+                s = random.uniform(scale_max-self.limit_scale, scale_max)
+            else:
+                s = random.uniform(self.scale_min, scale_max)
 
             w_lr = inp_size
             w_hr = round(w_lr * s)

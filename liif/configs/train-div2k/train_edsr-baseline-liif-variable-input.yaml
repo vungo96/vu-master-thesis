@@ -11,6 +11,7 @@ train_dataset:
       inp_sizes: [48]
       augment: true
       sample_q: 2304
+      limit_scale: 10
       plot_scales: true
   collate_batch: true
   batch_size: 16
