@@ -12,6 +12,7 @@ train_dataset:
       scale_max: 4
       augment: true
       sample_q: 2304
+      plot_scales: true
   collate_batch: false
   batch_size: 16
 

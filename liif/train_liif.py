@@ -24,6 +24,7 @@
 import argparse
 import os
 
+import pickle
 import yaml
 import torch
 import torch.nn as nn
@@ -45,6 +46,7 @@ def make_data_loader(spec, tag=''):
     dataset = datasets.make(spec['wrapper'], args={'dataset': dataset})
 
     if spec['collate_batch']:
+        # TODO: print stuff here as well
         loader = DataLoader(dataset, batch_size=spec['batch_size'],
                             shuffle=(tag == 'train'), num_workers=8, collate_fn=dataset.collate_batch, pin_memory=True)
     else:
@@ -88,6 +90,18 @@ def prepare_training():
     log('model: #params={}'.format(utils.compute_num_params(model, text=True)))
     return model, optimizer, epoch_start, lr_scheduler
 
+def add_scales_to_dict(scales, scales_max):
+    for scale in scales.tolist():
+        if round(scale) in scale_freq.keys():
+            scale_freq[round(scale)] += 1
+        else:
+            scale_freq[round(scale)] = 1
+    
+    for scale_max in scales_max.tolist():
+        if scale_max in scale_max_freq.keys():
+            scale_max_freq[scale_max] += 1
+        else:
+            scale_max_freq[scale_max] = 1
 
 def train(train_loader, model, optimizer, gradient_accumulation_steps):
     model.train()
@@ -123,11 +137,16 @@ def train(train_loader, model, optimizer, gradient_accumulation_steps):
 
             pred = None; loss = None
 
+        if 'scale' in batch.keys() and 'scale_max' in batch.keys():
+            add_scales_to_dict(batch['scale'], batch['scale_max'])
+            
     return train_loss.item()
 
 
 def main(config_, save_path):
-    global config, log, writer, device
+    global config, log, writer, device, scale_freq, scale_max_freq
+    scale_freq = {}
+    scale_max_freq = {}
     config = config_
     log, writer = utils.set_save_path(save_path)
     with open(os.path.join(save_path, 'config.yaml'), 'w') as f:
@@ -197,6 +216,13 @@ def main(config_, save_path):
         if (epoch_save is not None) and (epoch % epoch_save == 0):
             torch.save(sv_file,
                        os.path.join(save_path, 'epoch-{}.pth'.format(epoch)))
+            # save scale_freq dict
+            if scale_freq:
+                with open(os.path.join(save_path, 'scale_freq.pickle'), "wb") as f:
+                    pickle.dump(scale_freq, f)
+            if scale_max_freq:
+                with open(os.path.join(save_path, 'scale_max_freq.pickle'), "wb") as f:
+                    pickle.dump(scale_max_freq, f)
 
         # validate
         if (epoch_val is not None) and (epoch % epoch_val == 0):

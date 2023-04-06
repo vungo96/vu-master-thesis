@@ -90,7 +90,7 @@ def resize_fn(img, size):
 class SRImplicitDownsampled(Dataset):
 
     def __init__(self, dataset, inp_size=None, scale_min=1, scale_max=None,
-                 augment=False, sample_q=None):
+                 augment=False, sample_q=None, plot_scales=False):
         self.dataset = dataset
         self.inp_size = inp_size
         self.scale_min = scale_min
@@ -99,6 +99,7 @@ class SRImplicitDownsampled(Dataset):
         self.scale_max = scale_max
         self.augment = augment
         self.sample_q = sample_q
+        self.plot_scales = plot_scales
 
     def __len__(self):
         return len(self.dataset)
@@ -161,12 +162,18 @@ class SRImplicitDownsampled(Dataset):
         cell[:, 0] *= 2 / crop_hr.shape[-2]
         cell[:, 1] *= 2 / crop_hr.shape[-1]
 
-        return {
+        rtn_dict = {
             'inp': crop_lr,
             'coord': hr_coord,
             'cell': cell,
             'gt': hr_rgb,
         }
+
+        if self.plot_scales:
+            rtn_dict['scale'] = torch.tensor(s)
+            rtn_dict['scale_max'] = torch.tensor(self.scale_max)
+
+        return rtn_dict
 
 
 @register('sr-implicit-uniform-varied')
@@ -224,12 +231,13 @@ class SRImplicitUniformVaried(Dataset):
 class SRImplicitDownsampled(Dataset):
 
     def __init__(self, dataset, inp_sizes=None, scale_min=1,
-                 augment=False, sample_q=None):
+                 augment=False, sample_q=None, plot_scales=False):
         self.dataset = dataset
         self.inp_sizes = inp_sizes
         self.scale_min = scale_min
         self.augment = augment
         self.sample_q = sample_q
+        self.plot_scales = plot_scales
 
     def __len__(self):
         return len(self.dataset)
@@ -244,7 +252,9 @@ class SRImplicitDownsampled(Dataset):
                 'inp': [],
                 'coord': [],
                 'cell': [],
-                'gt': []
+                'gt': [],
+                'scale': [],
+                'scale_max': []
             }
 
          # get minimum width or height of all images in one batch
@@ -257,7 +267,6 @@ class SRImplicitDownsampled(Dataset):
             min_dim = min(img.size(1), img.size(2))
             scale_max = min_dim // inp_size
             s = random.uniform(self.scale_min, scale_max)
-            # print(scale_max)
 
             w_lr = inp_size
             w_hr = round(w_lr * s)
@@ -310,12 +319,20 @@ class SRImplicitDownsampled(Dataset):
             rtn_lists['coord'].append(hr_coord)
             rtn_lists['cell'].append(cell)
             rtn_lists['gt'].append(hr_rgb)
+
+            if self.plot_scales:
+                rtn_lists['scale'].append(s)
+                rtn_lists['scale_max'].append(scale_max)
         
         rtn_dict = {
             'inp': torch.stack(rtn_lists['inp'], dim=0),
             'coord': torch.stack(rtn_lists['coord'], dim=0),
             'cell': torch.stack(rtn_lists['cell'], dim=0),
-            'gt': torch.stack(rtn_lists['gt'], dim=0)
+            'gt': torch.stack(rtn_lists['gt'], dim=0),
         }
+        
+        if self.plot_scales:
+            rtn_dict['scale'] = torch.tensor(rtn_lists['scale'])
+            rtn_dict['scale_max'] = torch.tensor(rtn_lists['scale_max'])
                 
         return rtn_dict
