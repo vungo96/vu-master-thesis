@@ -3,13 +3,12 @@ import os
 import pickle
 
 # Path to pickle files
-scale_freq_path = 'save_test/_train_edsr-baseline-liif_test/scale_freq-epoch-1.pickle'
-max_scale_freq_path = 'save_test/_train_edsr-baseline-liif_test/scale_max_freq-epoch-1.pickle'
+path = 'save_test/_train_edsr-baseline-liif-variable-input_sample-2304-input-48-batch-16-limit-10-finetune/'
 
-bins = 10
+bins = 60
 
 # Load dictionary from first file created via pickle
-with open(scale_freq_path, 'rb') as f:
+with open(path + 'scale_freq.pickle', 'rb') as f:
     scale_freq = pickle.load(f)
 
 # Sort dictionary keys
@@ -22,12 +21,11 @@ plt.ylabel('Frequency')
 plt.title('Distribution of Scales')
 
 # Save plot of first file to same directory as pickle file
-dir_path = os.path.dirname(scale_freq_path)
-plot_path = os.path.join(dir_path, 'scale_distribution.png')
+plot_path = os.path.join(path, 'scale_distribution.png')
 plt.savefig(plot_path)
 
 # Load dictionary from second file created via pickle
-with open(max_scale_freq_path, 'rb') as f:
+with open(path + 'scale_max_freq.pickle', 'rb') as f:
     max_scale_freq = pickle.load(f)
 
 # Sort dictionary keys
@@ -41,5 +39,5 @@ plt.ylabel('Frequency')
 plt.title('Distribution of Max Scales')
 
 # Save plot of second file to same directory as pickle file
-plot_path = os.path.join(dir_path, 'max_scale_distribution.png')
+plot_path = os.path.join(path, 'max_scale_distribution.png')
 plt.savefig(plot_path)

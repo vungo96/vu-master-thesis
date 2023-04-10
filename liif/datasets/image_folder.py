@@ -15,7 +15,7 @@ from datasets import register
 @register('image-folder')
 class ImageFolder(Dataset):
 
-    def __init__(self, root_path, split_file=None, split_key=None, first_k=None,
+    def __init__(self, root_path, root_path2=None, split_file=None, split_key=None, first_k=None,
                  repeat=1, cache='none'):
         self.repeat = repeat
         self.cache = cache
@@ -25,11 +25,19 @@ class ImageFolder(Dataset):
         else:
             with open(split_file, 'r') as f:
                 filenames = json.load(f)[split_key]
+        # add another dataset
+        if root_path2 is not None:
+                print("Add additional datatset.")
+                filenames2 = sorted(os.listdir(root_path2))
+                filenames.extend(filenames2)
         if first_k is not None:
             filenames = filenames[:first_k]
 
         self.files = []
-        for filename in filenames:
+        for i, filename in enumerate(filenames):
+            if root_path2 is not None and i >= len(filenames)-len(filenames2):
+                root_path = root_path2
+                
             file = os.path.join(root_path, filename)
 
             if cache == 'none':

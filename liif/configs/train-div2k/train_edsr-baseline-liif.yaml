@@ -3,7 +3,8 @@ train_dataset:
     name: image-folder
     args:
       root_path: ./load/div2k/DIV2K_train_HR
-      repeat: 20
+      root_path2: ./load/Flickr2K/Flickr2K_HR
+      repeat: 5
       cache: in_memory
   wrapper:
     name: sr-implicit-downsampled
@@ -60,6 +61,8 @@ epoch_max: 1000
 multi_step_lr:
   milestones: [200, 400, 600, 800]
   gamma: 0.5
+
+# pretrained: ckpts/edsr-baseline-liif.pth
 
 epoch_val: 1
 epoch_save: 200
