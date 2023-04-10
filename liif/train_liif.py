@@ -48,13 +48,13 @@ def make_data_loader(spec, tag=''):
     if spec['collate_batch']:
         # TODO: print stuff here as well
         loader = DataLoader(dataset, batch_size=spec['batch_size'],
-                            shuffle=(tag == 'train'), num_workers=8, collate_fn=dataset.collate_batch, pin_memory=True)
+                            shuffle=(tag == 'train'), num_workers=12, collate_fn=dataset.collate_batch, pin_memory=True)
     else:
         log('{} dataset: size={}'.format(tag, len(dataset)))
         for k, v in dataset[0].items():
             log('  {}: shape={}'.format(k, tuple(v.shape)))
         loader = DataLoader(dataset, batch_size=spec['batch_size'],
-                            shuffle=(tag == 'train'), num_workers=8, pin_memory=True)
+                            shuffle=(tag == 'train'), num_workers=12, pin_memory=True)
     return loader
 
 
@@ -172,6 +172,8 @@ def main(config_, save_path):
             'gt': {'sub': [0], 'div': [1]}
         }
 
+    print("Config: ", config)
+
     n_gpus = len(os.environ['CUDA_VISIBLE_DEVICES'].split(','))
 
     # Enable running on cpu as well
@@ -286,5 +288,7 @@ if __name__ == '__main__':
     if args.tag is not None:
         save_name += '_' + args.tag
     save_path = os.path.join('./save_test', save_name)
+
+    print('Tag: ', args.tag)
 
     main(config, save_path)
