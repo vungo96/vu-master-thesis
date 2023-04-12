@@ -3,17 +3,17 @@ train_dataset:
     name: image-folder
     args:
       root_path: ./load/div2k/DIV2K_train_HR
-      #root_path2: ./load/Flickr2K/Flickr2K_HR # change repeat
+      # root_path2: ./load/Flickr2K/Flickr2K_HR # change repeat
       repeat: 20
       cache: in_memory
   wrapper:
     name: sr-implicit-downsampled-collate-batch
     args:
-      inp_sizes: [48]
+      inp_sizes: [60]
       augment: true
-      sample_q: 4096
-      limit_scale: 10 # change scale_min
-      # scale_min: 4
+      sample_q: 7200
+      # limit_scale: 4 # change scale_min
+      scale_min: 4
       plot_scales: true
   collate_batch: true
   batch_size: 16
@@ -31,9 +31,9 @@ val_dataset:
   wrapper:
     name: sr-implicit-downsampled-collate-batch
     args:
-      inp_sizes: [48]
-      sample_q: 4096
-      limit_scale: 10
+      inp_sizes: [60]
+      sample_q: 7200
+      limit_scale: 4
   collate_batch: true
   batch_size: 16
 
@@ -57,10 +57,10 @@ model:
 optimizer:
   name: adam
   args:
-    lr: 1.e-5
-epoch_max: 1000
+    lr: 5.e-5
+epoch_max: 500
 multi_step_lr:
-  milestones: [200, 400, 600, 800]
+  milestones: [100, 200, 300, 400] # [200, 400, 600, 800]
   gamma: 0.5
 
 pretrained: ckpts/edsr-baseline-liif-six-layers.pth # change lr

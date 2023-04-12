@@ -3,7 +3,7 @@ import os
 import pickle
 
 # Path to pickle files
-path = 'save_test/_train_edsr-baseline-liif-variable-input_sample-2304-input-48-batch-16-limit-10-finetune/'
+path = 'save_test/_train_edsr-baseline-liif-variable-input_sample-4096-inputs-48-batch-16-limit-10-finetune-six-layers-lr-1e5/'
 
 bins = 60
 
@@ -13,6 +13,10 @@ with open(path + 'scale_freq.pickle', 'rb') as f:
 
 # Sort dictionary keys
 sorted_keys = sorted(scale_freq.keys())
+
+# bins dependent on largest scale
+bins = max(scale_freq.keys()) + 5
+print('highest scale:', bins - 5)
 
 # Plot distribution of first file as a histogram
 plt.hist(sorted_keys, weights=[scale_freq[k] for k in sorted_keys], bins=bins, range=(0,bins))
@@ -30,6 +34,10 @@ with open(path + 'scale_max_freq.pickle', 'rb') as f:
 
 # Sort dictionary keys
 sorted_keys = sorted(max_scale_freq.keys())
+
+# bins dependent on largest scale
+bins = max(max_scale_freq.keys()) + 5
+print('highest scale:', bins - 5)
 
 # Plot distribution of second file as a histogram
 plt.clf() # Clear previous plot
