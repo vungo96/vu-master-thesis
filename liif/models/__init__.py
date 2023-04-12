@@ -3,6 +3,7 @@ from . import edsr, rdn, rcan
 from . import mlp
 from . import liif
 from . import misc
+from . import lte, ltep, swinir
 from .rrdb_net import RRDB
 from . import glean_styleganv2
 from . import stylegan2
