@@ -230,11 +230,12 @@ class SRImplicitUniformVaried(Dataset):
 @register('sr-implicit-downsampled-collate-batch')
 class SRImplicitDownsampled(Dataset):
 
-    def __init__(self, dataset, inp_sizes=None, scale_min=1,
+    def __init__(self, dataset, inp_sizes=None, scale_min=1, scale_max=None,
                  augment=False, sample_q=None, plot_scales=False, limit_scale=None):
         self.dataset = dataset
         self.inp_sizes = inp_sizes
         self.scale_min = scale_min
+        self.scale_max = scale_max
         self.augment = augment
         self.sample_q = sample_q
         self.plot_scales = plot_scales
@@ -271,6 +272,9 @@ class SRImplicitDownsampled(Dataset):
                 s = random.uniform(scale_max-self.limit_scale, scale_max)
             else:
                 s = random.uniform(self.scale_min, scale_max)
+            
+            if self.scale_max is not None:
+                s = random.uniform(self.scale_min, self.scale_max)
 
             w_lr = inp_size
             w_hr = round(w_lr * s)
