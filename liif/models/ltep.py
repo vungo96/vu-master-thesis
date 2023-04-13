@@ -12,8 +12,9 @@ from utils import make_coord
 @register('lte-fast')
 class LTEP(nn.Module):
 
-    def __init__(self, encoder_spec, num_layer=3, hidden_dim=256, out_dim=3):
+    def __init__(self, encoder_spec, num_layer=3, hidden_dim=256, out_dim=3, device='cuda'):
         super().__init__()
+        self.device = device
         self.encoder = models.make(encoder_spec)
                 
         # Fourier prediction
@@ -40,7 +41,7 @@ class LTEP(nn.Module):
         freq = self.freq(feat) # frequency
         
         # prepare meta-data (coordinate)
-        pos_lr = make_coord(feat.shape[-2:], flatten=False).cuda() \
+        pos_lr = make_coord(feat.shape[-2:], flatten=False).to(self.device) \
             .permute(2, 0, 1) \
             .unsqueeze(0).expand(feat.shape[0], 2, *feat.shape[-2:])
         

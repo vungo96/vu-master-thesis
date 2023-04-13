@@ -11,8 +11,9 @@ import numpy as np
 @register('lte')
 class LTE(nn.Module):
 
-    def __init__(self, encoder_spec, imnet_spec=None, hidden_dim=256):
+    def __init__(self, encoder_spec, imnet_spec=None, hidden_dim=256, device='cuda'):
         super().__init__()        
+        self.device = device
         self.encoder = models.make(encoder_spec)
         self.coef = nn.Conv2d(self.encoder.out_dim, hidden_dim, 3, padding=1)
         self.freq = nn.Conv2d(self.encoder.out_dim, hidden_dim, 3, padding=1)
@@ -22,7 +23,7 @@ class LTE(nn.Module):
 
     def gen_feat(self, inp):
         self.inp = inp
-        self.feat_coord = make_coord(inp.shape[-2:], flatten=False).cuda() \
+        self.feat_coord = make_coord(inp.shape[-2:], flatten=False).to(self.device) \
             .permute(2, 0, 1) \
             .unsqueeze(0).expand(inp.shape[0], 2, *inp.shape[-2:])
         
