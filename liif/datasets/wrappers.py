@@ -227,6 +227,7 @@ class SRImplicitUniformVaried(Dataset):
             'gt': hr_rgb
         }
 
+
 @register('sr-implicit-downsampled-fast')
 class SRImplicitDownsampledFast(Dataset):
 
@@ -302,8 +303,8 @@ class SRImplicitDownsampledFast(Dataset):
             'coord': hr_coord,
             'cell': cell,
             'gt': hr_rgb
-        }  
-    
+        } 
+
 
 @register('sr-implicit-downsampled-collate-batch')
 class SRImplicitDownsampled(Dataset):
@@ -336,12 +337,9 @@ class SRImplicitDownsampled(Dataset):
                 'scale': [],
                 'scale_max': []
             }
-
-         # get minimum width or height of all images in one batch
-        # min_dim = min([img.size(1) for img in batch] + [img.size(2) for img in batch])
+        
         inp_idx = random.randint(0, len(self.inp_sizes)-1)
         inp_size = self.inp_sizes[inp_idx]
-        # print('input_size: ', inp_size)
 
         for img in batch:
             min_dim = min(img.size(1), img.size(2))
@@ -423,19 +421,19 @@ class SRImplicitDownsampled(Dataset):
                 
         return rtn_dict
     
-
 @register('sr-implicit-downsampled-fast-collate-batch')
 class SRImplicitDownsampledFast(Dataset):
 
-    def __init__(self, dataset, inp_size=None, scale_min=1, scale_max=None,
-                 augment=False):
+    def __init__(self, dataset, inp_sizes=None, scale_min=1, scale_max=None,
+                 augment=False, sample_q=None, plot_scales=False, limit_scale=None):
         self.dataset = dataset
-        self.inp_size = inp_size
+        self.inp_sizes = inp_sizes
         self.scale_min = scale_min
-        if scale_max is None:
-            scale_max = scale_min
         self.scale_max = scale_max
         self.augment = augment
+        self.sample_q = sample_q
+        self.plot_scales = plot_scales
+        self.limit_scale = limit_scale
 
     def __len__(self):
         return len(self.dataset)
@@ -443,11 +441,8 @@ class SRImplicitDownsampledFast(Dataset):
     def __getitem__(self, idx):
         img = self.dataset[idx]
         return img
-    
+       
     def collate_batch(self, batch):
-        img = self.dataset[idx]
-        s = random.uniform(self.scale_min, self.scale_max)
-
         rtn_lists = { 
                 'inp': [],
                 'coord': [],
@@ -457,11 +452,8 @@ class SRImplicitDownsampledFast(Dataset):
                 'scale_max': []
             }
 
-         # get minimum width or height of all images in one batch
-        # min_dim = min([img.size(1) for img in batch] + [img.size(2) for img in batch])
         inp_idx = random.randint(0, len(self.inp_sizes)-1)
         inp_size = self.inp_sizes[inp_idx]
-        # print('input_size: ', inp_size)
 
         for img in batch:
             min_dim = min(img.size(1), img.size(2))
