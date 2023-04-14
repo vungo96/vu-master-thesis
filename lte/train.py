@@ -39,8 +39,8 @@ def make_data_loaders():
 
 
 def prepare_training():
-#     if config.get('resume') is not None:
-    if os.path.exists(config.get('resume')):
+    if config.get('resume') is not None:
+    #if os.path.exists(config.get('resume')):
         sv_file = torch.load(config['resume'])
         model = models.make(sv_file['model'], load_sd=True).cuda()
         optimizer = utils.make_optimizer(
