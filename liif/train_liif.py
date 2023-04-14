@@ -177,7 +177,7 @@ def main(config_, save_path):
     n_gpus = len(os.environ['CUDA_VISIBLE_DEVICES'].split(','))
 
     # Enable running on cpu as well
-    device = torch.device('cpu' if torch.cuda.is_available() else 'cpu')
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print("Run on device: ", device)
 
     # get model, optimizer, and lr_scheduler from config
