@@ -10,9 +10,10 @@ train_dataset:
     args:
       inp_sizes: [48]
       augment: true
-      sample_q: 4096
+      sample_q: 2304
       # limit_scale: 4 # change scale_min
-      scale_min: 4
+      scale_min: 1
+      scale_max: 4
       plot_scales: true
   collate_batch: true
   batch_size: 16

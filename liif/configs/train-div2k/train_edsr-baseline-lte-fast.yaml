@@ -6,16 +6,12 @@ train_dataset:
       repeat: 20
       cache: in_memory
   wrapper:
-    name: sr-implicit-downsampled-collate-batch
+    name: sr-implicit-downsampled-fast
     args:
-      inp_sizes: [48]
-      augment: true
-      sample_q: 2304
-      # limit_scale: 4 # change scale_min
-      scale_min: 1
+      inp_size: 48
       scale_max: 4
-      plot_scales: true
-  collate_batch: true
+      augment: true
+  collate_batch: false
   batch_size: 16
 
 gradient_accumulation_steps: 1
@@ -29,11 +25,10 @@ val_dataset:
       repeat: 160
       cache: in_memory
   wrapper:
-    name: sr-implicit-downsampled
+    name: sr-implicit-downsampled-fast
     args:
       inp_size: 48
       scale_max: 4
-      sample_q: 2304
   collate_batch: false
   batch_size: 16
 
@@ -42,18 +37,15 @@ data_norm:
   gt: {sub: [0.5], div: [0.5]}
 
 model:
-  name: lte
+  name: lte-fast
   args:
     encoder_spec:
-      name: rdn
+      name: edsr-baseline
       args:
         no_upsampling: true
-    imnet_spec:
-      name: mlp
-      args:
-        out_dim: 3
-        hidden_list: [256, 256, 256]
+    num_layer: 3
     hidden_dim: 256
+    out_dim: 3
 
 optimizer:
   name: adam
