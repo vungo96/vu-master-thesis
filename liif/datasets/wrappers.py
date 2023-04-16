@@ -334,6 +334,7 @@ class SRImplicitDownsampled(Dataset):
                 'coord': [],
                 'cell': [],
                 'gt': [],
+                'inp_scale': [],
                 'scale': [],
                 'scale_max': []
             }
@@ -399,10 +400,14 @@ class SRImplicitDownsampled(Dataset):
             cell[:, 0] *= 2 / crop_hr.shape[-2]
             cell[:, 1] *= 2 / crop_hr.shape[-1]
 
+            inp_scale = torch.ones(hr_coord.shape[-2])
+            inp_scale[:] *= s
+
             rtn_lists['inp'].append(crop_lr)
             rtn_lists['coord'].append(hr_coord)
             rtn_lists['cell'].append(cell)
             rtn_lists['gt'].append(hr_rgb)
+            rtn_lists['inp_scale'].append(inp_scale)
 
             if self.plot_scales:
                 rtn_lists['scale'].append(s)
@@ -413,6 +418,7 @@ class SRImplicitDownsampled(Dataset):
             'coord': torch.stack(rtn_lists['coord'], dim=0),
             'cell': torch.stack(rtn_lists['cell'], dim=0),
             'gt': torch.stack(rtn_lists['gt'], dim=0),
+            'inp_scale': torch.stack(rtn_lists['inp_scale'], dim=0)
         }
         
         if self.plot_scales:

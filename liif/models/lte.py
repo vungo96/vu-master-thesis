@@ -11,13 +11,23 @@ import numpy as np
 @register('lte')
 class LTE(nn.Module):
 
-    def __init__(self, encoder_spec, imnet_spec=None, hidden_dim=256, device='cuda'):
+    def __init__(self, encoder_spec, imnet_spec=None, hidden_dim=256, scale_aware_phase=None, scale_aware_mlp=None, device='cpu'):
         super().__init__()        
         self.device = device
         self.encoder = models.make(encoder_spec)
         self.coef = nn.Conv2d(self.encoder.out_dim, hidden_dim, 3, padding=1)
         self.freq = nn.Conv2d(self.encoder.out_dim, hidden_dim, 3, padding=1)
-        self.phase = nn.Linear(2, hidden_dim//2, bias=False)        
+        self.scale = nn.Sequential(
+            nn.Linear(1, hidden_dim//2, bias=False),
+            nn.ReLU()
+        )
+        self.scale_mlp = nn.Sequential(
+            nn.Linear(1, hidden_dim, bias=False),
+            nn.ReLU()
+        )
+        self.phase = nn.Linear(2, hidden_dim//2, bias=False)
+        self.scale_aware_phase = scale_aware_phase
+        self.scale_aware_mlp = scale_aware_mlp
 
         self.imnet = models.make(imnet_spec, args={'in_dim': hidden_dim})
 
@@ -32,7 +42,7 @@ class LTE(nn.Module):
         self.freqq = self.freq(self.feat)
         return self.feat
 
-    def query_rgb(self, coord, cell=None):
+    def query_rgb(self, coord, cell=None, scale=None):
         feat = self.feat
         coef = self.coeff
         freq = self.freqq
@@ -82,10 +92,16 @@ class LTE(nn.Module):
                 q_freq = torch.stack(torch.split(q_freq, 2, dim=-1), dim=-1)
                 q_freq = torch.mul(q_freq, rel_coord.unsqueeze(-1))
                 q_freq = torch.sum(q_freq, dim=-2)
-                q_freq += self.phase(rel_cell.view((bs * q, -1))).view(bs, q, -1)
+                if scale is not None and self.scale_aware_phase is not None:
+                    q_freq += self.phase(rel_cell.view((bs * q, -1))).view(bs, q, -1) + self.scale(scale.view(bs * q, -1)).view(bs, q, -1)
+                else:
+                    q_freq += self.phase(rel_cell.view((bs * q, -1))).view(bs, q, -1)
                 q_freq = torch.cat((torch.cos(np.pi*q_freq), torch.sin(np.pi*q_freq)), dim=-1)
 
-                inp = torch.mul(q_coef, q_freq)            
+                inp = torch.mul(q_coef, q_freq)       
+
+                if self.scale_aware_mlp is not None and scale is not None:
+                    inp += self.scale_mlp(scale.view(bs * q, -1)).view(bs, q, -1)  
 
                 pred = self.imnet(inp.contiguous().view(bs * q, -1)).view(bs, q, -1)
                 preds.append(pred)
@@ -105,6 +121,6 @@ class LTE(nn.Module):
                       .permute(0, 2, 1)
         return ret
 
-    def forward(self, inp, coord, cell):
+    def forward(self, inp, coord, cell, scale=None):
         self.gen_feat(inp)
-        return self.query_rgb(coord, cell)
+        return self.query_rgb(coord, cell, scale)

@@ -40,6 +40,7 @@ val_dataset:
 data_norm:
   inp: {sub: [0.5], div: [0.5]}
   gt: {sub: [0.5], div: [0.5]}
+  inp_scale: 64
 
 model:
   name: lte
@@ -54,6 +55,8 @@ model:
         out_dim: 3
         hidden_list: [256, 256, 256]
     hidden_dim: 256
+    scale_aware_phase: true
+    scale_aware_mlp: true
 
 optimizer:
   name: adam
