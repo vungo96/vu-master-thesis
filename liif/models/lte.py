@@ -11,7 +11,7 @@ import numpy as np
 @register('lte')
 class LTE(nn.Module):
 
-    def __init__(self, encoder_spec, imnet_spec=None, hidden_dim=256, scale_aware_phase=None, scale_aware_mlp=None, device='cpu'):
+    def __init__(self, encoder_spec, imnet_spec=None, hidden_dim=256, scale_aware_phase=None, scale_aware_mlp=None, device='cuda'):
         super().__init__()        
         self.device = device
         self.encoder = models.make(encoder_spec)

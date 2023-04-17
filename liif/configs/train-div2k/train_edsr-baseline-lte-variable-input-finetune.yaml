@@ -11,8 +11,8 @@ train_dataset:
       inp_sizes: [42, 48, 56]
       augment: true
       sample_q: 4096
-      # limit_scale: 4 # change scale_min
-      scale_min: 1
+      limit_scale: 4 # change scale_min
+      # scale_min: 4
       # scale_max: 4
       plot_scales: true
   collate_batch: true
@@ -35,7 +35,7 @@ val_dataset:
       inp_sizes: [42, 48, 56]
       augment: true
       sample_q: 4096
-      limit_scale: 10
+      limit_scale: 4
       # scale_max: 4
   collate_batch: true
   batch_size: 16
@@ -59,16 +59,18 @@ model:
         hidden_list: [256, 256, 256]
     hidden_dim: 256
     # scale_aware_phase: true
-    scale_aware_mlp: true
+    # scale_aware_mlp: true
 
 optimizer:
   name: adam
   args:
-    lr: 1.e-4
-epoch_max: 1000
+    lr: 1.e-5
+epoch_max: 500
 multi_step_lr:
-  milestones: [200, 400, 600, 800]
+  milestones: [100, 200, 300, 400]
   gamma: 0.5
+
+pretrained: save_test/_train_edsr-baseline-lte-variable-input_sample-2304-x1to4-inputs-48/epoch-last.pth  # change lr
 
 epoch_val: 1
 epoch_save: 100

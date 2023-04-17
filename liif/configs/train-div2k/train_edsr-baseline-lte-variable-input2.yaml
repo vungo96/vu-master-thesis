@@ -8,12 +8,12 @@ train_dataset:
   wrapper:
     name: sr-implicit-downsampled-collate-batch
     args:
-      inp_sizes: [42, 48, 56]
+      inp_sizes: [48]
       augment: true
       sample_q: 4096
       # limit_scale: 4 # change scale_min
       scale_min: 1
-      # scale_max: 4
+      #scale_max: 4
       plot_scales: true
   collate_batch: true
   batch_size: 16
@@ -32,11 +32,12 @@ val_dataset:
     wrapper:
     name: sr-implicit-downsampled-collate-batch
     args:
-      inp_sizes: [42, 48, 56]
+      inp_sizes: [48]
       augment: true
       sample_q: 4096
       limit_scale: 10
-      # scale_max: 4
+      # scale_min: 1
+      #scale_max: 4
   collate_batch: true
   batch_size: 16
 
@@ -58,7 +59,7 @@ model:
         out_dim: 3
         hidden_list: [256, 256, 256]
     hidden_dim: 256
-    # scale_aware_phase: true
+    scale_aware_phase: true
     scale_aware_mlp: true
 
 optimizer:

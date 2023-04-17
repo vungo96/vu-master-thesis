@@ -128,7 +128,7 @@ def train(train_loader, model, optimizer, gradient_accumulation_steps):
     t = data_norm['gt']
     gt_sub = torch.FloatTensor(t['sub']).view(1, 1, -1).to(device)
     gt_div = torch.FloatTensor(t['div']).view(1, 1, -1).to(device)
-    inp_scale_max = data_norm['inp_scale']
+    inp_scale_max = data_norm['inp_scale_max']
 
     # train batches
     for step, batch in tqdm(enumerate(train_loader), leave=False, desc='train', total=len(train_loader)):
@@ -179,7 +179,7 @@ def main(config_, save_path):
     n_gpus = len(os.environ['CUDA_VISIBLE_DEVICES'].split(','))
 
     # Enable running on cpu as well
-    device = torch.device('cpu' if torch.cuda.is_available() else 'cpu')
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print("Run on device: ", device)
 
     # get model, optimizer, and lr_scheduler from config
