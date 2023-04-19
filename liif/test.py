@@ -5,7 +5,6 @@ from functools import partial
 
 from torchvision import transforms
 import torch.nn as nn
-import gc
 
 import yaml
 import torch
@@ -55,7 +54,7 @@ def batched_predict(model, inp, coord, cell, bsize):
     return pred
 
 
-def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None,
+def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None, max_scale=4,
               verbose=False, device="cuda", writer=None, epoch=0, out_dir=None):
     model.eval()
 
@@ -88,8 +87,6 @@ def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None,
     # TODO: change this to activate adding images
     first = False
     for i, batch in enumerate(pbar):
-        gc.collect()
-        torch.cuda.empty_cache()
         for k, v in batch.items():
             batch[k] = v.to(device)
 
@@ -99,7 +96,7 @@ def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None,
                 pred = model(inp, batch['coord'], batch['cell'])
         else:
             pred = batched_predict(model, inp,
-                                batch['coord'], batch['cell'], eval_bsize)
+                                batch['coord'], batch['cell']*max(scale/scale_max, 1), eval_bsize)
         pred = pred * gt_div + gt_sub
         pred.clamp_(0, 1)
 
@@ -134,6 +131,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--config')
     parser.add_argument('--model')
+    parser.add_argument('--scale_max', default='4')
     parser.add_argument('--out_dir', default=None)
     parser.add_argument('--tag', default=None)
     parser.add_argument('--gpu', default='0')
