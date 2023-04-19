@@ -158,9 +158,10 @@ def train(train_loader, model, optimizer, gradient_accumulation_steps):
 
 
 def main(config_, save_path):
-    global config, log, writer, device, scale_freq, scale_max_freq
+    global config, log, writer, device, scale_freq, scale_max_freq, eval_results
     scale_freq = {}
     scale_max_freq = {}
+    eval_results = []
     config = config_
     log, writer = utils.set_save_path(save_path)
     with open(os.path.join(save_path, 'config.yaml'), 'w') as f:
@@ -239,6 +240,9 @@ def main(config_, save_path):
             if scale_max_freq:
                 with open(os.path.join(save_path, 'scale_max_freq.pickle'), "wb") as f:
                     pickle.dump(scale_max_freq, f)
+            if eval_results:
+                with open(os.path.join(save_path, 'eval_results.pickle'), "wb") as f:
+                    pickle.dump(eval_results, f)
 
         # validate
         if (epoch_val is not None) and (epoch % epoch_val == 0):
@@ -256,6 +260,7 @@ def main(config_, save_path):
 
             log_info.append('val: psnr={:.4f}'.format(val_res))
             writer.add_scalars('psnr', {'val': val_res}, epoch)
+            eval_results.append(val_res)
             if val_res > max_val_v:
                 max_val_v = val_res
                 torch.save(sv_file, os.path.join(save_path, 'epoch-best.pth'))
