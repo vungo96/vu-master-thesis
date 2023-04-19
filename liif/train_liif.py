@@ -128,7 +128,10 @@ def train(train_loader, model, optimizer, gradient_accumulation_steps):
     t = data_norm['gt']
     gt_sub = torch.FloatTensor(t['sub']).view(1, 1, -1).to(device)
     gt_div = torch.FloatTensor(t['div']).view(1, 1, -1).to(device)
-    inp_scale_max = data_norm['inp_scale_max']
+    if 'inp_scale_max' in data_norm.keys():
+        inp_scale_max = data_norm['inp_scale_max']
+    else:
+        inp_scale_max = None
 
     # train batches
     for step, batch in tqdm(enumerate(train_loader), leave=False, desc='train', total=len(train_loader)):
@@ -136,9 +139,12 @@ def train(train_loader, model, optimizer, gradient_accumulation_steps):
             batch[k] = v.to(device)
 
         inp = (batch['inp'] - inp_sub) / inp_div
-        inp_scale_norm = (batch['inp_scale'] - 1) / (inp_scale_max - 1)
+        if inp_scale_max is not None:
+            inp_scale = (batch['inp_scale'] - 1) / (inp_scale_max - 1)
+            pred = model(inp, batch['coord'], batch['cell'], inp_scale)
+        else:
+            pred = model(inp, batch['coord'], batch['cell'])            
 
-        pred = model(inp, batch['coord'], batch['cell'], inp_scale_norm)
         gt = (batch['gt'] - gt_sub) / gt_div
         loss = loss_fn(pred, gt)
         loss = loss / gradient_accumulation_steps

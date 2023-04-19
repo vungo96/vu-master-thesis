@@ -9,9 +9,9 @@ train_dataset:
   wrapper:
     name: sr-implicit-downsampled-collate-batch
     args:
-      inp_sizes: [60]
+      inp_sizes: [48]
       augment: true
-      sample_q: 7200
+      sample_q: 2304
       # limit_scale: 4 # change scale_min
       scale_min: 4
       plot_scales: true
@@ -31,9 +31,10 @@ val_dataset:
   wrapper:
     name: sr-implicit-downsampled-collate-batch
     args:
-      inp_sizes: [60]
-      sample_q: 7200
-      limit_scale: 4
+      inp_sizes: [48]
+      sample_q: 2304
+      scale_max: 4
+      # limit_scale: 4
   collate_batch: true
   batch_size: 16
 
@@ -63,7 +64,7 @@ multi_step_lr:
   milestones: [100, 200, 300, 400] # [200, 400, 600, 800]
   gamma: 0.5
 
-pretrained: ckpts/edsr-baseline-liif-six-layers.pth # change lr
+# pretrained: ckpts/edsr-baseline-liif-six-layers.pth # change lr
 
 epoch_val: 1
-epoch_save: 200
+epoch_save: 100
