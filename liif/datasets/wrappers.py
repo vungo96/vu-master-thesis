@@ -162,11 +162,15 @@ class SRImplicitDownsampled(Dataset):
         cell[:, 0] *= 2 / crop_hr.shape[-2]
         cell[:, 1] *= 2 / crop_hr.shape[-1]
 
+        inp_scale = torch.ones(hr_coord.shape[-2])
+        inp_scale[:] *= s
+
         rtn_dict = {
             'inp': crop_lr,
             'coord': hr_coord,
             'cell': cell,
             'gt': hr_rgb,
+            'inp_scale': s,
         }
 
         if self.plot_scales:

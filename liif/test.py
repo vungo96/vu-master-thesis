@@ -39,7 +39,7 @@ def add_images_to_writer(writer, inp, pred, gt, step=0, tag=None):
     writer.flush()
 
 
-def batched_predict(model, inp, coord, cell, bsize):
+def batched_predict(model, inp, coord, cell, bsize, inp_scale=None):
     with torch.no_grad():
         model.gen_feat(inp)
         n = coord.shape[1]
@@ -47,7 +47,10 @@ def batched_predict(model, inp, coord, cell, bsize):
         preds = []
         while ql < n:
             qr = min(ql + bsize, n)
-            pred = model.query_rgb(coord[:, ql: qr, :], cell[:, ql: qr, :])
+            if inp_scale is not None:
+                pred = model.query_rgb(coord[:, ql: qr, :], cell[:, ql: qr, :], inp_scale[:, ql: qr])
+            else:
+                pred = model.query_rgb(coord[:, ql: qr, :], cell[:, ql: qr, :])
             preds.append(pred)
             ql = qr
         pred = torch.cat(preds, dim=1)
@@ -69,6 +72,10 @@ def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None, ma
     t = data_norm['gt']
     gt_sub = torch.FloatTensor(t['sub']).view(1, 1, -1).to(device)
     gt_div = torch.FloatTensor(t['div']).view(1, 1, -1).to(device)
+    if 'inp_scale_max' in data_norm.keys():
+        inp_scale_max = data_norm['inp_scale_max']
+    else:
+        inp_scale_max = None
 
     if eval_type is None:
         metric_fn = utils.calc_psnr
@@ -95,7 +102,13 @@ def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None, ma
             with torch.no_grad():
                 pred = model(inp, batch['coord'], batch['cell'])
         else:
-            pred = batched_predict(model, inp,
+            if inp_scale_max is not None:
+                inp_scale = (batch['inp_scale'] - 1) / (inp_scale_max - 1)
+                batched_predict(model, inp,
+                                batch['coord'], batch['cell']*max(scale/max_scale, 1), eval_bsize, inp_scale)
+            else:
+                  
+                pred = batched_predict(model, inp,
                                 batch['coord'], batch['cell']*max(scale/max_scale, 1), eval_bsize)
         pred = pred * gt_div + gt_sub
         pred.clamp_(0, 1)
