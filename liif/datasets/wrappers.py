@@ -170,7 +170,7 @@ class SRImplicitDownsampled(Dataset):
             'coord': hr_coord,
             'cell': cell,
             'gt': hr_rgb,
-            'inp_scale': s,
+            'inp_scale': inp_scale,
         }
 
         if self.plot_scales:
