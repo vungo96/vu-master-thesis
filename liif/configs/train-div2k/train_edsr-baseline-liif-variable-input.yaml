@@ -67,4 +67,4 @@ multi_step_lr:
 # pretrained: ckpts/edsr-baseline-liif-six-layers.pth # change lr
 
 epoch_val: 1
-epoch_save: 100
+epoch_save: 1
