@@ -23,6 +23,8 @@ class LTE(nn.Module):
         )
         self.scale_mlp = nn.Sequential(
             nn.Linear(1, hidden_dim, bias=False),
+            nn.ReLU(),
+            nn.Linear(hidden_dim, hidden_dim, bias=False),
             nn.ReLU()
         )
         self.phase = nn.Linear(2, hidden_dim//2, bias=False)
