@@ -3,7 +3,7 @@ import os
 import pickle
 
 # Path to pickle files
-path = 'save_test/_train_edsr-baseline-lte-variable-input_test2/'
+path = 'save_test/_train_edsr-baseline-lte-variable-input2_sample-4096-inputs-42-48-56-batch-16-all-scales/'
 
 bins = 60
 

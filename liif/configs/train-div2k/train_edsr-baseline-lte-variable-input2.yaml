@@ -8,12 +8,11 @@ train_dataset:
   wrapper:
     name: sr-implicit-downsampled-collate-batch
     args:
-      inp_sizes: [48]
+      inp_sizes: [42, 48, 56]
       augment: true
       sample_q: 4096
       # limit_scale: 4 # change scale_min
       scale_min: 1
-      #scale_max: 4
       plot_scales: true
   collate_batch: true
   batch_size: 16
@@ -29,22 +28,40 @@ val_dataset:
       repeat: 160
       cache: in_memory
   wrapper:
-    wrapper:
     name: sr-implicit-downsampled-collate-batch
     args:
       inp_sizes: [48]
       augment: true
-      sample_q: 4096
-      limit_scale: 10
-      # scale_min: 1
-      #scale_max: 4
+      sample_q: 2304
+      # limit_scale: 3
+      scale_min: 12
+      scale_max: 12
   collate_batch: true
-  batch_size: 16
+  batch_size: 32
+
+val_dataset2:
+  dataset:
+    name: image-folder
+    args:
+      root_path: ./load/Set5/HR
+      repeat: 80
+      cache: in_memory
+  wrapper:
+    name: sr-implicit-downsampled-collate-batch
+    args:
+      inp_sizes: [48]
+      augment: true
+      sample_q: 2304
+      # limit_scale: 1
+      scale_min: 4
+      scale_max: 4
+  collate_batch: true
+  batch_size: 32
 
 data_norm:
   inp: {sub: [0.5], div: [0.5]}
   gt: {sub: [0.5], div: [0.5]}
-  inp_scale_max: 64
+  # inp_scale_max: 64
 
 model:
   name: lte
@@ -59,16 +76,16 @@ model:
         out_dim: 3
         hidden_list: [256, 256, 256]
     hidden_dim: 256
-    scale_aware_phase: true
-    scale_aware_mlp: true
+    # scale_aware_phase: true
+    # scale_aware_mlp: true
 
 optimizer:
   name: adam
   args:
     lr: 1.e-4
-epoch_max: 1000
+epoch_max: 2000
 multi_step_lr:
-  milestones: [200, 400, 600, 800]
+  milestones: [200, 400, 600, 800, 1000, 1200, 1400, 1600, 1800]
   gamma: 0.5
 
 epoch_val: 1
