@@ -140,7 +140,7 @@ continuous_pipeline = [
 ]
 
 
-data_dir = "data"
+data_dir = "../liif/load"
 mydata_dir = "mydata"
 data = dict(
     workers_per_gpu=8,
@@ -152,12 +152,12 @@ data = dict(
         times=20,
         dataset=dict(
             type=train_dataset_type,
-            gt_folder=f'{data_dir}/DIV2K/HR',  #f'{data_dir}/DIV2K/DIV2K_train_HR', #
+            gt_folder=f'{data_dir}/div2k/DIV2K_train_HR',  #f'{data_dir}/DIV2K/DIV2K_train_HR', #
             pipeline=train_pipeline,
             scale=scale_max)),
     val=dict(
         type=val_dataset_type,
-        gt_folder=f'{mydata_dir}/Classical/Urban100/GTmod12',  #f'{data_dir}/testset/Urban100/HR',  #f'{data_dir}/sr_test/Urban100', #
+        gt_folder=f'{data_dir}/div2k/DIV2K_valid_HR',  #f'{data_dir}/testset/Urban100/HR',  #f'{data_dir}/sr_test/Urban100', #
         pipeline=valid_pipeline,
         scale=scale_max),
     test=dict(
@@ -168,7 +168,7 @@ data = dict(
         # scale=val_scale,
         # filename_tmpl='{}'))  #x4
         type=val_dataset_type,
-        gt_folder=f'{data_dir}/testset/DIV2K_val/HR', #f'{data_dir}/testset/Manga109/HR',  #f'{data_dir}/testset/Urban100/HR',  #f'{data_dir}/testset/B100/HR', #f'{data_dir}/testset/Set14/HR', #f'{data_dir}/testset/Set5/HR', #f'{mydata_dir}/Classical/Urban100/GTmod12',  #
+        gt_folder=f'{data_dir}/div2k/DIV2K_valid_HR', #f'{data_dir}/testset/Manga109/HR',  #f'{data_dir}/testset/Urban100/HR',  #f'{data_dir}/testset/B100/HR', #f'{data_dir}/testset/Set14/HR', #f'{data_dir}/testset/Set5/HR', #f'{mydata_dir}/Classical/Urban100/GTmod12',  #
         pipeline=valid_pipeline,
         scale=val_scale)) 
         # type=test_dataset_type,

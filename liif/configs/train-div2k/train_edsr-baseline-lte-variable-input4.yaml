@@ -3,8 +3,8 @@ train_dataset:
     name: image-folder
     args:
       root_path: ./load/div2k/DIV2K_train_HR
-      root_path2: .load/Flickr2K/Flickr2K_HR
-      repeat: 20
+      root_path2: ./load/Flickr2K/Flickr2K_HR
+      repeat: 5
       cache: in_memory
   wrapper:
     name: sr-implicit-downsampled-collate-batch
