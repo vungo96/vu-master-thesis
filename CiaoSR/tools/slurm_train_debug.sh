@@ -2,8 +2,8 @@
 
 ### Start of Slurm SBATCH definitions
 #SBATCH -c 14               # Number of cores (-c)
-#SBATCH -t 0-08:00          # Runtime in D-HH:MM, minimum of t minutes
-#SBATCH -p gpu_test              # Partition to submit to
+#SBATCH -t 3-00:00          # Runtime in D-HH:MM, minimum of t minutes
+#SBATCH -p gpu              # Partition to submit to
 #SBATCH --mem-per-cpu=20000M #M is the default and can therefore be omitted, but could also be K(ilo)|G(iga)|T(era)
 #SBATCH --gres=gpu:1
 #SBATCH -o tools/outputs/myoutput_%j.out  # File to which STDOUT will be written, %j inserts jobid

@@ -13,7 +13,7 @@ train_dataset:
       augment: true
       sample_q: 4096
       # limit_scale: 4 # change scale_min
-      scale_min: 1
+      scale_min: 12
       # scale_max: 4
       plot_scales: true
   collate_batch: true
@@ -36,8 +36,8 @@ val_dataset:
       augment: true
       sample_q: 2304
       # limit_scale: 3
-      scale_min: 12
-      scale_max: 12
+      scale_min: 1
+      # scale_max: 12
   collate_batch: true
   batch_size: 32
 

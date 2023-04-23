@@ -15,7 +15,7 @@ train_dataset:
       scale_min: 1
       plot_scales: true
   collate_batch: true
-  batch_size: 32
+  batch_size: 16
 
 gradient_accumulation_steps: 1
 
@@ -64,7 +64,7 @@ data_norm:
   inp_scale_max: 64
 
 model:
-  name: lte
+  name: lte-scale
   args:
     encoder_spec:
       name: edsr-baseline

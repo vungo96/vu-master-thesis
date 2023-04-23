@@ -36,7 +36,7 @@ val_dataset:
       sample_q: 2304
       # limit_scale: 3
       scale_min: 12
-      scale_max: 12
+      # scale_max: 12
   collate_batch: true
   batch_size: 32
 
