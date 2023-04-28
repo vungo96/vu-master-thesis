@@ -58,7 +58,7 @@ def batched_predict(model, inp, coord, cell, bsize, inp_scale=None):
 
 
 def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None, max_scale=4,
-              verbose=False, device="cuda", writer=None, epoch=0, out_dir=None):
+              verbose=False, device="cuda", writer=None, epoch=0, out_dir=None, scale_aware=None):
     model.eval()
 
     if data_norm is None:
@@ -72,7 +72,7 @@ def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None, ma
     t = data_norm['gt']
     gt_sub = torch.FloatTensor(t['sub']).view(1, 1, -1).to(device)
     gt_div = torch.FloatTensor(t['div']).view(1, 1, -1).to(device)
-    if 'inp_scale_max' in data_norm.keys():
+    if scale_aware is not None:
         inp_scale_max = data_norm['inp_scale_max']
     else:
         inp_scale_max = None
@@ -187,6 +187,13 @@ if __name__ == '__main__':
         print("Use multiple gpus.")
         model = nn.parallel.DataParallel(model)
 
+    # TODO: remove later
+    if 'inp_scale_max' in config['data_norm'].keys():
+        scale_aware = True
+        print("Condition on scale")
+    else:
+        scale_aware = None
+
     res = eval_psnr(loader, model,
                     data_norm=config.get('data_norm'),
                     eval_type=config.get('eval_type'),
@@ -194,5 +201,6 @@ if __name__ == '__main__':
                     verbose=True,
                     device=device,
                     writer=writer,
-                    out_dir=out_dir)
+                    out_dir=out_dir,
+                    scale_aware=scale_aware)
     print('result: {:.4f}'.format(res))

@@ -2,18 +2,34 @@ import matplotlib.pyplot as plt
 import os
 import pickle
 
-paths = ['save_test/_train_edsr-baseline-lte-variable-input_sample-2304-scale-1to4-batch-16/', 
-         'save_test/_train_edsr-baseline-lte-variable-input3_sample-4096-scale-1toMax-batch-16-scale-mlp/']
+scale  = "8"
+
+base_path = 'test_curves/psnr_lists/' + scale + '_set5'
+
+paths = [base_path + '/eval_results1to4.pickle', 
+         base_path + '/eval_results1toMax.pickle',
+         base_path + '/eval_results1toMax-scale.pickle',
+         base_path + '/eval_results1to4-more-inputs.pickle',
+         base_path + '/eval_results1toMax-more-inputs.pickle',
+         ]
+
+labels = ['1to4', 
+          '1toMax',
+          '1toMax-scale', 
+          '1to4-more-inputs', 
+          '1toMax-more-inputs'
+          ]
+
+tag = "set5-" + scale
 
 psnr_lists = []
 
-second = ""
-offset = 0.5
-k = 50
+offset = 0.05
+k = 1
 
 for path in paths:
     # Load dictionary from first file created via pickle
-    with open(path + 'eval_results' + second + '.pickle', 'rb') as f:
+    with open(path, 'rb') as f:
         psnr_lists.append(pickle.load(f))
 
 # filter psnr_lists
@@ -38,7 +54,7 @@ y_max = max([max(psnr_list) for psnr_list in psnr_lists]) + offset
 ax.set_ylim([y_min, y_max])
 
 # Set x and y axis labels
-ax.set_xlabel("Epoch")
+ax.set_xlabel("Training Iterations e5")
 ax.set_ylabel("PSNR")
 
 # Set title
@@ -46,11 +62,12 @@ ax.set_title("PSNR Curves Comparison")
 
 # Plot each PSNR list as a curve
 for i, psnr_list in enumerate(psnr_lists):
-    ax.plot(range(1, len(psnr_list)+1), psnr_list, label=paths[i])
+    ax.plot(range(1, len(psnr_list)+1), psnr_list, label=labels[i])
 
-# Add a legend
-ax.legend()
+# Set the position of the legend
+ax.legend(loc='lower right', bbox_to_anchor=(0.95, 0.05), borderaxespad=0.0)
+
 
 # Save plot of first file to same directory as pickle file
-plot_path = os.path.join(path, 'curves' + second + '.png')
+plot_path = os.path.join('test_curves/psnr_curves', 'curves_' + tag + '.png')
 plt.savefig(plot_path)

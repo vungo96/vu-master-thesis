@@ -61,8 +61,7 @@ def make_data_loader(spec, tag=''):
 def make_data_loaders():
     train_loader = make_data_loader(config.get('train_dataset'), tag='train')
     val_loader = make_data_loader(config.get('val_dataset'), tag='val')
-    val_loader2 = make_data_loader(config.get('val_dataset2'), tag='val')
-    return train_loader, val_loader, val_loader2
+    return train_loader, val_loader
 
 def prepare_training():
     if config.get('resume') is not None:
@@ -165,18 +164,17 @@ def train(train_loader, model, optimizer, gradient_accumulation_steps):
 
 
 def main(config_, save_path):
-    global config, log, writer, device, scale_freq, scale_max_freq, eval_results, eval_results2
+    global config, log, writer, device, scale_freq, scale_max_freq, eval_results
     scale_freq = {}
     scale_max_freq = {}
     eval_results = []
-    eval_results2 = []
     config = config_
     log, writer = utils.set_save_path(save_path)
     with open(os.path.join(save_path, 'config.yaml'), 'w') as f:
         yaml.dump(config, f, sort_keys=False)
 
     # get data loaders from config
-    train_loader, val_loader, val_loader2 = make_data_loaders()
+    train_loader, val_loader = make_data_loaders()
     if config.get('data_norm') is None:
         config['data_norm'] = {
             'inp': {'sub': [0], 'div': [1]},
@@ -255,32 +253,30 @@ def main(config_, save_path):
                 model_ = model.module
             else:
                 model_ = model
+            
+            # TODO: remove later
+            if 'inp_scale_max' in config['data_norm'].keys():
+                scale_aware = True
+            else:
+                scale_aware = None
+
             val_res = eval_psnr(val_loader, model_,
                                 data_norm=config['data_norm'],
                                 eval_type=config.get('eval_type'),
                                 eval_bsize=config.get('eval_bsize'),
                                 device=device, 
                                 writer=writer,
-                                epoch=epoch)
-            val_res2 = eval_psnr(val_loader2, model_,
-                                data_norm=config['data_norm'],
-                                eval_type=config.get('eval_type'),
-                                eval_bsize=config.get('eval_bsize'),
-                                device=device, 
-                                writer=None,
-                                epoch=epoch)
+                                epoch=epoch,
+                                scale_aware=scale_aware)
 
             log_info.append('val: psnr={:.4f}'.format(val_res))
             writer.add_scalars('psnr', {'val': val_res}, epoch)
 
             eval_results.append(val_res)
-            eval_results2.append(val_res2)
 
             if eval_results and (epoch % epoch_save == 0):
                 with open(os.path.join(save_path, 'eval_results.pickle'), "wb") as f:
                     pickle.dump(eval_results, f)
-                with open(os.path.join(save_path, 'eval_results2.pickle'), "wb") as f:
-                    pickle.dump(eval_results2, f)
             if val_res > max_val_v:
                 max_val_v = val_res
                 torch.save(sv_file, os.path.join(save_path, 'epoch-best.pth'))
