@@ -2,25 +2,23 @@ import matplotlib.pyplot as plt
 import os
 import pickle
 
-scale  = "8"
+scale  = "3"
 
-base_path = 'test_curves/psnr_lists/' + scale + '_set5'
+base_path = 'test_curves/psnr_lists/' + scale
 
 paths = [base_path + '/eval_results1to4.pickle', 
-         base_path + '/eval_results1toMax.pickle',
-         base_path + '/eval_results1toMax-scale.pickle',
-         base_path + '/eval_results1to4-more-inputs.pickle',
-         base_path + '/eval_results1toMax-more-inputs.pickle',
+         base_path + '/eval_results1to4-flickr.pickle', 
+         base_path + '/eval_results1toMax-flickr.pickle',
+         base_path + '/eval_results1toMax-flickr-scale-mlp.pickle',
          ]
 
-labels = ['1to4', 
-          '1toMax',
-          '1toMax-scale', 
-          '1to4-more-inputs', 
-          '1toMax-more-inputs'
+labels = ['1to4',
+          '1to4-flickr', 
+          '1toMax-flickr',
+          '1toMax-flickr-scale-mlp',
           ]
 
-tag = "set5-" + scale
+tag = "div2k-2-" + scale
 
 psnr_lists = []
 
@@ -62,7 +60,7 @@ ax.set_title("PSNR Curves Comparison")
 
 # Plot each PSNR list as a curve
 for i, psnr_list in enumerate(psnr_lists):
-    ax.plot(range(1, len(psnr_list)+1), psnr_list, label=labels[i])
+    ax.plot(range(1, len(psnr_list)+1), psnr_list, label=labels[i] + " last-psnr:" + str(round(psnr_list[-1], 2)))
 
 # Set the position of the legend
 ax.legend(loc='lower right', bbox_to_anchor=(0.95, 0.05), borderaxespad=0.0)

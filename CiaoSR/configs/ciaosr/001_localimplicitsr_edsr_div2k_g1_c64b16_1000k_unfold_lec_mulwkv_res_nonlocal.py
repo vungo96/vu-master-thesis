@@ -135,7 +135,7 @@ data = dict(
             scale=scale_max)),
     val=dict(
         type=val_dataset_type,
-        gt_folder=f'{data_dir}/Urban100/HR',#f'{mydata_dir}/Classical/Urban100/GTmod12',  #f'{data_dir}/testset/Urban100/HR',  #f'{data_dir}/sr_test/Urban100', #
+        gt_folder=f'{data_dir}/benchmark/Urban100/HR',#f'{mydata_dir}/Classical/Urban100/GTmod12',  #f'{data_dir}/testset/Urban100/HR',  #f'{data_dir}/sr_test/Urban100', #
         pipeline=valid_pipeline,
         scale=scale_max),
     test=dict(
@@ -178,7 +178,7 @@ dist_params = dict(backend='nccl')
 log_level = 'INFO'
 work_dir = f'{run_dir}/{exp_name}'
 load_from = None
-resume_from = None
+resume_from = 'work_dirs/001_localimplicitsr_edsr_div2k_g1_c64b16_1000k_unfold_lec_mulwkv_res_nonlocal/iter_714000.pth'
 workflow = [('train', 1)]
 find_unused_parameters = True
 test_checkpoint_path = f'{run_dir}/{exp_name}/latest.pth' # use --checkpoint None to enable this path in testing

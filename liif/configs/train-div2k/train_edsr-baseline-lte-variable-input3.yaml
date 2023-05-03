@@ -8,7 +8,7 @@ train_dataset:
   wrapper:
     name: sr-implicit-downsampled-collate-batch
     args:
-      inp_sizes: [42, 48, 56]
+      inp_sizes: [48]
       augment: true
       sample_q: 4096
       # limit_scale: 4 # change scale_min
@@ -42,7 +42,7 @@ val_dataset:
 data_norm:
   inp: {sub: [0.5], div: [0.5]}
   gt: {sub: [0.5], div: [0.5]}
-  inp_scale_max: 64
+  inp_scale_max: 48
 
 model:
   name: lte
@@ -66,7 +66,7 @@ optimizer:
     lr: 1.e-4
 epoch_max: 2000
 multi_step_lr:
-  milestones: [200, 400, 600, 800, 1000, 1200, 1400, 1600, 1800]
+  milestones: [400, 800, 1200, 1600]
   gamma: 0.5
 
 epoch_val: 1

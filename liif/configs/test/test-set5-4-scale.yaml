@@ -8,7 +8,7 @@ test_dataset:
     args:
       scale_min: 4
   batch_size: 1
-eval_type: benchmark-6
+eval_type: benchmark-4
 eval_bsize: 30000
 
 data_norm:

@@ -67,7 +67,8 @@ if __name__ == '__main__':
                         device=device,
                         writer=None,
                         out_dir=None,
-                        scale_aware=scale_aware)
+                        scale_aware=scale_aware,
+                        max_scale=48)
         psnr_list.append(res)
         print('result: {:.4f}'.format(res))
 

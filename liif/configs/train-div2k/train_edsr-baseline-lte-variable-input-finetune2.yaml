@@ -3,7 +3,8 @@ train_dataset:
     name: image-folder
     args:
       root_path: ./load/div2k/DIV2K_train_HR
-      repeat: 20
+      root_path2: ./load/Flickr2K/Flickr2K_HR
+      repeat: 5
       cache: in_memory
   wrapper:
     name: sr-implicit-downsampled-collate-batch
@@ -16,7 +17,7 @@ train_dataset:
       # scale_max: 4
       plot_scales: true
   collate_batch: true
-  batch_size: 16
+  batch_size: 32
 
 gradient_accumulation_steps: 1
 
@@ -31,27 +32,9 @@ val_dataset:
   wrapper:
     name: sr-implicit-downsampled-collate-batch
     args:
-      inp_sizes: [42, 48, 56]
-      augment: true
-      sample_q: 2304
-      limit_scale: 4
-      # scale_max: 4
-  collate_batch: true
-  batch_size: 32
-
-val_dataset2:
-  dataset:
-    name: image-folder
-    args:
-      root_path: ./load/Set5/HR
-      repeat: 80
-      cache: in_memory
-  wrapper:
-    name: sr-implicit-downsampled-collate-batch
-    args:
       inp_sizes: [48]
       augment: true
-      sample_q: 2304
+      sample_q: 4096
       limit_scale: 1
       # scale_max: 4
   collate_batch: true
@@ -81,13 +64,13 @@ model:
 optimizer:
   name: adam
   args:
-    lr: 1.e-5
+    lr: 1.e-4
 epoch_max: 1000
 multi_step_lr:
   milestones: [200, 400, 600, 800]
   gamma: 0.5
 
-pretrained: save_test/_train_edsr-baseline-lte-variable-input_sample-2304-x1to4-inputs-48/epoch-last.pth  # change lr
+pretrained: save_test/_train_edsr-baseline-lte-variable-input_sample-4096-scale-1to4-batch-32-inputs-48-new-lr-schedule/epoch-2000.pth  # change lr
 
 epoch_val: 1
 epoch_save: 100
