@@ -44,7 +44,12 @@ class RandomBicubicSampling:
                 modified 'gt', supplement 'lq' and 'scale' to keys.
         """
         img = results['gt']
-        scale = np.random.uniform(self.scale_min, self.scale_max)
+        if self.scale_max is None:
+            min_dim = min(img.size(1), img.size(2))
+            scale_max = min_dim // self.patch_size
+        else:
+            scale_max = self.scale_max
+        scale = np.random.uniform(self.scale_min, scale_max)
 
         if self.patch_size is None:
             h_lr = math.floor(img.shape[-3] / scale + 1e-9)
