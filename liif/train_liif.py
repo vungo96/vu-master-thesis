@@ -48,13 +48,13 @@ def make_data_loader(spec, tag=''):
     if spec['collate_batch']:
         # TODO: print stuff here as well
         loader = DataLoader(dataset, batch_size=spec['batch_size'],
-                            shuffle=(tag == 'train'), num_workers=4, collate_fn=dataset.collate_batch, pin_memory=True)
+                            shuffle=(tag == 'train'), num_workers=12, collate_fn=dataset.collate_batch, pin_memory=True)
     else:
         log('{} dataset: size={}'.format(tag, len(dataset)))
         for k, v in dataset[0].items():
             log('  {}: shape={}'.format(k, tuple(v.shape)))
         loader = DataLoader(dataset, batch_size=spec['batch_size'],
-                            shuffle=(tag == 'train'), num_workers=4, pin_memory=True)
+                            shuffle=(tag == 'train'), num_workers=12, pin_memory=True)
     return loader
 
 

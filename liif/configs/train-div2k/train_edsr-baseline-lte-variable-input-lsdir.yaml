@@ -4,7 +4,7 @@ train_dataset:
     args:
       root_path: ./load/LSDIR/train/HR
       repeat: 1
-      cache: in_memory
+      #cache: in_memory
       sharded: true
   wrapper:
     name: sr-implicit-downsampled-collate-batch
