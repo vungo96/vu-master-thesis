@@ -19,7 +19,7 @@ class LTE(nn.Module):
         self.freq = nn.Conv2d(self.encoder.out_dim, hidden_dim, 3, padding=1)
         self.scale = nn.Sequential(
             nn.Linear(1, hidden_dim//2, bias=False),
-            nn.ReLU()
+            nn.ReLU(),
         )
         self.scale_mlp = nn.Sequential(
             nn.Linear(1, hidden_dim, bias=False),

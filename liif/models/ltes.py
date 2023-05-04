@@ -19,11 +19,15 @@ class LTE(nn.Module):
         self.freq = nn.Conv2d(self.encoder.out_dim, hidden_dim, 3, padding=1)
         self.scale = nn.Sequential(
             nn.Linear(1, hidden_dim//2, bias=False),
-            nn.ReLU()
+            nn.ReLU(),
+            nn.Linear(hidden_dim//2, hidden_dim//2, bias=False),
+            nn.ReLU(),
         )
         self.scale_mlp = nn.Sequential(
             nn.Linear(1, hidden_dim, bias=False),
             nn.ReLU(),
+            nn.Linear(hidden_dim, hidden_dim, bias=False),
+            nn.ReLU()
         )
         self.phase = nn.Linear(2, hidden_dim//2, bias=False)
         self.scale_aware_phase = scale_aware_phase
@@ -93,7 +97,7 @@ class LTE(nn.Module):
                 q_freq = torch.mul(q_freq, rel_coord.unsqueeze(-1))
                 q_freq = torch.sum(q_freq, dim=-2)
                 if scale is not None and self.scale_aware_phase is not None:
-                    q_freq += self.phase(rel_cell.view((bs * q, -1))).view(bs, q, -1) + self.scale(scale.view(bs * q, -1)).view(bs, q, -1)
+                    q_freq = torch.mul(self.phase(rel_cell.view((bs * q, -1))).view(bs, q, -1), self.scale(scale.view(bs * q, -1)).view(bs, q, -1))
                 else:
                     q_freq += self.phase(rel_cell.view((bs * q, -1))).view(bs, q, -1)
                 q_freq = torch.cat((torch.cos(np.pi*q_freq), torch.sin(np.pi*q_freq)), dim=-1)
