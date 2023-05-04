@@ -8,8 +8,8 @@ from utils import make_coord
 
 import numpy as np
 
-@register('lte-scale')
-class LTE(nn.Module):
+@register('ltes')
+class LTES(nn.Module):
 
     def __init__(self, encoder_spec, imnet_spec=None, hidden_dim=256, scale_aware_phase=None, scale_aware_mlp=None, device='cuda'):
         super().__init__()        
