@@ -27,7 +27,7 @@ class RandomBicubicSampling:
                  scale_max=4.0,
                  patch_size=None,
                  ):
-        assert scale_max >= scale_min
+        # assert scale_max >= scale_min
         self.scale_min = scale_min
         self.scale_max = scale_max
         self.patch_size = patch_size
@@ -45,9 +45,11 @@ class RandomBicubicSampling:
         """
         img = results['gt']
         if self.scale_max is None:
+            print("scale_max None")
             min_dim = min(img.size(1), img.size(2))
             scale_max = min_dim // self.patch_size
         else:
+            print("scale_max = ", self.scale_max)
             scale_max = self.scale_max
         scale = np.random.uniform(self.scale_min, scale_max)
 

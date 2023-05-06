@@ -1,0 +1,180 @@
+train dataset: size=32000
+  inp: shape=(3, 2040, 1404)
+val dataset: size=1600
+  inp: shape=(3, 1356, 2040)
+model: #params=6.5M
+model: #struct=CLIT(
+  (encoder): EDSR(
+    (sub_mean): MeanShift(3, 3, kernel_size=(1, 1), stride=(1, 1))
+    (add_mean): MeanShift(3, 3, kernel_size=(1, 1), stride=(1, 1))
+    (head): Sequential(
+      (0): Conv2d(3, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    )
+    (body): Sequential(
+      (0): ResBlock(
+        (body): Sequential(
+          (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (1): ReLU(inplace=True)
+          (2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        )
+      )
+      (1): ResBlock(
+        (body): Sequential(
+          (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (1): ReLU(inplace=True)
+          (2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        )
+      )
+      (2): ResBlock(
+        (body): Sequential(
+          (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (1): ReLU(inplace=True)
+          (2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        )
+      )
+      (3): ResBlock(
+        (body): Sequential(
+          (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (1): ReLU(inplace=True)
+          (2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        )
+      )
+      (4): ResBlock(
+        (body): Sequential(
+          (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (1): ReLU(inplace=True)
+          (2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        )
+      )
+      (5): ResBlock(
+        (body): Sequential(
+          (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (1): ReLU(inplace=True)
+          (2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        )
+      )
+      (6): ResBlock(
+        (body): Sequential(
+          (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (1): ReLU(inplace=True)
+          (2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        )
+      )
+      (7): ResBlock(
+        (body): Sequential(
+          (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (1): ReLU(inplace=True)
+          (2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        )
+      )
+      (8): ResBlock(
+        (body): Sequential(
+          (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (1): ReLU(inplace=True)
+          (2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        )
+      )
+      (9): ResBlock(
+        (body): Sequential(
+          (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (1): ReLU(inplace=True)
+          (2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        )
+      )
+      (10): ResBlock(
+        (body): Sequential(
+          (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (1): ReLU(inplace=True)
+          (2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        )
+      )
+      (11): ResBlock(
+        (body): Sequential(
+          (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (1): ReLU(inplace=True)
+          (2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        )
+      )
+      (12): ResBlock(
+        (body): Sequential(
+          (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (1): ReLU(inplace=True)
+          (2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        )
+      )
+      (13): ResBlock(
+        (body): Sequential(
+          (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (1): ReLU(inplace=True)
+          (2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        )
+      )
+      (14): ResBlock(
+        (body): Sequential(
+          (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (1): ReLU(inplace=True)
+          (2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        )
+      )
+      (15): ResBlock(
+        (body): Sequential(
+          (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (1): ReLU(inplace=True)
+          (2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        )
+      )
+      (16): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    )
+  )
+  (conv_ch): Conv2d(64, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (conv_vs): ModuleList(
+    (0): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  )
+  (conv_qs): ModuleList(
+    (0): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  )
+  (conv_ks): ModuleList(
+    (0): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  )
+  (pb_encoder): PositionEncoder(
+    (proj): Linear(in_features=64, out_features=8, bias=True)
+  )
+  (imnets): ModuleList(
+    (0): MLP(
+      (act): GELU(approximate='none')
+      (layers): Sequential(
+        (0): Linear(in_features=12546, out_features=256, bias=True)
+        (1): GELU(approximate='none')
+        (2): Linear(in_features=256, out_features=256, bias=True)
+        (3): GELU(approximate='none')
+        (4): Linear(in_features=256, out_features=256, bias=True)
+        (5): GELU(approximate='none')
+        (6): Linear(in_features=256, out_features=256, bias=True)
+        (7): GELU(approximate='none')
+        (8): Linear(in_features=256, out_features=3, bias=True)
+      )
+    )
+  )
+)
+epoch 1/1000, lr:0.0001, train: loss=0.0425, val: psnr=25.6344, 3.0m 3.0m/50.4h
+epoch 2/1000, lr:0.0001, train: loss=0.0374, val: psnr=25.9683, 2.7m 5.8m/48.0h
+epoch 3/1000, lr:0.0001, train: loss=0.0371, val: psnr=25.8491, 2.7m 8.5m/47.2h
+epoch 4/1000, lr:0.0001, train: loss=0.0362, val: psnr=26.0130, 2.7m 11.2m/46.8h
+epoch 5/1000, lr:0.0001, train: loss=0.0362, val: psnr=26.0555, 2.7m 14.0m/46.6h
+epoch 6/1000, lr:0.0001, train: loss=0.0355, val: psnr=26.0714, 2.7m 16.7m/46.5h
+epoch 7/1000, lr:0.0001, train: loss=0.0342, val: psnr=26.0861, 2.7m 19.5m/46.4h
+epoch 8/1000, lr:0.0001, train: loss=0.0349, val: psnr=26.1867, 2.7m 22.2m/46.3h
+epoch 9/1000, lr:0.0001, train: loss=0.0349, val: psnr=26.0649, 2.8m 25.0m/46.3h
+epoch 10/1000, lr:0.0001, train: loss=0.0335, val: psnr=26.4949, 2.8m 27.7m/46.2h
+epoch 11/1000, lr:0.0001, train: loss=0.0338, val: psnr=26.2573, 2.7m 30.5m/46.2h
+epoch 12/1000, lr:0.0001, train: loss=0.0340, val: psnr=26.0503, 2.7m 33.2m/46.2h
+epoch 13/1000, lr:0.0001, train: loss=0.0341, val: psnr=26.2163, 2.7m 36.0m/46.1h
+epoch 14/1000, lr:0.0001, train: loss=0.0341, val: psnr=26.3841, 2.8m 38.7m/46.1h
+epoch 15/1000, lr:0.0001, train: loss=0.0333, val: psnr=26.2694, 2.7m 41.5m/46.1h
+epoch 16/1000, lr:0.0001, train: loss=0.0337, val: psnr=26.1614, 2.7m 44.2m/46.1h
+epoch 17/1000, lr:0.0001, train: loss=0.0331, val: psnr=26.2670, 2.8m 47.0m/46.0h
+epoch 18/1000, lr:0.0001, train: loss=0.0336, val: psnr=26.3241, 2.8m 49.7m/46.0h
+epoch 19/1000, lr:0.0001, train: loss=0.0330, val: psnr=26.1454, 2.7m 52.5m/46.0h
+epoch 20/1000, lr:0.0001, train: loss=0.0334, val: psnr=26.2240, 2.7m 55.2m/46.0h
+epoch 21/1000, lr:0.0001, train: loss=0.0327, val: psnr=26.3135, 2.8m 58.0m/46.0h
+epoch 22/1000, lr:0.0001, train: loss=0.0336, val: psnr=26.2945, 2.8m 1.0h/46.0h

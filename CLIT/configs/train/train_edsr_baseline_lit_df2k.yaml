@@ -2,8 +2,8 @@ train_dataset:
   dataset:
     name: image-folder
     args:
-      root_path: ../liif/load/div2k/DIV2K_train_HR
-      repeat: 40 # 20 for bz 16
+      root_path: ../liif/load/DF2K/HR_train
+      repeat: 10 # 40 # 20 for bz 16
       cache: in_memory
   wrapper:
     name: sr-implicit-downsampled-cascaded
