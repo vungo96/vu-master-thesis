@@ -178,3 +178,4 @@ epoch 19/1000, lr:0.0001, train: loss=0.0330, val: psnr=26.1454, 2.7m 52.5m/46.0
 epoch 20/1000, lr:0.0001, train: loss=0.0334, val: psnr=26.2240, 2.7m 55.2m/46.0h
 epoch 21/1000, lr:0.0001, train: loss=0.0327, val: psnr=26.3135, 2.8m 58.0m/46.0h
 epoch 22/1000, lr:0.0001, train: loss=0.0336, val: psnr=26.2945, 2.8m 1.0h/46.0h
+epoch 23/1000, lr:0.0001, train: loss=0.0327, val: psnr=26.4002, 2.8m 1.1h/46.0h
