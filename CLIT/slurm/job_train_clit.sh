@@ -23,4 +23,4 @@ module load cudnn/8.5.0.96_cuda11-fasrc01
  
 ### beginning of executable commands
 source activate liif_glean_experiment_python3.7_torch1.12.0
-python train.py --config configs/train/train_edsr_baseline_lit_df2k.yaml --name lit_edsr --tag sample-2304-scale-1to4-batch-32-inputs-48-df2k
+python train.py --config configs/train/train_edsr_baseline_lit.yaml --name lit_edsr --tag sample-2304-scale-1to4-batch-32-inputs-48
