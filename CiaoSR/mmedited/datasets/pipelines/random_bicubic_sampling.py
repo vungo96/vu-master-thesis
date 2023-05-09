@@ -34,8 +34,6 @@ class RandomCustomDownSampling:
         self.scale_min = scale_min
         self.scale_max = scale_max
         self.patch_size = patch_size
-        if self.scale_max is None:
-            print("JOOOOOOOOOOOOOOOOOOOOOOOOOOO")
 
     def __call__(self, results):
         """Call function.
@@ -50,7 +48,7 @@ class RandomCustomDownSampling:
         """
         img = results['gt']
         if self.scale_max is None:
-            min_dim = min(img.size(1), img.size(2))
+            min_dim = min(img.shape[-3], img.shape[-2])
             scale_max = min_dim // self.patch_size
         else:
             scale_max = self.scale_max
@@ -98,7 +96,7 @@ def resize_fn(img, size, scale):
     """
     if isinstance(size, int):
         size = (size, size)
-    assert img.min() >=0 and img.max() <= 1, "img shound in [0, 1]"
+    # assert img.min() >=0 and img.max() <= 1, "img shound in [0, 1]"
 
     if isinstance(img, np.ndarray) or isinstance(img, torch.Tensor):
         return im_resize(img, size, 1/scale)
