@@ -3,10 +3,10 @@
 ### Start of Slurm SBATCH definitions
 #SBATCH -c 14               # Number of cores (-c)
 #SBATCH -t 1-00:00          # Runtime in D-HH:MM, minimum of t minutes
-#SBATCH -p gpu_requeue              # Partition to submit to
+#SBATCH -p gpu              # Partition to submit to
 #SBATCH --mem-per-cpu=20000M #M is the default and can therefore be omitted, but could also be K(ilo)|G(iga)|T(era)
-#SBATCH --nodes=1              # number of nodes
-#SBATCH --ntasks-per-node=4     # MPI processes per node
+# --nodes=1              # number of nodes
+# --ntasks-per-node=4     # MPI processes per node
 #SBATCH --gres=gpu:4
 #SBATCH -o tools/outputs/myoutput_%j.out  # File to which STDOUT will be written, %j inserts jobid
 #SBATCH -e tools/outputs/myerrors_%j.err  # File to which STDERR will be written, %j inserts jobid
