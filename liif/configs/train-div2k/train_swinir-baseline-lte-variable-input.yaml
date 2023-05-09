@@ -29,12 +29,15 @@ val_dataset:
       repeat: 160
       cache: in_memory
   wrapper:
-    name: sr-implicit-downsampled
+    name: sr-implicit-downsampled-collate-batch
     args:
-      inp_size: 48
-      scale_max: 4
+      inp_sizes: [48]
+      augment: true
       sample_q: 2304
-  collate_batch: false
+      # limit_scale: 3
+      scale_min: 1
+      scale_max: 4
+  collate_batch: true
   batch_size: 32
 
 data_norm:

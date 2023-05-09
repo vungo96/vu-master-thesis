@@ -168,6 +168,7 @@ def main(config_, save_path):
 
     n_gpus = len(os.environ['CUDA_VISIBLE_DEVICES'].split(','))
     if n_gpus > 1:
+        print("Use multiple GPUs")
         model = nn.parallel.DataParallel(model)
 
     epoch_max = config['epoch_max']

@@ -2,10 +2,10 @@
 
 ### Start of Slurm SBATCH definitions
 #SBATCH -c 14               # Number of cores (-c)
-#SBATCH -t 2-08:00          # Runtime in D-HH:MM, minimum of t minutes
+#SBATCH -t 2-00:00  # 2-08:00          # Runtime in D-HH:MM, minimum of t minutes
 #SBATCH -p gpu_requeue              # Partition to submit to
 #SBATCH --mem-per-cpu=20G #M is the default and can therefore be omitted, but could also be K(ilo)|G(iga)|T(era)
-#SBATCH --gres=gpu:2
+#SBATCH --gres=gpu:4
 #SBATCH -o slurm/outputs/myoutput_%j.out  # File to which STDOUT will be written, %j inserts jobid
 #SBATCH -e slurm/outputs/myerrors_%j.err  # File to which STDERR will be written, %j inserts jobid
 
@@ -23,4 +23,4 @@ module load cudnn/8.5.0.96_cuda11-fasrc01
  
 ### beginning of executable commands
 source activate liif_glean_experiment_python3.7_torch1.12.0
-python train.py --config configs/train/train_edsr_baseline_lit.yaml --name lit_edsr --tag sample-2304-scale-1to4-batch-32-inputs-48
+python train.py --config configs/train/train_edsr_baseline_lit.yaml --name lit_edsr --tag sample-2304-scale-1to4-batch-32-inputs-48-resume

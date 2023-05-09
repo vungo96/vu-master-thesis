@@ -103,6 +103,7 @@ def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None, ma
                 pred = model(inp, batch['coord'], batch['cell'])
         else:
             if inp_scale_max is not None:
+                # TODO: normalize again
                 inp_scale = (batch['inp_scale'] - 1) / (inp_scale_max - 1)
                 pred = batched_predict(model, inp,
                                 batch['coord'], batch['cell']*max(scale/max_scale, 1), eval_bsize, inp_scale)

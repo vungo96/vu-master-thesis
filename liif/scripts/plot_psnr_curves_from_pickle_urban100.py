@@ -2,20 +2,20 @@ import matplotlib.pyplot as plt
 import os
 import pickle
 
-scale  = "18"
+scale  = "2"
 
 base_path = 'test_curves/psnr_lists/' + scale + '_urban100'
 
 paths = [
-         base_path + '/eval_results1to4-flickr.pickle', 
-        #base_path + '/eval_results1toMax-flickr.pickle',
-         base_path + '/eval_results1toMax-flickr-scale-mlp.pickle',
+         base_path + '/eval_results1to4-baseline.pickle', 
+         base_path + '/eval_results1to4-lsdir.pickle', 
+         base_path + '/eval_results1toMax-lsdir.pickle',
          ]
 
 labels = [
-          '1to4-flickr', 
-          #'1toMax-flickr',
-          '1toMax-flickr-scale-mlp'
+          '1to4-baseline', 
+          '1to4-lsdir',
+          '1toMax-lsdir'
           ]
 
 tag = "urban100-" + scale
@@ -56,7 +56,7 @@ ax.set_xlabel("Training Iterations e5")
 ax.set_ylabel("PSNR")
 
 # Set title
-ax.set_title("PSNR Curves Comparison")
+ax.set_title("PSNR Curves Comparison - Urban100 for scale " + scale)
 
 # Plot each PSNR list as a curve
 for i, psnr_list in enumerate(psnr_lists):
