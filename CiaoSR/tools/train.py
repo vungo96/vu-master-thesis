@@ -7,6 +7,7 @@ import time
 
 import mmcv
 import torch
+import mmedited.datasets.pipelines.random_bicubic_sampling
 from mmcv import Config
 from mmcv.runner import init_dist
 

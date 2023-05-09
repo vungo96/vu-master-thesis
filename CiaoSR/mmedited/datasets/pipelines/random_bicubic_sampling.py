@@ -7,8 +7,11 @@ from mmcv import imresize
 
 from mmedited.utils.utils_image import im_resize
 
+from mmedit.datasets.registry import PIPELINES
 
-class RandomBicubicSampling:
+
+@PIPELINES.register_module('RandomCustomDownSampling')
+class RandomCustomDownSampling:
     """Generate LQ image from GT (and crop), which will randomly pick a scale.
 
     Args:
@@ -31,6 +34,8 @@ class RandomBicubicSampling:
         self.scale_min = scale_min
         self.scale_max = scale_max
         self.patch_size = patch_size
+        if self.scale_max is None:
+            print("JOOOOOOOOOOOOOOOOOOOOOOOOOOO")
 
     def __call__(self, results):
         """Call function.
@@ -45,11 +50,9 @@ class RandomBicubicSampling:
         """
         img = results['gt']
         if self.scale_max is None:
-            print("scale_max None")
             min_dim = min(img.size(1), img.size(2))
             scale_max = min_dim // self.patch_size
         else:
-            print("scale_max = ", self.scale_max)
             scale_max = self.scale_max
         scale = np.random.uniform(self.scale_min, scale_max)
 

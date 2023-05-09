@@ -1,5 +1,5 @@
 exp_name = '001_localimplicitsr_edsr_div2k_g1_c64b16_1000k_unfold_lec_mulwkv_res_nonlocal_max_scale'
-scale_min, scale_max = 1, 4
+scale_min, scale_max = 1, None
 val_scale = 4
 
 from mmedited.models.restorers.ciaosr import CiaoSR
@@ -62,7 +62,7 @@ train_pipeline = [
         flag='color',
         channel_order='rgb'),
     dict(
-        type='RandomDownSampling',
+        type='RandomCustomDownSampling',
         scale_min=scale_min,
         scale_max=None,
         patch_size=48),
@@ -87,7 +87,7 @@ valid_pipeline = [
         key='gt',
         flag='color',
         channel_order='rgb'),
-    dict(type='RandomDownSampling', scale_min=val_scale, scale_max=val_scale),
+    dict(type='RandomCustomDownSampling', scale_min=val_scale, scale_max=val_scale),
     dict(type='RescaleToZeroOne', keys=['lq', 'gt']),
     dict(type='ImageToTensor', keys=['lq', 'gt']),
     dict(type='GenerateCoordinateAndCell'),

@@ -18,7 +18,7 @@ srun -p ${PARTITION} \
     -c 10 \
     --job-name=${JOB_NAME} \
     --ntasks=${GPUS} \
-    --mem-per-cpu=20000M \
+    --mem-per-cpu=10000M \
     --kill-on-bad-exit=1 \
     ${SRUN_ARGS} \
     python -u tools/test.py ${CONFIG} ${CHECKPOINT} --launcher="slurm" ${PY_ARGS}
