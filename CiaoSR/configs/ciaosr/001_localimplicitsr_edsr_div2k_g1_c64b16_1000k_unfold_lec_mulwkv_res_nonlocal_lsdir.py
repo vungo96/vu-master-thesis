@@ -1,5 +1,5 @@
-exp_name = '001_localimplicitsr_edsr_div2k_g1_c64b16_1000k_unfold_lec_mulwkv_res_nonlocal_max_scale_lsdir'
-scale_min, scale_max = 1, None
+exp_name = '001_localimplicitsr_edsr_div2k_g1_c64b16_1000k_unfold_lec_mulwkv_res_nonlocal_lsdir'
+scale_min, scale_max = 1, 4
 val_scale = 4
 
 from mmedited.models.restorers.ciaosr import CiaoSR
@@ -62,7 +62,7 @@ train_pipeline = [
         flag='color',
         channel_order='rgb'),
     dict(
-        type='RandomCustomDownSampling',
+        type='RandomDownSampling',
         scale_min=scale_min,
         scale_max=scale_max,
         patch_size=48),
@@ -130,14 +130,14 @@ data = dict(
         times=1,
         dataset=dict(
             type=train_dataset_type,
-            gt_folder=f'{data_dir}/LSDIR/train/HR',  #f'{data_dir}/div2k/DIV2K_train_HR', #
+            gt_folder=f'{data_dir}/LSDIR/train/HR',  #f'{data_dir}/DIV2K/DIV2K_train_HR', #
             pipeline=train_pipeline,
             scale=scale_max)),
     val=dict(
         type=val_dataset_type,
         gt_folder=f'{data_dir}/benchmark/Urban100/HR',#f'{mydata_dir}/Classical/Urban100/GTmod12',  #f'{data_dir}/testset/Urban100/HR',  #f'{data_dir}/sr_test/Urban100', #
         pipeline=valid_pipeline,
-        scale=4),
+        scale=scale_max),
     test=dict(
         # type=test_dataset_type,
         # lq_folder=f'{data_dir}/testset/DIV2K_val/LR_bicubic/X3', #f'{mydata_dir}/Classical/Urban100/LRbicx4',  #f'{mydata_dir}/Classical/Set14/LRbicx4', #f'{mydata_dir}/Classical/BSDS100/LRbicx2',  #
