@@ -49,7 +49,7 @@ class RandomCustomDownSampling:
         img = results['gt']
         if self.scale_max is None:
             min_dim = min(img.shape[-3], img.shape[-2])
-            scale_max = min_dim // self.patch_size
+            scale_max = min_dim // self.patch_size - 1 # fix
         else:
             scale_max = self.scale_max
         scale = np.random.uniform(self.scale_min, scale_max)
