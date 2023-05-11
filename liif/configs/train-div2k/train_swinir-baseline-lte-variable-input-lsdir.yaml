@@ -63,10 +63,10 @@ optimizer:
   name: adam
   args:
     lr: 2.e-4
-epoch_max: 2000
+epoch_max: 400
 multi_step_lr:
-  milestones: [1000, 1600, 1800, 1900]
+  milestones: [200, 320, 360, 380] # [1000, 1600, 1800, 1900]
   gamma: 0.5
 
 epoch_val: 1
-epoch_save: 100
+epoch_save: 20

@@ -1,5 +1,6 @@
 slurm/outputs
 save
+test_curves
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

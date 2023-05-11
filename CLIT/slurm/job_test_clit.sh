@@ -28,18 +28,18 @@ module load cudnn/8.5.0.96_cuda11-fasrc01
 ### beginning of executable commands
 source activate liif_glean_experiment_python3.7_torch1.12.0
 
-python test.py --config configs/test/test-div2k-2$scale.yaml --model $dir/$tag/epoch-best.pth --name $tag
-python test.py --config configs/test/test-div2k-3$scale.yaml --model $dir/$tag/epoch-best.pth --name $tag
-python test.py --config configs/test/test-div2k-4$scale.yaml --model $dir/$tag/epoch-best.pth --name $tag
-python test.py --config configs/test/test-div2k-6$scale.yaml --model $dir/$tag/epoch-best.pth --name $tag
-python test.py --config configs/test/test-div2k-12$scale.yaml --model $dir/$tag/epoch-best.pth --name $tag
-python test.py --config configs/test/test-div2k-18$scale.yaml --model $dir/$tag/epoch-best.pth --name $tag
-python test.py --config configs/test/test-div2k-24$scale.yaml --model $dir/$tag/epoch-best.pth --name $tag
-python test.py --config configs/test/test-div2k-30$scale.yaml --model $dir/$tag/epoch-best.pth --name $tag
+#python test.py --config configs/test/test-div2k-2$scale.yaml --model $dir/$tag/epoch-best.pth --name $tag
+#python test.py --config configs/test/test-div2k-3$scale.yaml --model $dir/$tag/epoch-best.pth --name $tag
+#python test.py --config configs/test/test-div2k-4$scale.yaml --model $dir/$tag/epoch-best.pth --name $tag
+#python test.py --config configs/test/test-div2k-6$scale.yaml --model $dir/$tag/epoch-best.pth --name $tag
+#python test.py --config configs/test/test-div2k-12$scale.yaml --model $dir/$tag/epoch-best.pth --name $tag
+#python test.py --config configs/test/test-div2k-18$scale.yaml --model $dir/$tag/epoch-best.pth --name $tag
+#python test.py --config configs/test/test-div2k-24$scale.yaml --model $dir/$tag/epoch-best.pth --name $tag
+#python test.py --config configs/test/test-div2k-30$scale.yaml --model $dir/$tag/epoch-best.pth --name $tag
 
-python test.py --config configs/test/test-div2k-2$scale.yaml --model $dir/$tag/epoch-last.pth --name $tag-last
-python test.py --config configs/test/test-div2k-3$scale.yaml --model $dir/$tag/epoch-last.pth --name $tag-last
-python test.py --config configs/test/test-div2k-4$scale.yaml --model $dir/$tag/epoch-last.pth --name $tag-last
+#python test.py --config configs/test/test-div2k-2$scale.yaml --model $dir/$tag/epoch-last.pth --name $tag-last
+#python test.py --config configs/test/test-div2k-3$scale.yaml --model $dir/$tag/epoch-last.pth --name $tag-last
+#python test.py --config configs/test/test-div2k-4$scale.yaml --model $dir/$tag/epoch-last.pth --name $tag-last
 python test.py --config configs/test/test-div2k-6$scale.yaml --model $dir/$tag/epoch-last.pth --name $tag-last
 python test.py --config configs/test/test-div2k-12$scale.yaml --model $dir/$tag/epoch-last.pth --name $tag-last
 python test.py --config configs/test/test-div2k-18$scale.yaml --model $dir/$tag/epoch-last.pth  --name $tag-last

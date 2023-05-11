@@ -9,7 +9,7 @@ test_dataset:
     args:
       batch_size: 1
       scale_max: 30
-      scale_base: 4
+      scale_base: 30 # 4
       phase: valid
 
   batch_size: 1
