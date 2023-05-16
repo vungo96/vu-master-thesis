@@ -70,5 +70,6 @@ multi_step_lr:
   milestones: [80, 160, 240, 320]
   gamma: 0.5
 
+resume: save_test/_train_edsr-baseline-lte-variable-input-lsdir3_sample-4096-scale-1toMax-batch-64-inputs-24-48-72-96-lsdir/epoch-last.pth
 epoch_val: 1
 epoch_save: 20

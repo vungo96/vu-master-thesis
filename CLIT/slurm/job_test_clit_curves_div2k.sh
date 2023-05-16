@@ -29,10 +29,10 @@ module load cudnn/8.5.0.96_cuda11-fasrc01
 source activate liif_glean_experiment_python3.7_torch1.12.0
 
 python test_all_epochs.py --config configs/test/test-div2k-2.yaml --model_path $dir/$model_path --scale 2 --tag $tag
-python test_all_epochs.py --config configs/test/test-div2k-3.yaml --model_path $dir/$model_path --scale 3 --tag $tag
-python test_all_epochs.py --config configs/test/test-div2k-4.yaml --model_path $dir/$model_path --scale 4 --tag $tag
-python test_all_epochs.py --config configs/test/test-div2k-6.yaml --model_path $dir/$model_path --scale 6 --tag $tag 
-python test_all_epochs.py --config configs/test/test-div2k-12.yaml --model_path $dir/$model_path --scale 12 --tag $tag
+#python test_all_epochs.py --config configs/test/test-div2k-3.yaml --model_path $dir/$model_path --scale 3 --tag $tag
+#python test_all_epochs.py --config configs/test/test-div2k-4.yaml --model_path $dir/$model_path --scale 4 --tag $tag
+#python test_all_epochs.py --config configs/test/test-div2k-6.yaml --model_path $dir/$model_path --scale 6 --tag $tag 
+#python test_all_epochs.py --config configs/test/test-div2k-12.yaml --model_path $dir/$model_path --scale 12 --tag $tag
 python test_all_epochs.py --config configs/test/test-div2k-18.yaml --model_path $dir/$model_path --scale 18 --tag $tag  
 python test_all_epochs.py --config configs/test/test-div2k-24.yaml --model_path $dir/$model_path --scale 24 --tag $tag 
 python test_all_epochs.py --config configs/test/test-div2k-30.yaml --model_path $dir/$model_path --scale 30 --tag $tag 

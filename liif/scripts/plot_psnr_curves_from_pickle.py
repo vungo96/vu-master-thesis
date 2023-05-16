@@ -2,31 +2,27 @@ import matplotlib.pyplot as plt
 import os
 import pickle
 
-scale  = "6"
+scale  = "30"
 
 base_path = 'test_curves/psnr_lists/' + scale
 
 paths = [base_path + '/eval_results1to4-baseline.pickle', 
          base_path + '/eval_results1toMax.pickle', 
-         base_path + '/eval_results1to4-flickr.pickle', 
-         base_path + '/eval_results1toMax-flickr.pickle',
-         base_path + '/eval_results1toMax-flickr-scale-mlp.pickle',
          base_path + '/eval_results1to4-lsdir.pickle',
          base_path + '/eval_results1toMax-lsdir.pickle',
-         base_path + '/eval_results1toMax-scale-mlp-no-lrschedule.pickle',
+         base_path + '/eval_results1toMax-lsdir-finetune-1to4-lr-1.e-5.pickle',
+         #base_path + '/eval_results1toMax-lsdir-5m-iterations.pickle',
          ]
 
 labels = ['1to4-baseline',
           '1toMax',
-          '1to4-flickr', 
-          '1toMax-flickr',
-          '1toMax-flickr-scale-mlp',
           '1to4-lsdir',
           '1toMax-lsdir',
-          '1toMax-no-lrschedule-scale-mlp',
+          '1toMax-finetune-1to4-lr-1e-5',
+          #'1toMax-5m-iterations',
           ]
 
-tag = "div2k-test-" + scale
+tag = "div2k-4-" + scale
 
 psnr_lists = []
 

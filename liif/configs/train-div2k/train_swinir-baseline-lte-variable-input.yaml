@@ -62,9 +62,9 @@ optimizer:
   name: adam
   args:
     lr: 2.e-4
-epoch_max: 1000
+epoch_max: 2000
 multi_step_lr:
-  milestones: [500, 800, 900, 950]
+  milestones: [1000, 1600, 1800, 1900]
   gamma: 0.5
 
 epoch_val: 1

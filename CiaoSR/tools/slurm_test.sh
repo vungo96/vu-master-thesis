@@ -2,12 +2,13 @@
 
 ### Start of Slurm SBATCH definitions
 #SBATCH -c 14               # Number of cores (-c)
-#SBATCH -t 1-00:00          # Runtime in D-HH:MM, minimum of t minutes
-#SBATCH -p gpu              # Partition to submit to
+#SBATCH -t 2-00:00          # Runtime in D-HH:MM, minimum of t minutes
+#SBATCH -p gpu_requeue              # Partition to submit to
 #SBATCH --mem-per-cpu=20000M #M is the default and can therefore be omitted, but could also be K(ilo)|G(iga)|T(era)
 # --nodes=1              # number of nodes
-# --ntasks-per-node=4     # MPI processes per node
-#SBATCH --gres=gpu:4
+#SBATCH --ntasks-per-node=2     # MPI processes per node
+#SBATCH --gres=gpu:8
+#SBATCH --ntasks=2
 #SBATCH -o tools/outputs/myoutput_%j.out  # File to which STDOUT will be written, %j inserts jobid
 #SBATCH -e tools/outputs/myerrors_%j.err  # File to which STDERR will be written, %j inserts jobid
 
@@ -30,7 +31,7 @@ source activate ciaosr6
 export MASTER_PORT=$((12000 + $RANDOM % 20000))
 
 CONFIG=configs/ciaosr/001_localimplicitsr_edsr_div2k_g1_c64b16_1000k_unfold_lec_mulwkv_res_nonlocal.py
-GPUS=4
+GPUS=8
 CKPT=work_dirs/001_localimplicitsr_edsr_div2k_g1_c64b16_1000k_unfold_lec_mulwkv_res_nonlocal/latest.pth
 
 PYTHONPATH=/bin/..:tools/..:
