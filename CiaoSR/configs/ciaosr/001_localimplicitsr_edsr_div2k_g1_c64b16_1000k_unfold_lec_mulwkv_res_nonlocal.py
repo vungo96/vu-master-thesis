@@ -46,8 +46,8 @@ model = dict(
     pixel_loss=dict(type='L1Loss', loss_weight=1.0, reduction='mean'))
 # model training and testing settings
 train_cfg = None
-# test_cfg = dict(metrics=['PSNR', 'SSIM'], crop_border=val_scale, tile=128, tile_overlap=32, scale=val_scale) #, convert_to='y' val_scale+6
-test_cfg = dict(metrics=['PSNR', 'SSIM'], crop_border=val_scale, scale=val_scale) #, convert_to='y' val_scale+6
+test_cfg = dict(metrics=['PSNR', 'SSIM'], crop_border=val_scale, tile=64, tile_overlap=32, scale=val_scale) #, convert_to='y' val_scale+6
+# test_cfg = dict(metrics=['PSNR', 'SSIM'], crop_border=val_scale, scale=val_scale) #, convert_to='y' val_scale+6
 
 
 # dataset settings
@@ -178,7 +178,7 @@ dist_params = dict(backend='nccl')
 log_level = 'INFO'
 work_dir = f'{run_dir}/{exp_name}'
 load_from = None
-resume_from = 'work_dirs/001_localimplicitsr_edsr_div2k_g1_c64b16_1000k_unfold_lec_mulwkv_res_nonlocal/iter_714000.pth'
+resume_from = None
 workflow = [('train', 1)]
 find_unused_parameters = True
 test_checkpoint_path = f'{run_dir}/{exp_name}/latest.pth' # use --checkpoint None to enable this path in testing

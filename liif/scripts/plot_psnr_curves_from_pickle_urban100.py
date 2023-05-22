@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import os
 import pickle
 
-scale  = "2"
+scale  = "12"
 
 base_path = 'test_curves/psnr_lists/' + scale + '_urban100'
 
@@ -56,12 +56,14 @@ ax.set_xlabel("Training Iterations e5")
 ax.set_ylabel("PSNR")
 
 # Set title
-ax.set_title("PSNR Curves Comparison - Urban100 for scale " + scale)
+ax.set_title("PSNR Curves Comparison - EDSR-LTE (x" + scale + ")")
+
+baseline_psnr = round(psnr_lists[0][-1], 2)
 
 # Plot each PSNR list as a curve
 for i, psnr_list in enumerate(psnr_lists):
-    ax.plot(range(1, len(psnr_list)+1), psnr_list, label=labels[i] + " last-psnr:" + str(round(psnr_list[-1], 2)))
-
+    ax.plot(range(1, len(psnr_list)+1), psnr_list, label=labels[i] + " last-psnr:" + str(round(psnr_list[-1], 2)) + " (" 
+            + str(round(round(psnr_list[-1], 2) - baseline_psnr, 2)) + ")")
 # Set the position of the legend
 ax.legend(loc='lower right', bbox_to_anchor=(0.95, 0.05), borderaxespad=0.0)
 

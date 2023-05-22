@@ -3,8 +3,8 @@ from PIL import Image
 from tqdm import tqdm
 
 save_folder = 'concatenated_images'
-image_folder1 = './_test-urban100-18__train_edsr-baseline-lte-variable-input_sample-2304-scale-1to4-batch-16-last'
-image_folder2 = './_test-urban100-18__train_edsr-baseline-lte-variable-input-lsdir2_sample-4096-scale-1toMax-batch-32-inputs-48-lsdir-last'
+image_folder1 = './_test-div2k-2__train_edsr-baseline-lte-variable-input_sample-2304-scale-1to4-batch-16-last'
+image_folder2 = './_test-div2k-2__train_edsr-baseline-lte-variable-input-lsdir2_sample-4096-scale-1toMax-batch-32-inputs-48-lsdir-last'
 
 # the number of epochs passed until we save images -> set in test.py
 num_epochs = 1
