@@ -67,5 +67,7 @@ multi_step_lr:
   milestones: [1000, 1600, 1800, 1900]
   gamma: 0.5
 
+resume: save_test/_train_swinir-baseline-lte-variable-input_sample-2304-scale-1to4-inputs-48-baseline/epoch-last.pth
+
 epoch_val: 1
 epoch_save: 100

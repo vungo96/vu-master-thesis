@@ -71,6 +71,6 @@ multi_step_lr:
   milestones: [200, 400, 600, 800]
   gamma: 0.5
 
-resume: _train_edsr-baseline-lte-variable-input-lsdir_sample-4096-scale-1to4-batch-32-inputs-48-lsdir-5M-iterations/epoch-last.pth
+#resume: _train_edsr-baseline-lte-variable-input-lsdir_sample-4096-scale-1to4-batch-32-inputs-48-lsdir-5M-iterations/epoch-last.pth
 epoch_val: 1
 epoch_save: 20

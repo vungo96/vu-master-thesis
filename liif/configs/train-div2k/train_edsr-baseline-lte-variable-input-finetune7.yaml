@@ -14,7 +14,7 @@ train_dataset:
       sample_q: 4096
       # limit_scale: 4 # change scale_min
       scale_min: 1
-      scale_max: 12
+      # scale_max: 12
       plot_scales: true
   collate_batch: true
   batch_size: 32
@@ -70,7 +70,7 @@ multi_step_lr:
   milestones: [40, 80, 120, 160]
   gamma: 0.5
 
-pretrained: save_test//epoch-200.pth  # change lr
+pretrained: save_test/_train_edsr-baseline-lte-variable-input-finetune7_sample-4096-scale-1to8-inputs-48-lsdir-cumulative/epoch-200.pth  # change lr
 
 epoch_val: 1
 epoch_save: 20

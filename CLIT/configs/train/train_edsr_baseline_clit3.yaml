@@ -88,5 +88,5 @@ multi_step_lr:
 epoch_val: 1
 epoch_save: 100
 
-resume: ~
+resume: save/clit2_edsr_sample-2304-scale-1to4-batch-32-inputs-48/epoch-last.pth
 pre_train: ~

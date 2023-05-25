@@ -1,7 +1,7 @@
 import os
 import time
 import shutil
-import math
+import random
 
 import torch
 import numpy as np
@@ -144,3 +144,14 @@ def calc_psnr(sr, hr, dataset=None, scale=1, rgb_range=1):
         valid = diff
     mse = valid.pow(2).mean()
     return -10 * torch.log10(mse)
+
+def choose_scale_exponentially(min_scale, max_scale):
+    scales = list(range(min_scale, max_scale + 1))
+    
+    # Calculate the weights exponentially
+    weights = [2**(scale - min_scale) for scale in scales]
+    
+    # Use random.choices to select a scale based on the defined weights
+    chosen_scale = random.choices(scales, weights)[0]
+    
+    return chosen_scale

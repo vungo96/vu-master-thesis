@@ -1,0 +1,16 @@
+cox
+bigmem
+gpu
+gpu_mig
+gpu_requeue
+gpu_test
+remoteviz
+rocky
+rocky_gpu
+serial_requeue
+shared
+test
+ultramem
+unrestricted
+seas_compute
+seas_gpu

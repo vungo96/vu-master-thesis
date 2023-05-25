@@ -1,6 +1,6 @@
 exp_name = '001_localimplicitsr_edsr_div2k_g1_c64b16_1000k_unfold_lec_mulwkv_res_nonlocal_max_scale_lsdir'
 scale_min, scale_max = 1, None
-val_scale = 4
+val_scale = 30
 
 from mmedited.models.restorers.ciaosr import CiaoSR
 from mmedited.models.backbones.sr_backbones.ciaosr_net import LocalImplicitSREDSR
