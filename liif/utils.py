@@ -7,6 +7,8 @@ import torch
 import numpy as np
 from torch.optim import SGD, Adam
 from tensorboardX import SummaryWriter
+from torchmetrics.functional import structural_similarity_index_measure
+from torchmetrics.image.lpip import LearnedPerceptualImagePatchSimilarity
 
 
 class Averager():
@@ -144,6 +146,38 @@ def calc_psnr(sr, hr, dataset=None, scale=1, rgb_range=1):
         valid = diff
     mse = valid.pow(2).mean()
     return -10 * torch.log10(mse)
+
+def calc_ssim(sr, hr, dataset=None, scale=1):
+    if dataset is not None:
+        if dataset == 'benchmark':
+            shave = scale
+        elif dataset == 'div2k':
+            shave = scale + 6
+        else:
+            raise NotImplementedError
+        sr = sr[..., shave:-shave, shave:-shave]
+        hr = hr[..., shave:-shave, shave:-shave]
+
+        return structural_similarity_index_measure(sr, hr)
+    else:
+        raise NotImplementedError
+
+def calc_lpips(sr, hr, dataset=None, scale=1):
+    if dataset is not None:
+        if dataset == 'benchmark':
+            shave = scale
+        elif dataset == 'div2k':
+            shave = scale + 6
+        else:
+            raise NotImplementedError
+        sr = sr[..., shave:-shave, shave:-shave]
+        hr = hr[..., shave:-shave, shave:-shave]
+
+        lpips = LearnedPerceptualImagePatchSimilarity(net_type='vgg')
+
+        return lpips(sr, hr)
+    else:
+        raise NotImplementedError
 
 def choose_scale_exponentially(min_scale, max_scale):
     scales = list(range(min_scale, max_scale + 1))
