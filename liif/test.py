@@ -6,6 +6,7 @@ from functools import partial
 from torchvision import transforms
 import torch.nn as nn
 
+import math
 import yaml
 import torch
 from torch.utils.data import DataLoader
@@ -17,10 +18,10 @@ import utils
 
 def save_images_to_dir(out_dir, inp, pred, gt, step=0):
     # bring pred and gt back to h x w
-    h, w = inp.shape[2:]
-    s = int(math.sqrt(pred.shape[1] // (h*w)))
-    pred = pred.view(pred.shape[0], h*s, w*s, 3).permute(0, 3, 1, 2)
-    gt = gt.view(gt.shape[0], h*s, w*s, 3).permute(0, 3, 1, 2)
+    h, w = pred.shape[-2], pred.shape[-1]
+    #s = int(math.sqrt(pred.shape[1] // (h*w)))
+    #pred = pred.view(pred.shape[0], h, w, 3).permute(0, 3, 1, 2)
+    #gt = gt.view(gt.shape[0], h, w, 3).permute(0, 3, 1, 2)
 
     transforms.ToPILImage()(inp[0]).save(f'{out_dir}/{step}_inp.png')
     transforms.ToPILImage()(pred[0]).save(f'{out_dir}/{step}_pred.png')
@@ -128,9 +129,6 @@ def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None, ma
             add_images_to_writer(writer, batch['inp'], pred, batch['gt'],
                                 step=epoch, tag=str(i))
             first = False
-        
-        if out_dir is not None and (i % 5) == 0:
-            save_images_to_dir(out_dir, batch['inp'], pred, batch['gt'], step=i)
 
         if eval_type is not None:  # reshape for shaving-eval
             ih, iw = batch['inp'].shape[-2:]
@@ -140,6 +138,9 @@ def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None, ma
                 .permute(0, 3, 1, 2).contiguous()
             batch['gt'] = batch['gt'].view(*shape) \
                 .permute(0, 3, 1, 2).contiguous()
+            
+        if out_dir is not None and (i % 5) == 0:
+            save_images_to_dir(out_dir, batch['inp'], pred, batch['gt'], step=i)
 
         res_psnr = metric_psnr(pred, batch['gt'])
         val_res_psnr.add(res_psnr.item(), inp.shape[0])

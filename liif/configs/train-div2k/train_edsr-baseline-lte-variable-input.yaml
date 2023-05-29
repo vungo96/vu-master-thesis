@@ -3,7 +3,7 @@ train_dataset:
     name: image-folder
     args:
       root_path: ./load/div2k/DIV2K_train_HR
-      repeat: 20
+      repeat: 1
       cache: in_memory
   wrapper:
     name: sr-implicit-downsampled-collate-batch
@@ -11,6 +11,7 @@ train_dataset:
       inp_sizes: [48]
       augment: true
       sample_q: 4096
+      # sample_patch: true
       # limit_scale: 4 # change scale_min
       scale_min: 1
       scale_max: 4
@@ -34,9 +35,10 @@ val_dataset:
       inp_sizes: [48]
       augment: true
       sample_q: 4096
+      # sample_patch: true
       # limit_scale: 3
       scale_min: 1
-      # scale_max: 12
+      #scale_max: 8
   collate_batch: true
   batch_size: 32
 

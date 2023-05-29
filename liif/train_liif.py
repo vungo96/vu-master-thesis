@@ -140,8 +140,7 @@ def train(train_loader, model, optimizer, gradient_accumulation_steps):
 
         inp = (batch['inp'] - inp_sub) / inp_div
         if inp_scale_max is not None:
-            # TODO: normalize again
-            inp_scale = batch['inp_scale'] # (batch['inp_scale'] - 1) / (inp_scale_max - 1)
+            inp_scale = (batch['inp_scale'] - 1) / (inp_scale_max - 1)
             pred = model(inp, batch['coord'], batch['cell'], inp_scale)
         else:
             pred = model(inp, batch['coord'], batch['cell'])            

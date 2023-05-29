@@ -237,7 +237,7 @@ class SRImplicitDownsampled(Dataset):
 
     def __init__(self, dataset, inp_sizes=None, scale_min=1, scale_max=None,
                  augment=False, sample_q=None, plot_scales=False, limit_scale=None, 
-                 exp_dist_from=None):
+                 exp_dist_from=None, sample_patch=None):
         self.dataset = dataset
         self.inp_sizes = inp_sizes
         self.scale_min = scale_min
@@ -247,6 +247,7 @@ class SRImplicitDownsampled(Dataset):
         self.plot_scales = plot_scales
         self.limit_scale = limit_scale
         self.exp_dist_from = exp_dist_from
+        self.sample_patch = sample_patch
 
     def __len__(self):
         return len(self.dataset)
@@ -297,7 +298,6 @@ class SRImplicitDownsampled(Dataset):
             y0 = random.randint(0, img.shape[-1] - w_hr)
             crop_hr = img[:, x0: x0 + w_hr, y0: y0 + w_hr]
             crop_lr = resize_fn(crop_hr, w_lr)
-
             if self.augment:
                 hflip = random.random() < 0.5
                 vflip = random.random() < 0.5
@@ -318,10 +318,10 @@ class SRImplicitDownsampled(Dataset):
             hr_coord, hr_rgb = to_pixel_samples(crop_hr.contiguous())
 
             # sample q coordinates
-            if self.sample_q is not None:
+            if self.sample_q is not None and self.sample_patch is None:
                 # sample_q can be set higher than inp_size^2
                 sample_q = self.sample_q
-                if self.sample_q > len(hr_coord):
+                if self.sample_q > len(hr_coord) :
                     sample_q = len(hr_coord)
                 sample_lst = np.random.choice(
                     len(hr_coord), sample_q, replace=False)
@@ -333,6 +333,18 @@ class SRImplicitDownsampled(Dataset):
                 if ratio > 1:
                     hr_coord = hr_coord.repeat((self.sample_q // len(hr_coord)) + 1, 1)[:self.sample_q]
                     hr_rgb = hr_rgb.repeat((self.sample_q // len(hr_rgb)) + 1, 1)[:self.sample_q]
+
+            if self.sample_q is not None and self.sample_patch is not None:
+                sample_q = self.sample_q
+                sample_patch_size = round(math.sqrt(sample_q))
+
+                hr_coord_reshape = hr_coord.reshape(crop_hr.shape[-2], crop_hr.shape[-1], 2)
+                hr_rgb_reshape = hr_rgb.reshape(crop_hr.shape[-2], crop_hr.shape[-1], 3)
+                
+                x0 = random.randint(0, hr_coord_reshape.shape[0] - sample_patch_size)
+                y0 = random.randint(0, hr_coord_reshape.shape[1] - sample_patch_size)
+                hr_coord = hr_coord_reshape[x0: x0 + sample_patch_size, y0: y0 + sample_patch_size, :].reshape(sample_patch_size*sample_patch_size, 2)
+                hr_rgb = hr_rgb_reshape[x0: x0 + sample_patch_size, y0: y0 + sample_patch_size, :].reshape(sample_patch_size*sample_patch_size, 3)
 
             cell = torch.ones_like(hr_coord)
             cell[:, 0] *= 2 / crop_hr.shape[-2]
