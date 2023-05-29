@@ -2,25 +2,35 @@ import matplotlib.pyplot as plt
 import os
 import pickle
 
-scale  = "24"
+scale  = "30"
 
-metric = "lpips"
+metric = "psnr"
 
 base_path = 'test_curves/metric_lists/' + scale
 
-paths = [base_path + '/eval_results1toMax-lsdir-exp-dist-12.pickle', 
-         base_path + '/eval_results1toMax-lsdir-exp-dist-12.pickle'
+paths = [base_path + '/eval_results1to4-baseline.pickle',
+         base_path + '/eval_results1to4-lsdir.pickle',
+         base_path + '/eval_results1toMax-lsdir.pickle',
+         base_path + '/eval_results1toMax-lsdir-exp-dist-12.pickle', 
+         base_path + '/eval_results1to4-baseline-swinir.pickle',
+         base_path + '/eval_results1toMax-lsdir-swinir.pickle',
+         base_path + '/eval_results1toMax-lsdir-cumulative.pickle',
          ]
 
-labels = ['1toMax-lsdir-exp-dist-12',
+labels = ['1to4-baseline',
+          '1to4-lsdir',
+          '1toMax-lsdir',
           '1toMax-lsdir-exp-dist-12',
+          '1to4-baseline-swinir',
+          '1toMax-baseline-swinir',
+          '1toMax-lsdir-cumulative',
           ]
 
 tag = "div2k-test-" + scale
 
 metric_dicts = []
 
-offset = 0.005 #0.05
+offset = 0.05 #0.05
 
 for path in paths:
     # Load dictionary from first file created via pickle

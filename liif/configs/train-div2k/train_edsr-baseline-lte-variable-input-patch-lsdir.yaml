@@ -2,16 +2,17 @@ train_dataset:
   dataset:
     name: image-folder
     args:
-      root_path: ./load/div2k/DIV2K_train_HR
-      repeat: 20
-      cache: in_memory
+      root_path: ./load/LSDIR/train/HR
+      repeat: 1
+      #cache: in_memory
+      sharded: true
   wrapper:
     name: sr-implicit-downsampled-collate-batch
     args:
-      inp_sizes: [48]
+      inp_sizes: [64]
       augment: true
       sample_q: 4096
-      # sample_patch: true
+      sample_patch: true
       # limit_scale: 4 # change scale_min
       scale_min: 1
       scale_max: 4
@@ -34,7 +35,7 @@ val_dataset:
     args:
       inp_sizes: [48]
       augment: true
-      sample_q: 4096
+      sample_q: 2304
       # sample_patch: true
       # limit_scale: 3
       scale_min: 1
@@ -67,10 +68,10 @@ optimizer:
   name: adam
   args:
     lr: 1.e-4
-epoch_max: 2000
+epoch_max: 400
 multi_step_lr:
-  milestones: [] 
+  milestones: [80, 160, 240, 320]
   gamma: 0.5
 
 epoch_val: 1
-epoch_save: 100
+epoch_save: 20
