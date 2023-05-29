@@ -198,7 +198,7 @@ def main(config_, save_path):
         print("Use multiple gpus.")
         model = nn.parallel.DataParallel(model)
 
-    num_iter_per_epoch = math.ceil(len(train_loader.dataset) / config['train_dataset']['batch_size'])
+    num_iter_per_epoch = math.ceil(len(train_loader.dataset) / 16) # config['train_dataset']['batch_size'])
     iter_max = config['iter_max']
     epoch_max = math.ceil(iter_max / num_iter_per_epoch)
     epoch_val = math.ceil(config.get('iter_val') / num_iter_per_epoch)
@@ -268,7 +268,7 @@ def main(config_, save_path):
             else:
                 scale_aware = None
 
-            val_res = eval_psnr(val_loader, model_,
+            val_res, _, _ = eval_psnr(val_loader, model_,
                                 data_norm=config['data_norm'],
                                 eval_type=config.get('eval_type'),
                                 eval_bsize=config.get('eval_bsize'),
@@ -318,7 +318,7 @@ if __name__ == '__main__':
         save_name = '_' + args.config.split('/')[-1][:-len('.yaml')]
     if args.tag is not None:
         save_name += '_' + args.tag
-    save_path = os.path.join('./save_test', save_name)
+    save_path = os.path.join('./save_iter', save_name)
 
     print('Tag: ', args.tag)
 

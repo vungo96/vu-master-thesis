@@ -261,7 +261,7 @@ def main(config_, save_path):
             else:
                 scale_aware = None
 
-            val_res = eval_psnr(val_loader, model_,
+            val_res, _, _ = eval_psnr(val_loader, model_,
                                 data_norm=config['data_norm'],
                                 eval_type=config.get('eval_type'),
                                 eval_bsize=config.get('eval_bsize'),

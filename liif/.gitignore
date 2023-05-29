@@ -5,6 +5,7 @@ ckpts
 ckpts2
 save
 save_test
+save_iter
 save_test2
 save_test_tag
 .vscode

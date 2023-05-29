@@ -10,6 +10,7 @@ from torch.utils.data import Dataset
 from torchvision import transforms
 
 from datasets import register
+from PIL import ImageFile
 
 
 @register('image-folder')
@@ -19,6 +20,8 @@ class ImageFolder(Dataset):
                  repeat=1, cache='none', sharded=None):
         self.repeat = repeat
         self.cache = cache
+
+        ImageFile.LOAD_TRUNCATED_IMAGES = True
 
         if split_file is None:
             if sharded is None:

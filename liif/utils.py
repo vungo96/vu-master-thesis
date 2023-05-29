@@ -162,7 +162,7 @@ def calc_ssim(sr, hr, dataset=None, scale=1):
     else:
         raise NotImplementedError
 
-def calc_lpips(sr, hr, dataset=None, scale=1):
+def calc_lpips(sr, hr, dataset=None, scale=1, device='cuda'):
     if dataset is not None:
         if dataset == 'benchmark':
             shave = scale
@@ -173,9 +173,12 @@ def calc_lpips(sr, hr, dataset=None, scale=1):
         sr = sr[..., shave:-shave, shave:-shave]
         hr = hr[..., shave:-shave, shave:-shave]
 
-        lpips = LearnedPerceptualImagePatchSimilarity(net_type='vgg')
+        lpips_net = LearnedPerceptualImagePatchSimilarity(net_type='vgg').to(device)
 
-        return lpips(sr, hr)
+        with torch.no_grad():
+            lpips = lpips_net(sr, hr)
+
+        return lpips
     else:
         raise NotImplementedError
 

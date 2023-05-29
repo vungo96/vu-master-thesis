@@ -77,18 +77,27 @@ def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None, ma
     else:
         inp_scale_max = None
 
+    print("eval_type:", eval_type)
     if eval_type is None:
-        metric_fn = utils.calc_psnr
+        metric_psnr = utils.calc_psnr
+        #metric_ssim = utils.calc_ssim
+        #metric_lpips = utils.calc_lpips
     elif eval_type.startswith('div2k'):
         scale = int(eval_type.split('-')[1])
-        metric_fn = partial(utils.calc_psnr, dataset='div2k', scale=scale)
+        metric_psnr = partial(utils.calc_psnr, dataset='div2k', scale=scale)
+        metric_ssim = partial(utils.calc_ssim, dataset='div2k', scale=scale)
+        metric_lpips = partial(utils.calc_lpips, dataset='div2k', scale=scale, device=device)
     elif eval_type.startswith('benchmark'):
         scale = int(eval_type.split('-')[1])
-        metric_fn = partial(utils.calc_psnr, dataset='benchmark', scale=scale)
+        metric_psnr = partial(utils.calc_psnr, dataset='benchmark', scale=scale)
+        metric_ssim = partial(utils.calc_ssim, dataset='benchmark', scale=scale)
+        metric_lpips = partial(utils.calc_lpips, dataset='benchmark', scale=scale, device=device)
     else:
         raise NotImplementedError
 
-    val_res = utils.Averager()
+    val_res_psnr = utils.Averager()
+    val_res_ssim = utils.Averager()
+    val_res_lpips = utils.Averager()
 
     pbar = tqdm(loader, leave=False, desc='val')
     # TODO: change this to activate adding images
@@ -132,13 +141,22 @@ def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None, ma
             batch['gt'] = batch['gt'].view(*shape) \
                 .permute(0, 3, 1, 2).contiguous()
 
-        res = metric_fn(pred, batch['gt'])
-        val_res.add(res.item(), inp.shape[0])
+        res_psnr = metric_psnr(pred, batch['gt'])
+        val_res_psnr.add(res_psnr.item(), inp.shape[0])
+        if eval_type is not None:
+            res_ssim = metric_ssim(pred, batch['gt'])
+            res_lpips = metric_lpips(pred, batch['gt'])
+        
+            val_res_ssim.add(res_ssim.item(), inp.shape[0])
+            val_res_lpips.add(res_lpips.item(), inp.shape[0])
 
         if verbose:
-            pbar.set_description('val {:.4f}'.format(val_res.item()))
+            pbar.set_description('val psnr {:.4f}'.format(val_res_psnr.item()))
 
-    return val_res.item()
+    if eval_type is None:
+        return val_res_psnr.item(), None, None
+
+    return val_res_psnr.item(), val_res_ssim.item(), val_res_lpips.item()
 
 
 if __name__ == '__main__':
@@ -195,13 +213,15 @@ if __name__ == '__main__':
     else:
         scale_aware = None
 
-    res = eval_psnr(loader, model,
+    res_psnr, res_ssim, res_lpips = eval_psnr(loader, model,
                     data_norm=config.get('data_norm'),
                     eval_type=config.get('eval_type'),
                     eval_bsize=config.get('eval_bsize'),
                     verbose=True,
                     device=device,
                     writer=writer,
-                    out_dir=out_dir,
+                    out_dir=args.out_dir,
                     scale_aware=scale_aware)
-    print('result: {:.4f}'.format(res))
+    print('result psnr: {:.4f}'.format(res_psnr))
+    print('result ssim: {:.4f}'.format(res_ssim))
+    print('result lpips: {:.4f}'.format(res_lpips))

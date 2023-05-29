@@ -275,6 +275,8 @@ class SRImplicitDownsampled(Dataset):
             scale_max = min_dim // inp_size
 
             # scale-adaptive
+            if scale_max > 32:
+                scale_max = 32
             s = random.uniform(self.scale_min, scale_max)
 
             if self.exp_dist_from is not None:
