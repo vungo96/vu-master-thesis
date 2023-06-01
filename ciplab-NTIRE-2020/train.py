@@ -29,7 +29,7 @@ NB_CROP_FRAME = 2   # crop N patches from every image
 PATCH_SIZE = 384    # Training patch size
 
 START_ITER = 0      # Set 0 for from scratch, else will load saved params and trains further
-NB_ITER_MSE = 75000 # MSE pretraining iteration, after that the full loss works
+NB_ITER_MSE = 0 # MSE pretraining iteration, after that the full loss works
 NB_ITER = 150000    # Total number of training iterations
 
 I_DISPLAY = 100     # display info every N iteration
@@ -40,8 +40,8 @@ L_ADV = 1e-3        # Scaling params for the Adv loss
 L_FM = 1            # Scaling params for the feature matching loss
 L_LPIPS = 1e-3      # Scaling params for the LPIPS loss
 
-TRAIN_DIR = './train/'  # Training images: png files should just locate in the directory (eg ./train/img0001.png ... ./train/img0800.png)
-VAL_DIR = './val/'      # Validation images
+TRAIN_DIR = '../liif/load/div2k/DIV2K_train_HR'  # Training images: png files should just locate in the directory (eg ./train/img0001.png ... ./train/img0800.png)
+VAL_DIR = '../liif/load/div2k/DIV2K_valid_HR'      # Validation images
 
 LR_G = 1e-5         # Learning rate for the generator
 LR_D = 1e-5         # Learning rate for the discriminator

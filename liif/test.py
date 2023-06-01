@@ -81,8 +81,8 @@ def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None, ma
     print("eval_type:", eval_type)
     if eval_type is None:
         metric_psnr = utils.calc_psnr
-        #metric_ssim = utils.calc_ssim
-        #metric_lpips = utils.calc_lpips
+        metric_ssim = utils.calc_ssim
+        metric_lpips = utils.calc_lpips
     elif eval_type.startswith('div2k'):
         scale = int(eval_type.split('-')[1])
         metric_psnr = partial(utils.calc_psnr, dataset='div2k', scale=scale)
@@ -113,7 +113,6 @@ def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None, ma
                 pred = model(inp, batch['coord'], batch['cell'])
         else:
             if inp_scale_max is not None:
-                # TODO: normalize again
                 inp_scale = (batch['inp_scale'] - 1) / (inp_scale_max - 1)
                 pred = batched_predict(model, inp,
                                 batch['coord'], batch['cell']*max(scale/max_scale, 1), eval_bsize, inp_scale)
@@ -138,24 +137,25 @@ def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None, ma
                 .permute(0, 3, 1, 2).contiguous()
             batch['gt'] = batch['gt'].view(*shape) \
                 .permute(0, 3, 1, 2).contiguous()
+        else:
+            # prep data
+            sample_patch_size = round(math.sqrt(pred.shape[-2]))
+            pred = pred.reshape(pred.shape[0], sample_patch_size, sample_patch_size, 3).permute(0, 3, 1, 2)
+            gt = batch['gt'].reshape(pred.shape[0], sample_patch_size, sample_patch_size, 3).permute(0, 3, 1, 2)
             
         if out_dir is not None and (i % 5) == 0:
             save_images_to_dir(out_dir, batch['inp'], pred, batch['gt'], step=i)
 
-        res_psnr = metric_psnr(pred, batch['gt'])
+        # TODO: test psnr with coordinates
+        res_psnr = metric_psnr(pred, gt) 
+        res_ssim = metric_ssim(pred, gt)
+        res_lpips = metric_lpips(pred, gt)
         val_res_psnr.add(res_psnr.item(), inp.shape[0])
-        if eval_type is not None:
-            res_ssim = metric_ssim(pred, batch['gt'])
-            res_lpips = metric_lpips(pred, batch['gt'])
-        
-            val_res_ssim.add(res_ssim.item(), inp.shape[0])
-            val_res_lpips.add(res_lpips.item(), inp.shape[0])
+        val_res_ssim.add(res_ssim.item(), inp.shape[0])
+        val_res_lpips.add(res_lpips.item(), inp.shape[0])
 
         if verbose:
-            pbar.set_description('val psnr {:.4f}'.format(val_res_psnr.item()))
-
-    if eval_type is None:
-        return val_res_psnr.item(), None, None
+            pbar.set_description('val psnr {:.4f} | ssim loss {:.4f} | lpips loss {:.4f}'.format(val_res_psnr.item(), val_res_ssim.item()), val_res_lpips.item())
 
     return val_res_psnr.item(), val_res_ssim.item(), val_res_lpips.item()
 

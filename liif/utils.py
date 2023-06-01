@@ -160,7 +160,7 @@ def calc_ssim(sr, hr, dataset=None, scale=1):
 
         return structural_similarity_index_measure(sr, hr)
     else:
-        raise NotImplementedError
+        return structural_similarity_index_measure(sr, hr)
 
 def calc_lpips(sr, hr, dataset=None, scale=1, device='cuda'):
     if dataset is not None:
@@ -169,18 +169,24 @@ def calc_lpips(sr, hr, dataset=None, scale=1, device='cuda'):
         elif dataset == 'div2k':
             shave = scale + 6
         else:
-            raise NotImplementedError
+            lpips_net = LearnedPerceptualImagePatchSimilarity(net_type='vgg').to(device)
+            lpips = lpips_net(sr*2-1, hr*2-1)
+
+            return lpips
         sr = sr[..., shave:-shave, shave:-shave]
         hr = hr[..., shave:-shave, shave:-shave]
 
         lpips_net = LearnedPerceptualImagePatchSimilarity(net_type='vgg').to(device)
-
         with torch.no_grad():
-            lpips = lpips_net(sr, hr)
+            lpips = lpips_net(sr*2-1, hr*2-1)
 
         return lpips
     else:
-        raise NotImplementedError
+        lpips_net = LearnedPerceptualImagePatchSimilarity(net_type='vgg').to(device)
+        with torch.no_grad():
+            lpips = lpips_net(sr*2-1, hr*2-1)
+
+        return lpips
 
 def choose_scale_exponentially(min_scale, max_scale):
     scales = list(range(min_scale, max_scale + 1))
@@ -192,3 +198,38 @@ def choose_scale_exponentially(min_scale, max_scale):
     chosen_scale = random.choices(scales, weights)[0]
     
     return chosen_scale
+
+def Huber(input, target, delta=0.01, reduce=True):
+    abs_error = torch.abs(input - target)
+    quadratic = torch.clamp(abs_error, max=delta)
+
+    # The following expression is the same in value as
+    # tf.maximum(abs_error - delta, 0), but importantly the gradient for the
+    # expression when abs_error == delta is 0 (for tf.maximum it would be 1).
+    # This is necessary to avoid doubling the gradient, since there is already a
+    # nonzero contribution to the gradient from the quadratic term.
+    linear = (abs_error - quadratic)
+    losses = 0.5 * torch.pow(quadratic, 2) + delta * linear
+    
+    if reduce:
+        return torch.mean(losses)
+    else:
+        return losses
+
+def rand_bbox(size, lam):
+    W = size[2]
+    H = size[3]
+    cut_rat = np.sqrt(1. - lam)
+    cut_w = np.int(W * cut_rat)
+    cut_h = np.int(H * cut_rat)
+
+    # uniform
+    cx = np.random.randint(W)
+    cy = np.random.randint(H)
+
+    bbx1 = np.clip(cx - cut_w // 2, 0, W)
+    bby1 = np.clip(cy - cut_h // 2, 0, H)
+    bbx2 = np.clip(cx + cut_w // 2, 0, W)
+    bby2 = np.clip(cy + cut_h // 2, 0, H)
+
+    return bbx1, bby1, bbx2, bby2
