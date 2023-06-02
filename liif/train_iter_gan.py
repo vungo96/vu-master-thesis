@@ -119,9 +119,13 @@ def add_scales_to_dict(scales, scales_max):
         else:
             scale_max_freq[scale_max] = 1
 
-def train(train_loader, model, optimizer, params, gradient_accumulation_steps, model_D=None, optimizer_D=None, params_D=None, l_adv=0.001, l_fm=1, l_lpips=0.001, n_mix = 0):
+def train(train_loader, model, optimizer, params, gradient_accumulation_steps, model_D=None, optimizer_D=None, params_D=None, l_adv=0.001, l_fm=1, l_lpips=0.000001, n_mix = 0, loss_fn='l1'):
     model.train()
     loss_fn = nn.L1Loss()
+    if loss_fn == 'huber':
+        print("test huber")
+        loss_fn = utils.Huber
+        
     train_loss = utils.Averager()
     train_loss_D = utils.Averager()
 
@@ -364,9 +368,9 @@ def main(config_, save_path):
 
         # train epoch
         if gan_based is not None:
-            train_loss = train(train_loader, model, optimizer, params, gradient_accumulation_steps, model_D, optimizer_D, params_D)
+            train_loss = train(train_loader, model, optimizer, params, gradient_accumulation_steps, model_D, optimizer_D, params_D, loss_fn=config.get('loss_fn'))
         else:
-            train_loss = train(train_loader, model, optimizer, params, gradient_accumulation_steps)
+            train_loss = train(train_loader, model, optimizer, params, gradient_accumulation_steps, loss_fn=config.get('loss_fn'))
         if lr_scheduler is not None:
             lr_scheduler.step()
         if gan_based is not None and lr_scheduler_D is not None:

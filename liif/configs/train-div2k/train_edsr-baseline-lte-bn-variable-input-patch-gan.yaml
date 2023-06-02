@@ -51,7 +51,7 @@ data_norm:
   # inp_scale_max: 64
 
 model:
-  name: lte
+  name: lte-bn
   args:
     encoder_spec:
       name: edsr-baseline

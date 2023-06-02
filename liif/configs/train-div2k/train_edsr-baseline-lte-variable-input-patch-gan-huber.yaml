@@ -82,6 +82,8 @@ multi_step_lr_D:
   milestones: [200000, 400000, 600000, 800000]
   gamma: 0.5
 
+loss_fn: huber
+
 iter_max: 1000000
 iter_val: 1000
 iter_save: 100000

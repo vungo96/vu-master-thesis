@@ -11,19 +11,29 @@ base_path = 'test_curves/metric_lists/' + scale
 paths = [base_path + '/eval_results1to4-baseline.pickle',
          base_path + '/eval_results1to4-lsdir.pickle',
          base_path + '/eval_results1toMax-lsdir.pickle',
-         base_path + '/eval_results1toMax-lsdir-exp-dist-12.pickle', 
-         base_path + '/eval_results1to4-baseline-swinir.pickle',
-         base_path + '/eval_results1toMax-lsdir-swinir.pickle',
-         base_path + '/eval_results1toMax-lsdir-cumulative.pickle',
+         #base_path + '/eval_results1toMax-lsdir-exp-dist-12.pickle', 
+        # base_path + '/eval_results1to4-baseline-swinir.pickle',
+        # base_path + '/eval_results1toMax-lsdir-swinir.pickle',
+        # base_path + '/eval_results1toMax-lsdir-cumulative.pickle',
+         #base_path + '/eval_results1to4-div8k.pickle',
+         base_path + '/eval_results1toMax-div8k.pickle',
+         base_path + '/eval_results1toMax-lsdir-sample-patch.pickle',
+         base_path + '/eval_results1to4-lsdir-inputs-64-sample-patch.pickle',
+         base_path + '/eval_results1toMax-lsdir-batch-128.pickle',
          ]
 
 labels = ['1to4-baseline',
           '1to4-lsdir',
           '1toMax-lsdir',
-          '1toMax-lsdir-exp-dist-12',
-          '1to4-baseline-swinir',
-          '1toMax-baseline-swinir',
-          '1toMax-lsdir-cumulative',
+         # '1toMax-lsdir-exp-dist-12',
+          #'1to4-baseline-swinir',
+          #'1toMax-baseline-swinir',
+         # '1toMax-lsdir-cumulative',
+          #'1to4-div8k',
+          '1toMax-div8k',
+          '1toMax-lsdir-sample-patch',
+          '1to4-lsdir-inputs-64-sample-patch',
+          '1toMax-lsdir-batch-128'
           ]
 
 tag = "div2k-test-" + scale

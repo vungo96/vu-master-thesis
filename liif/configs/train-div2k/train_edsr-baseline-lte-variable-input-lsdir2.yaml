@@ -11,12 +11,12 @@ train_dataset:
     args:
       inp_sizes: [48]
       augment: true
-      sample_q: 4096
+      sample_q: 2304
       # limit_scale: 3 # change scale_min
       scale_min: 1
       plot_scales: true
   collate_batch: true
-  batch_size: 128
+  batch_size: 32
 
 gradient_accumulation_steps: 1
 
@@ -33,7 +33,7 @@ val_dataset:
     args:
       inp_sizes: [48]
       augment: true
-      sample_q: 4096
+      sample_q: 2304
       # limit_scale: 3
       scale_min: 1
       # scale_max: 12

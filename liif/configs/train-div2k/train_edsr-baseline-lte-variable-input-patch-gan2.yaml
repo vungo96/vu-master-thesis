@@ -38,6 +38,7 @@ val_dataset:
       inp_sizes: [48]
       augment: true
       sample_q: 2304
+      sample_patch: true
       # sample_patch: true
       # limit_scale: 3
       scale_min: 1

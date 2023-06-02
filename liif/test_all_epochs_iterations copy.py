@@ -20,7 +20,6 @@ if __name__ == '__main__':
     parser.add_argument('--scale_aware', default=None)
     parser.add_argument('--scale_max', default='4')
     parser.add_argument('--tag', default=None)
-    parser.add_argument('--window', default=0)
     args = parser.parse_args()
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -31,8 +30,6 @@ if __name__ == '__main__':
     with open(args.config, 'r') as f:
         config = yaml.load(f, Loader=yaml.FullLoader)
         print(config)
-
-    print("window: ", args.window)
 
     save_path = "test_curves/metric_lists/" + args.scale
 
@@ -75,8 +72,7 @@ if __name__ == '__main__':
                         writer=None,
                         out_dir=None,
                         scale_aware=scale_aware,
-                        max_scale=4,
-                        window_size=int(args.window)
+                        max_scale=4
                         )
         print('result psnr: {:.4f}'.format(res_psnr))
         print('result ssim: {:.4f}'.format(res_ssim))
