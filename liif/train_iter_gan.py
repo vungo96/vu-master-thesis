@@ -39,7 +39,7 @@ from torchmetrics.image.lpip import LearnedPerceptualImagePatchSimilarity
 import datasets
 import models
 import utils
-from test import eval_psnr
+from test import eval_psnr, save_images_to_dir
 
 
 def make_data_loader(spec, tag=''):
@@ -170,6 +170,13 @@ def train(train_loader, model, optimizer, params, gradient_accumulation_steps, m
             sample_patch_size = round(math.sqrt(pred.shape[-2]))
             pred_img = pred.reshape(pred.shape[0], sample_patch_size, sample_patch_size, 3).permute(0, 3, 1, 2)
             gt_img = gt.reshape(pred.shape[0], sample_patch_size, sample_patch_size, 3).permute(0, 3, 1, 2)
+
+            # TODO: remove later only for debugging
+            #pred_img = pred_img * gt_div + gt_sub
+            #pred_img.clamp_(0, 1)
+            #gt_img = gt_img * gt_div + gt_sub
+            #gt_img.clamp(0,1)
+            #save_images_to_dir("test_images2", inp, pred_img, gt_img, step=step)
 
             e_S, d_S, _, _ = model_D(pred_img)
             e_H, d_H, _, _ = model_D(gt_img)

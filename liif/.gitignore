@@ -11,4 +11,5 @@ save_test_tag
 .vscode
 slurm
 test_images
+test_images2
 test_curves

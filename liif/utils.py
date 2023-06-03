@@ -4,12 +4,16 @@ import shutil
 import random
 
 import torch
+import cv2
 import numpy as np
 from torch.optim import SGD, Adam
 from tensorboardX import SummaryWriter
 from torchmetrics.functional import structural_similarity_index_measure
 from torchmetrics.image.lpip import LearnedPerceptualImagePatchSimilarity
+from torchvision import transforms
 
+def save_image_to_dir(img, out_dir='test', step=0):
+    transforms.ToPILImage()(img).save(f'{out_dir}/{step}.png')
 
 class Averager():
 
@@ -233,3 +237,62 @@ def rand_bbox(size, lam):
     bby2 = np.clip(cy + cut_h // 2, 0, H)
 
     return bbx1, bby1, bbx2, bby2
+   
+def get_random_coordinate_from_edges(image_tensor):
+     # Convert the image tensor to a NumPy array
+    image_np = image_tensor.squeeze().permute(1, 2, 0).numpy()
+
+    # Convert the image to grayscale
+    gray_image = cv2.cvtColor(image_np, cv2.COLOR_RGB2GRAY)
+
+    # Convert the grayscale image to 8-bit unsigned integer
+    gray_image = np.uint8(gray_image * 255.0)
+
+    # Apply Canny edge detection using OpenCV
+    edges = cv2.Canny(gray_image, threshold1=100, threshold2=200)
+
+    # Find the coordinates of the edge pixels
+    edge_indices = np.argwhere(edges > 0)
+
+    # Randomly select one of the edge coordinates
+    random_index = np.random.randint(len(edge_indices))
+    edge_coordinate = edge_indices[random_index]
+
+    return edge_coordinate
+
+def get_image_crop(image, center_coord, p):
+    # Calculate the height and width of the image
+    center_row, center_col = center_coord[0], center_coord[1]
+    height, width = image.size(-2), image.size(-1)
+
+    # Calculate the starting and ending row indices of the crop
+    start_row = center_row - p // 2
+    end_row = start_row + p
+
+    # Check if the crop exceeds the top or bottom boundaries of the image
+    if start_row < 0:
+        start_row = 0
+        end_row = p
+    elif end_row > height:
+        end_row = height
+        start_row = end_row - p
+
+    # Calculate the starting and ending column indices of the crop
+    start_col = center_col - p // 2
+    end_col = start_col + p
+
+    # Check if the crop exceeds the left or right boundaries of the image
+    if start_col < 0:
+        start_col = 0
+        end_col = p
+    elif end_col > width:
+        end_col = width
+        start_col = end_col - p
+
+    # Perform the crop
+    cropped_image = image[:, start_row:end_row, start_col:end_col]
+
+    return cropped_image
+
+
+
