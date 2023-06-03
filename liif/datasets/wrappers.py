@@ -9,7 +9,7 @@ from torch.utils.data import Dataset
 from torchvision import transforms
 
 from datasets import register
-from utils import to_pixel_samples, make_coord, choose_scale_exponentially, get_random_coordinate_from_edges, get_image_crop
+from utils import to_pixel_samples, make_coord, choose_scale_exponentially, get_random_coordinate_from_edges, get_image_crop_start_coord
 
 
 @register('sr-implicit-paired')
@@ -237,7 +237,7 @@ class SRImplicitDownsampled(Dataset):
 
     def __init__(self, dataset, inp_sizes=None, scale_min=1, scale_max=None,
                  augment=False, sample_q=None, plot_scales=False, limit_scale=None, 
-                 exp_dist_from=None, sample_patch=None, choose_from_fourier=None):
+                 exp_dist_from=None, sample_patch=None, crop_from_edges=None, sample_from_edges=None):
         self.dataset = dataset
         self.inp_sizes = inp_sizes
         self.scale_min = scale_min
@@ -248,7 +248,8 @@ class SRImplicitDownsampled(Dataset):
         self.limit_scale = limit_scale
         self.exp_dist_from = exp_dist_from
         self.sample_patch = sample_patch
-        self.choose_from_fourier=choose_from_fourier
+        self.crop_from_edges = crop_from_edges
+        self.sample_from_edges=sample_from_edges
 
     def __len__(self):
         return len(self.dataset)
@@ -295,13 +296,13 @@ class SRImplicitDownsampled(Dataset):
 
             w_lr = inp_size
             w_hr = round(w_lr * s)
-            if self.choose_from_fourier is not None:
+            if self.sample_from_edges is not None:
                 coord_from_edge = get_random_coordinate_from_edges(img)
-                crop_hr = get_image_crop(img, coord_from_edge, w_hr)
+                x0, y0 = get_image_crop_start_coord(img, coord_from_edge, w_hr)
             else:
                 x0 = random.randint(0, img.shape[-2] - w_hr)
                 y0 = random.randint(0, img.shape[-1] - w_hr)
-                crop_hr = img[:, x0: x0 + w_hr, y0: y0 + w_hr]
+            crop_hr = img[:, x0: x0 + w_hr, y0: y0 + w_hr]
             crop_lr = resize_fn(crop_hr, w_lr)
         
             if self.augment:
@@ -347,8 +348,13 @@ class SRImplicitDownsampled(Dataset):
                 hr_coord_reshape = hr_coord.reshape(crop_hr.shape[-2], crop_hr.shape[-1], 2)
                 hr_rgb_reshape = hr_rgb.reshape(crop_hr.shape[-2], crop_hr.shape[-1], 3)
                 
-                x0 = random.randint(0, hr_coord_reshape.shape[0] - sample_patch_size)
-                y0 = random.randint(0, hr_coord_reshape.shape[1] - sample_patch_size)
+                if self.crop_from_edges is not None:
+                    coord_from_edge = get_random_coordinate_from_edges(crop_hr)
+                    x0, y0 = get_image_crop_start_coord(crop_hr, coord_from_edge, sample_patch_size)
+                else:
+                    x0 = random.randint(0, hr_coord_reshape.shape[0] - sample_patch_size)
+                    y0 = random.randint(0, hr_coord_reshape.shape[1] - sample_patch_size)
+            
                 hr_coord = hr_coord_reshape[x0: x0 + sample_patch_size, y0: y0 + sample_patch_size, :].reshape(sample_patch_size*sample_patch_size, 2)
                 hr_rgb = hr_rgb_reshape[x0: x0 + sample_patch_size, y0: y0 + sample_patch_size, :].reshape(sample_patch_size*sample_patch_size, 3)
 

@@ -11,13 +11,14 @@ train_dataset:
     args:
       inp_sizes: [48]
       augment: true
-      #sample_q: 2304
+      sample_q: 2304
       sample_patch: true
       # limit_scale: 4 # change scale_min
       scale_min: 2
       scale_max: 2
       plot_scales: true
-      choose_from_fourier: true
+      crop_from_edges: true
+      sample_from_edges: true
   collate_batch: true
   batch_size: 1
 

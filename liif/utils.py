@@ -260,7 +260,7 @@ def get_random_coordinate_from_edges(image_tensor):
 
     return edge_coordinate
 
-def get_image_crop(image, center_coord, p):
+def get_image_crop_start_coord(image, center_coord, p):
     # Calculate the height and width of the image
     center_row, center_col = center_coord[0], center_coord[1]
     height, width = image.size(-2), image.size(-1)
@@ -290,9 +290,9 @@ def get_image_crop(image, center_coord, p):
         start_col = end_col - p
 
     # Perform the crop
-    cropped_image = image[:, start_row:end_row, start_col:end_col]
+    #cropped_image = image[:, start_row:end_row, start_col:end_col]
 
-    return cropped_image
+    return start_row, start_col
 
 
 
