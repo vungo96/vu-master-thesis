@@ -393,7 +393,7 @@ def main(config_, save_path):
         if n_gpus > 1:
             model_ = model.module
             if gan_based is not None:
-                model_D = model_D.module
+                model_D_ = model_D.module
         else:
             model_ = model
             if gan_based is not None:
