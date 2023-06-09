@@ -172,7 +172,7 @@ def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None, ma
             batch['gt'] = batch['gt'].reshape(pred.shape[0], sample_patch_size, sample_patch_size, 3).permute(0, 3, 1, 2)
             
         if out_dir is not None and (i % 5) == 0:
-            save_images_to_dir(out_dir, batch['inp'], pred, gt, step=i)
+            save_images_to_dir(out_dir, batch['inp'], pred, batch['gt'], step=i)
 
         # TODO: test psnr with coordinates
         res_psnr = metric_psnr(pred, batch['gt']) 

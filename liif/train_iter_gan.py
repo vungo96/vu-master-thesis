@@ -176,7 +176,7 @@ def train(train_loader, model, optimizer, params, gradient_accumulation_steps, m
             #pred_img.clamp_(0, 1)
             #gt_img = gt_img * gt_div + gt_sub
             #gt_img.clamp(0,1)
-            #save_images_to_dir("test_images2", inp, pred_img, gt_img, step=step)
+            #save_images_to_dir("test_images", inp, pred_img, gt_img, step=step)
 
             e_S, d_S, _, _ = model_D(pred_img)
             e_H, d_H, _, _ = model_D(gt_img)
@@ -331,6 +331,7 @@ def main(config_, save_path):
     # get model, optimizer, and lr_scheduler from config
     model, optimizer, epoch_start, lr_scheduler = prepare_training()
 
+    # TODO: move this to prepare training
     params = list(filter(lambda p: p.requires_grad, model.parameters()))
 
     gan_based = config.get('gan_based')
@@ -341,6 +342,7 @@ def main(config_, save_path):
         log('model_D: #params={}'.format(utils.compute_num_params(model, text=True)))
 
         params_D = list(filter(lambda p: p.requires_grad, model_D.parameters()))
+        # TODO: change this to params_D
         optimizer_D = utils.make_optimizer(model_D.parameters(), config.get('optimizer_D'))
         lr_scheduler_D = MultiStepLR(optimizer_D, config.get('multi_step_lr_D'))
 
@@ -352,6 +354,7 @@ def main(config_, save_path):
         print("Use multiple gpus.")
         model = nn.parallel.DataParallel(model)
 
+    # TODO: change this back
     num_iter_per_epoch = math.ceil(len(train_loader.dataset) / 16) # config['train_dataset']['batch_size'])
     iter_max = config['iter_max']
     epoch_max = math.ceil(iter_max / num_iter_per_epoch)
@@ -377,6 +380,7 @@ def main(config_, save_path):
         if gan_based is not None:
             train_loss = train(train_loader, model, optimizer, params, gradient_accumulation_steps, model_D, optimizer_D, params_D, loss_fn=config.get('loss_fn'))
         else:
+            # TODO: make sure that optimizer params are correct for clip
             train_loss = train(train_loader, model, optimizer, params, gradient_accumulation_steps, loss_fn=config.get('loss_fn'))
         if lr_scheduler is not None:
             lr_scheduler.step()
