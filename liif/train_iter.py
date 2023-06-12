@@ -201,11 +201,12 @@ def main(config_, save_path):
     num_iter_per_epoch = math.ceil(len(train_loader.dataset) / 16) # config['train_dataset']['batch_size'])
     iter_max = config['iter_max']
     epoch_max = math.ceil(iter_max / num_iter_per_epoch)
-    epoch_val = math.ceil(config.get('iter_val') / num_iter_per_epoch)
-    epoch_save = math.ceil(config.get('iter_save') / num_iter_per_epoch)
+    epoch_val = math.floor(config.get('iter_val') / num_iter_per_epoch)
+    epoch_save = math.floor(config.get('iter_save') / num_iter_per_epoch)
     print(len(train_loader.dataset))
     print(epoch_max)
     print(epoch_val)
+    print(epoch_save)
 
     max_val_v = -1e18
 

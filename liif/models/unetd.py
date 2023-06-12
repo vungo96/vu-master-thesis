@@ -32,8 +32,8 @@ class UnetD(nn.Module):
             classname = m.__class__.__name__
             if classname.lower().find('conv') != -1:
                 # print(classname)
-                nn.init.kaiming_normal(m.weight)
-                nn.init.constant(m.bias, 0)
+                nn.init.kaiming_normal_(m.weight)
+                nn.init.constant_(m.bias, 0)
             elif classname.find('bn') != -1:
                 m.weight.data.normal_(1.0, 0.02)
                 m.bias.data.fill_(0)

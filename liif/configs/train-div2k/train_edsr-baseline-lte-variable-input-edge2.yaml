@@ -5,19 +5,24 @@ train_dataset:
       root_path: ./load/div2k/DIV2K_train_HR
       repeat: 20
       cache: in_memory
+      # sharded: true
   wrapper:
     name: sr-implicit-downsampled-collate-batch
     args:
       inp_sizes: [48]
       augment: true
       sample_q: 2304
-      # sample_patch: true
+      sample_patch: true
       # limit_scale: 4 # change scale_min
       scale_min: 1
       scale_max: 4
       plot_scales: true
+      crop_from_edges: true
+      sample_from_edges: true
   collate_batch: true
   batch_size: 16
+
+# gan_based: true
 
 gradient_accumulation_steps: 1
 
@@ -68,17 +73,17 @@ optimizer:
   args:
     lr: 1.e-4
 multi_step_lr:
-  milestones: [] 
-  gamma: 0.5
-
-optimizer:
-  name: adam
-  args:
-    lr: 1.e-4
-iter_max: 1000000
-multi_step_lr:
   milestones: [200000, 400000, 600000, 800000]
   gamma: 0.5
 
-iter_val: 100000
+optimizer_D:
+  name: adam
+  args:
+    lr: 1.e-4
+multi_step_lr_D:
+  milestones: [200000, 400000, 600000, 800000]
+  gamma: 0.5
+
+iter_max: 1000000
+iter_val: 1000
 iter_save: 100000

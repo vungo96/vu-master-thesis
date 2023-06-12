@@ -72,8 +72,9 @@ def prepare_training():
         sv_file = torch.load(config['resume'])
         model = models.make(
             sv_file['model'], load_sd=True).to(device)
+        params = list(filter(lambda p: p.requires_grad, model.parameters()))
         optimizer = utils.make_optimizer(
-            model.parameters(), sv_file['optimizer'], load_sd=True)
+            params, sv_file['optimizer'], load_sd=True)
         epoch_start = sv_file['epoch'] + 1
         if config.get('multi_step_lr') is None:
             lr_scheduler = None
@@ -86,8 +87,9 @@ def prepare_training():
         sv_file = torch.load(config['pretrained'])
         model = models.make(
             sv_file['model'], load_sd=True).to(device)
+        params = list(filter(lambda p: p.requires_grad, model.parameters()))
         optimizer = utils.make_optimizer(
-            model.parameters(), sv_file['optimizer'], load_sd=True)
+            params, sv_file['optimizer'], load_sd=True)
         epoch_start = 1
         if config.get('multi_step_lr') is None:
             lr_scheduler = None
@@ -95,8 +97,9 @@ def prepare_training():
             lr_scheduler = MultiStepLR(optimizer, **config['multi_step_lr'])
     else:
         model = models.make(config['model']).to(device)
+        params = list(filter(lambda p: p.requires_grad, model.parameters()))
         optimizer = utils.make_optimizer(
-            model.parameters(), config['optimizer'])
+            params, config['optimizer'])
         epoch_start = 1
         if config.get('multi_step_lr') is None:
             lr_scheduler = None
@@ -104,7 +107,7 @@ def prepare_training():
             lr_scheduler = MultiStepLR(optimizer, **config['multi_step_lr'])
         
     log('model: #params={}'.format(utils.compute_num_params(model, text=True)))
-    return model, optimizer, epoch_start, lr_scheduler
+    return model, optimizer, epoch_start, lr_scheduler, params
 
 def add_scales_to_dict(scales, scales_max):
     for scale in scales.tolist():
@@ -154,7 +157,6 @@ def train(train_loader, model, optimizer, params, gradient_accumulation_steps, m
         gt = (batch['gt'] - gt_sub) / gt_div 
 
         if model_D is not None:
-            print("teeeeest")
             optimizer.zero_grad()
             optimizer_D.zero_grad()
 
@@ -246,7 +248,7 @@ def train(train_loader, model, optimizer, params, gradient_accumulation_steps, m
             pred = model(inp, batch['coord'], batch['cell'])
     
         # TODO: check if this works
-        # pred.clamp_(-1, 1)
+        pred.clamp_(-1, 1)
             
         loss = loss_fn(pred, gt)
         # loss_Pixel = utils.Huber(pred, gt)
@@ -291,7 +293,7 @@ def train(train_loader, model, optimizer, params, gradient_accumulation_steps, m
         loss = loss / gradient_accumulation_steps
         loss.backward()
         # TODO: change back
-        # torch.nn.utils.clip_grad_norm_(params, 0.1)
+        torch.nn.utils.clip_grad_norm_(params, 0.1)
 
         if step % gradient_accumulation_steps == 0:
             train_loss.add(loss.item())
@@ -331,10 +333,7 @@ def main(config_, save_path):
     print("Run on device: ", device)
 
     # get model, optimizer, and lr_scheduler from config
-    model, optimizer, epoch_start, lr_scheduler = prepare_training()
-
-    # TODO: move this to prepare training
-    params = list(filter(lambda p: p.requires_grad, model.parameters()))
+    model, optimizer, epoch_start, lr_scheduler, params = prepare_training()
 
     gan_based = config.get('gan_based')
 

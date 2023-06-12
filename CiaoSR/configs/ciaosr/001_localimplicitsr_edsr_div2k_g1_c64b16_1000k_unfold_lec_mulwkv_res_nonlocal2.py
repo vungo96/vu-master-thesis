@@ -1,6 +1,6 @@
 exp_name = '001_localimplicitsr_edsr_div2k_g1_c64b16_1000k_unfold_lec_mulwkv_res_nonlocal2'
 scale_min, scale_max = 1, 4
-val_scale = 4
+val_scale = 30
 
 from mmedited.models.restorers.ciaosr import CiaoSR
 from mmedited.models.backbones.sr_backbones.ciaosr_net import LocalImplicitSREDSR
@@ -47,8 +47,7 @@ model = dict(
 # model training and testing settings
 train_cfg = None
 # test_cfg = dict(metrics=['PSNR', 'SSIM'], crop_border=val_scale, tile=128, tile_overlap=32, scale=val_scale) #, convert_to='y' val_scale+6
-test_cfg = dict(metrics=['PSNR', 'SSIM'], crop_border=val_scale, scale=val_scale) #, convert_to='y' val_scale+6
-
+test_cfg = dict(metrics=['PSNR', 'SSIM', 'LPIPS'], crop_border=val_scale, scale=val_scale) #, convert_to='y' val_scale+6
 
 # dataset settings
 train_dataset_type = 'SRFolderGTDataset'

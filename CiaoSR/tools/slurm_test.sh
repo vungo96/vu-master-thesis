@@ -20,19 +20,22 @@
 cd /n/holylfs05/LABS/pfister_lab/Lab/coxfs01/pfister_lab2/Lab/mngo/vu-master-thesis/CiaoSR
 
 ### load modules
-module load Anaconda/5.0.1-fasrc02
-module load gcc/8.3.0-fasrc01
-module load cuda/11.1.0-fasrc01
-module load cudnn
+# module load Anaconda/5.0.1-fasrc02
+# module load Anaconda2/2019.10-fasrc01
+#module load cuda/11.6.2-fasrc01
+#module load cudnn/8.5.0.96_cuda11-fasrc01
+module load cuda/12.0.1-fasrc01
+module load cudnn/8.8.0.121_cuda12-fasrc01
+module load gcc/9.5.0-fasrc01
  
 ### beginning of executable commands
 source activate ciaosr6
 
 export MASTER_PORT=$((12000 + $RANDOM % 20000))
 
-CONFIG=configs/ciaosr/001_localimplicitsr_edsr_div2k_g1_c64b16_1000k_unfold_lec_mulwkv_res_nonlocal_lsdir.py
+CONFIG=configs/ciaosr/001_localimplicitsr_edsr_div2k_g1_c64b16_1000k_unfold_lec_mulwkv_res_nonlocal2.py
 GPUS=4
-CKPT=work_dirs/001_localimplicitsr_edsr_div2k_g1_c64b16_1000k_unfold_lec_mulwkv_res_nonlocal_lsdir/latest.pth
+CKPT=work_dirs/edsr-ciaosr-baseline.pth
 
 PYTHONPATH=/bin/..:tools/..:
 PYTHONPATH="$(dirname $0)/..":$PYTHONPATH \
