@@ -411,6 +411,7 @@ def main(config_, save_path):
 
         # save weights
         torch.save(sv_file, os.path.join(save_path, 'iteration-last.pth'))
+        # TODO: save like normal model
         if gan_based is not None:
                 torch.save(model_D_.state_dict(), os.path.join(save_path, 'd_iteration-last.pth'))
 
