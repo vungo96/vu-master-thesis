@@ -360,9 +360,11 @@ def main(config_, save_path):
     epoch_max = math.ceil(iter_max / num_iter_per_epoch)
     epoch_val = math.floor(config.get('iter_val') / num_iter_per_epoch)
     epoch_save = math.floor(config.get('iter_save') / num_iter_per_epoch)
+    config['multi_step_lr']['milestones'] = [math.floor(milestone / num_iter_per_epoch) for milestone in config['multi_step_lr']['milestones']]
     print('len dataset: ', len(train_loader.dataset))
     print('epoch_max: ', epoch_max)
     print('epoch_val', epoch_val)
+    print('milestones', config['multi_step_lr'])
 
     max_val_v = -1e18
 

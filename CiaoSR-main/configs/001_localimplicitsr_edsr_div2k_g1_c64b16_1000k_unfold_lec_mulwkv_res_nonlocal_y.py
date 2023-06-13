@@ -44,7 +44,7 @@ train_cfg = None
 if val_scale <= 4:
     test_cfg = dict(metrics=['PSNR', 'SSIM'], crop_border=val_scale, scale=val_scale, tile=192, tile_overlap=32, convert_to='y') # larger tile is better
 else:
-    test_cfg = dict(metrics=['PSNR', 'SSIM'], crop_border=val_scale, scale=val_scale) # , convert_to='y') # x6, x8, x12 
+    test_cfg = dict(metrics=['PSNR', 'SSIM'], crop_border=val_scale, scale=val_scale, convert_to='y') # x6, x8, x12 
 
 
 # dataset settings
