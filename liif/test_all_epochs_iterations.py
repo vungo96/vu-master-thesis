@@ -17,7 +17,6 @@ if __name__ == '__main__':
     parser.add_argument('--config')
     parser.add_argument('--model_path')
     parser.add_argument('--scale')
-    parser.add_argument('--scale_aware', default=None)
     parser.add_argument('--scale_max', default='4')
     parser.add_argument('--tag', default=None)
     parser.add_argument('--window', default=0)
@@ -54,12 +53,6 @@ if __name__ == '__main__':
         'lpips' : []
     }
 
-    if args.scale_aware is True or args.scale_aware=="true":
-        print("scale-aware !")
-        scale_aware = True
-    else:
-        scale_aware = None
-
     for file in epoch_files:
 
         model_spec = torch.load(
@@ -74,7 +67,6 @@ if __name__ == '__main__':
                         device=device,
                         writer=None,
                         out_dir=None,
-                        scale_aware=scale_aware,
                         max_scale=4,
                         window_size=int(args.window)
                         )

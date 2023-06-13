@@ -27,19 +27,6 @@ def save_images_to_dir(out_dir, inp, pred, gt, step=0):
     transforms.ToPILImage()(pred[0]).save(f'{out_dir}/{step}_pred.png')
     transforms.ToPILImage()(gt[0]).save(f'{out_dir}/{step}_gt.png')
 
-def add_images_to_writer(writer, inp, pred, gt, step=0, tag=None):
-    # bring pred and gt back to h x w
-    h, w = inp.shape[2:]
-    s = int(math.sqrt(pred.shape[1] // (h*w)))
-    pred = pred.view(pred.shape[0], h*s, w*s, 3).permute(0, 3, 1, 2)
-    gt = gt.view(gt.shape[0], h*s, w*s, 3).permute(0, 3, 1, 2)
-
-    writer.add_images(f'Epoch {step} batch {tag} GT', inp, step)
-    writer.add_images(f'Epoch {step} batch {tag} pred', pred, step)
-    writer.add_images(f'Epoch {step} batch {tag} input', gt, step)
-    writer.flush()
-
-
 def batched_predict(model, inp, coord, cell, bsize, inp_scale=None):
     with torch.no_grad():
         model.gen_feat(inp)
@@ -59,7 +46,7 @@ def batched_predict(model, inp, coord, cell, bsize, inp_scale=None):
 
 
 def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None, max_scale=4,
-              verbose=False, device="cuda", writer=None, epoch=0, out_dir=None, scale_aware=None, window_size=0):
+              verbose=False, device="cuda", writer=None, epoch=0, out_dir=None, window_size=0):
     model.eval()
 
     if data_norm is None:
@@ -73,10 +60,6 @@ def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None, ma
     t = data_norm['gt']
     gt_sub = torch.FloatTensor(t['sub']).view(1, 1, -1).to(device)
     gt_div = torch.FloatTensor(t['div']).view(1, 1, -1).to(device)
-    if scale_aware is not None:
-        inp_scale_max = data_norm['inp_scale_max']
-    else:
-        inp_scale_max = None
 
     print("eval_type:", eval_type)
     if eval_type is None:
@@ -101,8 +84,6 @@ def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None, ma
     val_res_lpips = utils.Averager()
 
     pbar = tqdm(loader, leave=False, desc='val')
-    # TODO: change this to activate adding images
-    first = False
     for i, batch in enumerate(pbar):
         for k, v in batch.items():
             batch[k] = v.to(device)
@@ -132,22 +113,11 @@ def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None, ma
             with torch.no_grad():
                 pred = model(inp, batch['coord'], batch['cell'])
         else:
-            if inp_scale_max is not None:
-                inp_scale = (batch['inp_scale'] - 1) / (inp_scale_max - 1)
-                pred = batched_predict(model, inp,
-                                coord, cell*max(scale/max_scale, 1), eval_bsize, inp_scale)
-            else:
-                  
-                pred = batched_predict(model, inp,
+            pred = batched_predict(model, inp,
                                 coord, cell*max(scale/max_scale, 1), eval_bsize)
+            
         pred = pred * gt_div + gt_sub
         pred.clamp_(0, 1)
-
-        # save qualitative results
-        if writer is not None and first:
-            add_images_to_writer(writer, batch['inp'], pred, batch['gt'],
-                                step=epoch, tag=str(i))
-            first = False
 
         if eval_type is not None:  # reshape for shaving-eval
             # gt reshape
@@ -236,13 +206,6 @@ if __name__ == '__main__':
         print("Use multiple gpus.")
         model = nn.parallel.DataParallel(model)
 
-    # TODO: remove later
-    if 'inp_scale_max' in config['data_norm'].keys():
-        scale_aware = True
-        print("Condition on scale")
-    else:
-        scale_aware = None
-
     res_psnr, res_ssim, res_lpips = eval_psnr(loader, model,
                     data_norm=config.get('data_norm'),
                     eval_type=config.get('eval_type'),
@@ -251,7 +214,6 @@ if __name__ == '__main__':
                     device=device,
                     writer=writer,
                     out_dir=args.out_dir,
-                    scale_aware=scale_aware,
                     window_size=int(args.window))
     print('result psnr: {:.4f}'.format(res_psnr))
     print('result ssim: {:.4f}'.format(res_ssim))

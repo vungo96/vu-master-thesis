@@ -154,7 +154,6 @@ def train(train_loader, model, optimizer, params, gradient_accumulation_steps, m
         gt = (batch['gt'] - gt_sub) / gt_div 
 
         if model_D is not None:
-            print("teeeeest")
             optimizer.zero_grad()
             optimizer_D.zero_grad()
 

@@ -11,6 +11,7 @@ import numpy as np
 @register('lte')
 class LTE(nn.Module):
 
+    # TODO: remove scale aware stuff
     def __init__(self, encoder_spec, imnet_spec=None, hidden_dim=256, scale_aware_phase=None, scale_aware_mlp=None, device='cuda'):
         super().__init__()        
         self.device = device
@@ -28,9 +29,6 @@ class LTE(nn.Module):
             nn.ReLU()
         )
         self.phase = nn.Linear(2, hidden_dim//2, bias=False)
-        self.scale_aware_phase = scale_aware_phase
-        self.scale_aware_mlp = scale_aware_mlp
-
         self.imnet = models.make(imnet_spec, args={'in_dim': hidden_dim})
 
     def gen_feat(self, inp):
@@ -94,16 +92,10 @@ class LTE(nn.Module):
                 q_freq = torch.stack(torch.split(q_freq, 2, dim=-1), dim=-1)
                 q_freq = torch.mul(q_freq, rel_coord.unsqueeze(-1))
                 q_freq = torch.sum(q_freq, dim=-2)
-                if scale is not None and self.scale_aware_phase is not None:
-                    q_freq += self.phase(rel_cell.view((bs * q, -1))).view(bs, q, -1) + self.scale(scale.view(bs * q, -1)).view(bs, q, -1)
-                else:
-                    q_freq += self.phase(rel_cell.view((bs * q, -1))).view(bs, q, -1)
+                q_freq += self.phase(rel_cell.view((bs * q, -1))).view(bs, q, -1)
                 q_freq = torch.cat((torch.cos(np.pi*q_freq), torch.sin(np.pi*q_freq)), dim=-1)
 
-                inp = torch.mul(q_coef, q_freq)       
-
-                if self.scale_aware_mlp is not None and scale is not None:
-                    inp += self.scale_mlp(scale.view(bs * q, -1)).view(bs, q, -1)  
+                inp = torch.mul(q_coef, q_freq)
 
                 pred = self.imnet(inp.contiguous().view(bs * q, -1)).view(bs, q, -1)
                 preds.append(pred)

@@ -17,7 +17,6 @@ if __name__ == '__main__':
     parser.add_argument('--config')
     parser.add_argument('--model_path')
     parser.add_argument('--scale')
-    parser.add_argument('--scale_aware', default=None)
     parser.add_argument('--scale_max', default='4')
     parser.add_argument('--tag', default=None)
     args = parser.parse_args()
@@ -47,12 +46,6 @@ if __name__ == '__main__':
     epoch_files = sorted(epoch_files, key=lambda x: int(x.split('-')[1].split('.')[0]))
     psnr_list = []
 
-    if args.scale_aware is True or args.scale_aware=="true":
-        print("scale-aware !")
-        scale_aware = True
-    else:
-        scale_aware = None
-
     for file in epoch_files:
 
         model_spec = torch.load(
@@ -66,8 +59,7 @@ if __name__ == '__main__':
                         verbose=True,
                         device=device,
                         writer=None,
-                        out_dir=None,
-                        scale_aware=scale_aware)
+                        out_dir=None)
         psnr_list.append(res)
         print('result: {:.4f}'.format(res))
 
