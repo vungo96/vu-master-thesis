@@ -128,10 +128,6 @@ def train(train_loader, model, optimizer, gradient_accumulation_steps):
     t = data_norm['gt']
     gt_sub = torch.FloatTensor(t['sub']).view(1, 1, -1).to(device)
     gt_div = torch.FloatTensor(t['div']).view(1, 1, -1).to(device)
-    if 'inp_scale_max' in data_norm.keys():
-        inp_scale_max = data_norm['inp_scale_max']
-    else:
-        inp_scale_max = None
 
     # train batches
     for step, batch in tqdm(enumerate(train_loader), leave=False, desc='train', total=len(train_loader)):
@@ -139,11 +135,7 @@ def train(train_loader, model, optimizer, gradient_accumulation_steps):
             batch[k] = v.to(device)
 
         inp = (batch['inp'] - inp_sub) / inp_div
-        if inp_scale_max is not None:
-            inp_scale = (batch['inp_scale'] - 1) / (inp_scale_max - 1)
-            pred = model(inp, batch['coord'], batch['cell'], inp_scale)
-        else:
-            pred = model(inp, batch['coord'], batch['cell'])            
+        pred = model(inp, batch['coord'], batch['cell'])            
 
         gt = (batch['gt'] - gt_sub) / gt_div
         loss = loss_fn(pred, gt)
@@ -253,12 +245,6 @@ def main(config_, save_path):
                 model_ = model.module
             else:
                 model_ = model
-            
-            # TODO: remove later
-            if 'inp_scale_max' in config['data_norm'].keys():
-                scale_aware = True
-            else:
-                scale_aware = None
 
             val_res, _, _ = eval_psnr(val_loader, model_,
                                 data_norm=config['data_norm'],
@@ -266,8 +252,7 @@ def main(config_, save_path):
                                 eval_bsize=config.get('eval_bsize'),
                                 device=device, 
                                 writer=writer,
-                                epoch=epoch,
-                                scale_aware=scale_aware)
+                                epoch=epoch)
 
             log_info.append('val: psnr={:.4f}'.format(val_res))
             writer.add_scalars('psnr', {'val': val_res}, epoch)

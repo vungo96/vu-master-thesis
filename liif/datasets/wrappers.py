@@ -296,7 +296,7 @@ class SRImplicitDownsampled(Dataset):
 
             w_lr = inp_size
             w_hr = round(w_lr * s)
-            if self.sample_from_edges is not None:
+            if self.crop_from_edges is not None:
                 coord_from_edge = get_random_coordinate_from_edges(img)
                 x0, y0 = get_image_crop_start_coord(img, coord_from_edge, w_hr)
             else:
@@ -348,7 +348,7 @@ class SRImplicitDownsampled(Dataset):
                 hr_coord_reshape = hr_coord.reshape(crop_hr.shape[-2], crop_hr.shape[-1], 2)
                 hr_rgb_reshape = hr_rgb.reshape(crop_hr.shape[-2], crop_hr.shape[-1], 3)
                 
-                if self.crop_from_edges is not None:
+                if self.sample_from_edges is not None:
                     coord_from_edge = get_random_coordinate_from_edges(crop_hr)
                     x0, y0 = get_image_crop_start_coord(crop_hr, coord_from_edge, sample_patch_size)
                 else:

@@ -129,10 +129,6 @@ def train(train_loader, model, optimizer, gradient_accumulation_steps):
     t = data_norm['gt']
     gt_sub = torch.FloatTensor(t['sub']).view(1, 1, -1).to(device)
     gt_div = torch.FloatTensor(t['div']).view(1, 1, -1).to(device)
-    if 'inp_scale_max' in data_norm.keys():
-        inp_scale_max = data_norm['inp_scale_max']
-    else:
-        inp_scale_max = None
 
     # train batches
     for step, batch in tqdm(enumerate(train_loader), leave=False, desc='train', total=len(train_loader)):
@@ -140,12 +136,7 @@ def train(train_loader, model, optimizer, gradient_accumulation_steps):
             batch[k] = v.to(device)
 
         inp = (batch['inp'] - inp_sub) / inp_div
-        if inp_scale_max is not None:
-            # TODO: normalize again
-            inp_scale = batch['inp_scale'] # (batch['inp_scale'] - 1) / (inp_scale_max - 1)
-            pred = model(inp, batch['coord'], batch['cell'], inp_scale)
-        else:
-            pred = model(inp, batch['coord'], batch['cell'])            
+        pred = model(inp, batch['coord'], batch['cell'])            
 
         gt = (batch['gt'] - gt_sub) / gt_div
         loss = loss_fn(pred, gt)
@@ -185,19 +176,7 @@ def main(config_, save_path):
 
     print("Config: ", config)
 
-    n_gpus = len(os.environ['CUDA_VISIBLE_DEVICES'].split(','))
-
-    # Enable running on cpu as well
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    print("Run on device: ", device)
-
-    # get model, optimizer, and lr_scheduler from config
-    model, optimizer, epoch_start, lr_scheduler = prepare_training()
-
-    if n_gpus > 1:
-        print("Use multiple gpus.")
-        model = nn.parallel.DataParallel(model)
-
+    # TODO: change this back
     num_iter_per_epoch = math.ceil(len(train_loader.dataset) / 16) # config['train_dataset']['batch_size'])
     iter_max = config['iter_max']
     epoch_max = math.ceil(iter_max / num_iter_per_epoch)
@@ -208,6 +187,20 @@ def main(config_, save_path):
     print('epoch_max: ', epoch_max)
     print('epoch_val', epoch_val)
     print('milestones', config['multi_step_lr'])
+
+    n_gpus = len(os.environ['CUDA_VISIBLE_DEVICES'].split(','))
+
+    # Enable running on cpu as well
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    print("Run on device: ", device)
+
+
+    # get model, optimizer, and lr_scheduler from config
+    model, optimizer, epoch_start, lr_scheduler = prepare_training()
+
+    if n_gpus > 1:
+        print("Use multiple gpus.")
+        model = nn.parallel.DataParallel(model)
 
     max_val_v = -1e18
 
@@ -263,12 +256,6 @@ def main(config_, save_path):
                 model_ = model.module
             else:
                 model_ = model
-            
-            # TODO: remove later
-            if 'inp_scale_max' in config['data_norm'].keys():
-                scale_aware = True
-            else:
-                scale_aware = None
 
             val_res, _, _ = eval_psnr(val_loader, model_,
                                 data_norm=config['data_norm'],
@@ -276,8 +263,7 @@ def main(config_, save_path):
                                 eval_bsize=config.get('eval_bsize'),
                                 device=device, 
                                 writer=writer,
-                                epoch=epoch,
-                                scale_aware=scale_aware)
+                                epoch=epoch)
 
             log_info.append('val: psnr={:.4f}'.format(val_res))
             writer.add_scalars('psnr', {'val': val_res}, epoch)

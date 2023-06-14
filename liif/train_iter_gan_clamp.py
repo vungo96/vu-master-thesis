@@ -232,9 +232,9 @@ def train(train_loader, model, optimizer, params, gradient_accumulation_steps, m
             #l_accum[4] += torch.mean(d_S).item()
 
         optimizer.zero_grad()
-
-        pred = model(inp, batch['coord'], batch['cell'])
     
+        pred = model(inp, batch['coord'], batch['cell'])
+        
         # TODO: check if this works
         pred.clamp_(-1, 1)
             
@@ -281,7 +281,7 @@ def train(train_loader, model, optimizer, params, gradient_accumulation_steps, m
         loss = loss / gradient_accumulation_steps
         loss.backward()
         # TODO: change back
-        torch.nn.utils.clip_grad_norm_(params, 0.1)
+        # torch.nn.utils.clip_grad_norm_(params, 0.1)
 
         if step % gradient_accumulation_steps == 0:
             train_loss.add(loss.item())

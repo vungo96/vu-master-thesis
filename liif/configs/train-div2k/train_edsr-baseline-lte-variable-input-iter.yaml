@@ -72,5 +72,5 @@ multi_step_lr:
   milestones: [200000, 400000, 600000, 800000]
   gamma: 0.5
 
-iter_val: 100000
+iter_val: 1000
 iter_save: 100000

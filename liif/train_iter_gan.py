@@ -140,10 +140,6 @@ def train(train_loader, model, optimizer, params, gradient_accumulation_steps, m
     t = data_norm['gt']
     gt_sub = torch.FloatTensor(t['sub']).view(1, 1, -1).to(device)
     gt_div = torch.FloatTensor(t['div']).view(1, 1, -1).to(device)
-    if 'inp_scale_max' in data_norm.keys():
-        inp_scale_max = data_norm['inp_scale_max']
-    else:
-        inp_scale_max = None
 
     # train batches
     for step, batch in tqdm(enumerate(train_loader), leave=False, desc='train', total=len(train_loader)):
@@ -157,11 +153,7 @@ def train(train_loader, model, optimizer, params, gradient_accumulation_steps, m
             optimizer.zero_grad()
             optimizer_D.zero_grad()
 
-            if inp_scale_max is not None:
-                inp_scale = batch['inp_scale'] # (batch['inp_scale'] - 1) / (inp_scale_max - 1)
-                pred = model(inp, batch['coord'], batch['cell'], inp_scale).detach()
-            else:
-                pred = model(inp, batch['coord'], batch['cell']).detach()
+            pred = model(inp, batch['coord'], batch['cell']).detach()
         
             # TODO: check if this works
             pred.clamp_(-1, 1)
@@ -238,11 +230,7 @@ def train(train_loader, model, optimizer, params, gradient_accumulation_steps, m
 
         optimizer.zero_grad()
 
-        if inp_scale_max is not None:
-            inp_scale = batch['inp_scale'] # (batch['inp_scale'] - 1) / (inp_scale_max - 1)
-            pred = model(inp, batch['coord'], batch['cell'], inp_scale)
-        else:
-            pred = model(inp, batch['coord'], batch['cell'])
+        pred = model(inp, batch['coord'], batch['cell'])
     
         # TODO: check if this works
         # pred.clamp_(-1, 1)
@@ -323,6 +311,18 @@ def main(config_, save_path):
 
     print("Config: ", config)
 
+    # TODO: change this back
+    num_iter_per_epoch = math.ceil(len(train_loader.dataset) / 16) # config['train_dataset']['batch_size'])
+    iter_max = config['iter_max']
+    epoch_max = math.ceil(iter_max / num_iter_per_epoch)
+    epoch_val = math.floor(config.get('iter_val') / num_iter_per_epoch)
+    epoch_save = math.floor(config.get('iter_save') / num_iter_per_epoch)
+    config['multi_step_lr']['milestones'] = [math.floor(milestone / num_iter_per_epoch) for milestone in config['multi_step_lr']['milestones']]
+    print('len dataset: ', len(train_loader.dataset))
+    print('epoch_max: ', epoch_max)
+    print('epoch_val', epoch_val)
+    print('milestones', config['multi_step_lr'])
+
     n_gpus = len(os.environ['CUDA_VISIBLE_DEVICES'].split(','))
 
     # Enable running on cpu as well
@@ -353,18 +353,6 @@ def main(config_, save_path):
     if n_gpus > 1:
         print("Use multiple gpus.")
         model = nn.parallel.DataParallel(model)
-
-    # TODO: change this back
-    num_iter_per_epoch = math.ceil(len(train_loader.dataset) / 16) # config['train_dataset']['batch_size'])
-    iter_max = config['iter_max']
-    epoch_max = math.ceil(iter_max / num_iter_per_epoch)
-    epoch_val = math.floor(config.get('iter_val') / num_iter_per_epoch)
-    epoch_save = math.floor(config.get('iter_save') / num_iter_per_epoch)
-    config['multi_step_lr']['milestones'] = [math.floor(milestone / num_iter_per_epoch) for milestone in config['multi_step_lr']['milestones']]
-    print('len dataset: ', len(train_loader.dataset))
-    print('epoch_max: ', epoch_max)
-    print('epoch_val', epoch_val)
-    print('milestones', config['multi_step_lr'])
 
     max_val_v = -1e18
 
@@ -436,12 +424,6 @@ def main(config_, save_path):
                 model_ = model.module
             else:
                 model_ = model
-            
-            # TODO: remove later
-            if 'inp_scale_max' in config['data_norm'].keys():
-                scale_aware = True
-            else:
-                scale_aware = None
 
             val_res_psnr, val_res_ssim, val_res_lpips = eval_psnr(val_loader, model_,
                                 data_norm=config['data_norm'],
@@ -449,8 +431,7 @@ def main(config_, save_path):
                                 eval_bsize=config.get('eval_bsize'),
                                 device=device, 
                                 writer=writer,
-                                epoch=epoch,
-                                scale_aware=scale_aware)
+                                epoch=epoch)
 
             log_info.append('val psnr {:.4f} | ssim loss {:.4f} | lpips loss {:.4f}'.format(val_res_psnr, val_res_ssim, val_res_lpips))
             writer.add_scalars('psnr', {'val': val_res_psnr}, epoch)

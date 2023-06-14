@@ -174,7 +174,8 @@ def calc_lpips(sr, hr, dataset=None, scale=1, device='cuda'):
             shave = scale + 6
         else:
             lpips_net = LearnedPerceptualImagePatchSimilarity(net_type='vgg').to(device)
-            lpips = lpips_net(sr*2-1, hr*2-1)
+            with torch.no_grad():
+                lpips = lpips_net(sr*2-1, hr*2-1)
 
             return lpips
         sr = sr[..., shave:-shave, shave:-shave]

@@ -11,8 +11,7 @@ import numpy as np
 @register('lte')
 class LTE(nn.Module):
 
-    # TODO: remove scale aware stuff
-    def __init__(self, encoder_spec, imnet_spec=None, hidden_dim=256, scale_aware_phase=None, scale_aware_mlp=None, device='cuda'):
+    def __init__(self, encoder_spec, imnet_spec=None, hidden_dim=256, device='cuda'):
         super().__init__()        
         self.device = device
         self.encoder = models.make(encoder_spec)

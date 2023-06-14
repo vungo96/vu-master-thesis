@@ -33,7 +33,7 @@ source activate ciaosr6
 
 export MASTER_PORT=$((12000 + $RANDOM % 20000))
 
-CONFIG=configs/001_localimplicitsr_edsr_div2k_g1_c64b16_1000k_unfold_lec_mulwkv_res_nonlocal_y.py
+CONFIG=configs/001_localimplicitsr_edsr_div2k_g1_c64b16_1000k_unfold_lec_mulwkv_res_nonlocal.py
 GPUS=4
 CKPT=pretrain_model/edsr-ciaosr-baseline.pth
 

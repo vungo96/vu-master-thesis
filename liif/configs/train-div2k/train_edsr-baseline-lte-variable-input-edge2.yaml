@@ -85,5 +85,5 @@ multi_step_lr_D:
   gamma: 0.5
 
 iter_max: 1000000
-iter_val: 1000
+iter_val: 100000
 iter_save: 100000
