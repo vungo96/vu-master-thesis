@@ -6,14 +6,14 @@ import torch.nn.functional as F
 import mmcv
 from mmcv.runner import auto_fp16
 
-from mmedit.core import psnr, ssim, tensor2img
+from mmedit.core import tensor2img
+from ...core.evaluation.metrics import psnr, ssim, lpips
 from mmedit.models.base import BaseModel
 from mmedit.models.builder import build_backbone, build_loss
-# from ..registry import MODELS
+from mmedit.models.registry import MODELS
 import pdb
 
-
-# @MODELS.register_module()
+@MODELS.register_module('BasicRestorer')
 class BasicRestorer(BaseModel):
     """Basic model for image restoration.
 
@@ -30,7 +30,7 @@ class BasicRestorer(BaseModel):
         test_cfg (dict): Config for testing. Default: None.
         pretrained (str): Path for pretrained model. Default: None.
     """
-    allowed_metrics = {'PSNR': psnr, 'SSIM': ssim}
+    allowed_metrics = {'PSNR': psnr, 'SSIM': ssim, 'LPIPS': lpips}
 
     def __init__(self,
                  generator,
