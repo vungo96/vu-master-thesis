@@ -13,7 +13,7 @@ from mmedit.models.builder import build_backbone, build_loss
 from mmedit.models.registry import MODELS
 import pdb
 
-@MODELS.register_module('BasicRestorer')
+# @MODELS.register_module('BasicRestorer')
 class BasicRestorer(BaseModel):
     """Basic model for image restoration.
 
@@ -39,6 +39,8 @@ class BasicRestorer(BaseModel):
                  test_cfg=None,
                  pretrained=None):
         super().__init__()
+
+        print('Metrics: ', self.allowed_metrics)
 
         self.train_cfg = train_cfg
         self.test_cfg = test_cfg

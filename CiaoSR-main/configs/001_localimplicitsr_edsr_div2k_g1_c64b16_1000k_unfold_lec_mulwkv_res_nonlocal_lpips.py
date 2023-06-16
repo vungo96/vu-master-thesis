@@ -1,6 +1,6 @@
 exp_name = '001_ciaosr_edsr_div2k'
 scale_min, scale_max = 1, 4
-val_scale = 4
+val_scale = 30
 # data_type = 'Urban100'  #TODO {Set5, Set14, BSDS100, Urban100, Manga109}
 
 from mmedited.models.restorers.ciaosr import CiaoSR
@@ -42,9 +42,9 @@ model = dict(
 # model training and testing settings
 train_cfg = None
 if val_scale <= 4:
-    test_cfg = dict(metrics=['PSNR', 'SSIM'], crop_border=val_scale, scale=val_scale, tile=192, tile_overlap=32) # larger tile is better
+    test_cfg = dict(metrics=['PSNR', 'SSIM', 'LPIPS'], crop_border=val_scale, scale=val_scale, tile=192, tile_overlap=32) # larger tile is better
 else:
-    test_cfg = dict(metrics=['PSNR', 'SSIM'], crop_border=val_scale, scale=val_scale) # , convert_to='y') # x6, x8, x12 
+    test_cfg = dict(metrics=['PSNR', 'SSIM', 'LPIPS'], crop_border=val_scale, scale=val_scale)# , tile=64, tile_overlap=32) # , convert_to='y') # x6, x8, x12 
 
 
 # dataset settings
@@ -87,7 +87,7 @@ valid_pipeline = [
     dict(type='RandomDownSampling', scale_min=val_scale, scale_max=val_scale),
     dict(type='RescaleToZeroOne', keys=['lq', 'gt']),
     dict(type='ImageToTensor', keys=['lq', 'gt']),
-    dict(type='GenerateCoordinateAndCell'),
+    dict(type='GenerateCoordinateAndCell', scale=val_scale),
     dict(
         type='Collect',
         keys=['lq', 'gt', 'coord', 'cell'],
@@ -145,12 +145,12 @@ data = dict(
         # lq_folder=f'{data_dir}/testset/DIV2K_val/LR_bicubic/X3', #f'{mydata_dir}/Classical/Urban100/LRbicx4',  #f'{mydata_dir}/Classical/Set14/LRbicx4', #f'{mydata_dir}/Classical/BSDS100/LRbicx2',  #
         # gt_folder=f'{data_dir}/testset/DIV2K_val/HR', #f'{mydata_dir}/Classical/Urban100/GTmod12',  #f'{mydata_dir}/Classical/Set14/GTmod12', #f'{mydata_dir}/Classical/BSDS100/GTmod12',  #
         # pipeline=test_pipeline,
-        scale=scale_max,
+        #scale=scale_max,
         # filename_tmpl='{}x3'))   #x4
         type=val_dataset_type,
         gt_folder=f'{data_dir}/div2k/DIV2K_valid_HR', #f'{mydata_dir}/Classical/Urban100/GTmod12',  #f'{data_dir}/testset/Set5/HR', #f'{data_dir}/testset/Urban100/HR',  #f'{data_dir}/sr_test/Set5', #
-        pipeline=valid_pipeline))
-        # scale=val_scale))
+        pipeline=valid_pipeline,
+        scale=val_scale))
 
 # optimizer
 optimizers = dict(type='Adam', lr=1.e-4)

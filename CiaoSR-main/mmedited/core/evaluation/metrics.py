@@ -367,10 +367,16 @@ def lpips(img1, img2, crop_border=0, input_order='HWC', convert_to=None):
         img1 = img1[crop_border:-crop_border, crop_border:-crop_border, None]
         img2 = img2[crop_border:-crop_border, crop_border:-crop_border, None]
 
-    img1 = ndarray_to_tensor(img1).to('cuda')
-    img2 = ndarray_to_tensor(img2).to('cuda')
+    # Get the index of the current CUDA device
+    current_device_index = torch.cuda.current_device()
 
-    lpips_net = LearnedPerceptualImagePatchSimilarity(net_type='vgg').to('cuda')
+    # Set the device to the current CUDA device
+    device = torch.device(f'cuda:{current_device_index}')
+
+    img1 = ndarray_to_tensor(img1).to(device)
+    img2 = ndarray_to_tensor(img2).to(device)
+
+    lpips_net = LearnedPerceptualImagePatchSimilarity(net_type='vgg').to(device)
     with torch.no_grad():
         lpips = lpips_net(img1*2-1, img2*2-1)
 
