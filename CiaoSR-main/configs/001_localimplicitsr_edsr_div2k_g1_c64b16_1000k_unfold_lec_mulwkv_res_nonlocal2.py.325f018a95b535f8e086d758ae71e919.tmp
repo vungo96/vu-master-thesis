@@ -149,7 +149,7 @@ data = dict(
         # filename_tmpl='{}x3'))   #x4
         type=val_dataset_type,
         gt_folder=f'{data_dir}/div2k/DIV2K_valid_HR', #f'{mydata_dir}/Classical/Urban100/GTmod12',  #f'{data_dir}/testset/Set5/HR', #f'{data_dir}/testset/Urban100/HR',  #f'{data_dir}/sr_test/Set5', #
-        pipeline=valid_pipeline
+        pipeline=valid_pipeline,
         scale=val_scale))
 
 # optimizer
