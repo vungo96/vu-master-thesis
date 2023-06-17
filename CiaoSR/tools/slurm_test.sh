@@ -3,7 +3,7 @@
 ### Start of Slurm SBATCH definitions
 #SBATCH -c 14               # Number of cores (-c)
 #SBATCH -t 0-12:00          # Runtime in D-HH:MM, minimum of t minutes
-#SBATCH -p gpu              # Partition to submit to
+#SBATCH -p seas_gpu              # Partition to submit to
 #SBATCH --mem-per-cpu=20000M #M is the default and can therefore be omitted, but could also be K(ilo)|G(iga)|T(era)
 # --nodes=1              # number of nodes
 # --ntasks-per-node=2     # MPI processes per node

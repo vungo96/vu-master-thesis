@@ -84,7 +84,7 @@ def prepare_training():
         model = models.make(
             sv_file['model'], load_sd=True).to(device)
         optimizer = utils.make_optimizer(
-            model.parameters(), sv_file['optimizer'], load_sd=True)
+            model.parameters(), config['optimizer'], load_sd=True)
         epoch_start = 1
         if config.get('multi_step_lr') is None:
             lr_scheduler = None
@@ -177,7 +177,7 @@ def main(config_, save_path):
     print("Config: ", config)
 
     # TODO: change this back
-    num_iter_per_epoch = math.ceil(len(train_loader.dataset) / 16) # config['train_dataset']['batch_size'])
+    num_iter_per_epoch = math.ceil(len(train_loader.dataset) / config['train_dataset']['batch_size']) # config['train_dataset']['batch_size'])
     iter_max = config['iter_max']
     epoch_max = math.ceil(iter_max / num_iter_per_epoch)
     epoch_val = math.floor(config.get('iter_val') / num_iter_per_epoch)

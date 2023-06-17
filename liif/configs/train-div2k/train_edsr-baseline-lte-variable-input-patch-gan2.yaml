@@ -12,7 +12,7 @@ train_dataset:
       inp_sizes: [48]
       augment: true
       sample_q: 2304
-      sample_patch: true
+      # sample_patch: true
       # limit_scale: 4 # change scale_min
       scale_min: 1
       scale_max: 4
@@ -38,7 +38,7 @@ val_dataset:
       inp_sizes: [48]
       augment: true
       sample_q: 2304
-      sample_patch: true
+      # sample_patch: true
       # sample_patch: true
       # limit_scale: 3
       scale_min: 1
@@ -84,5 +84,5 @@ multi_step_lr_D:
   gamma: 0.5
 
 iter_max: 1000000
-iter_val: 1000
+iter_val: 100000
 iter_save: 100000

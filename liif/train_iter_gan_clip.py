@@ -89,7 +89,7 @@ def prepare_training():
             sv_file['model'], load_sd=True).to(device)
         params = list(filter(lambda p: p.requires_grad, model.parameters()))
         optimizer = utils.make_optimizer(
-            params, sv_file['optimizer'], load_sd=True)
+            params, config['optimizer'], load_sd=True)
         epoch_start = 1
         if config.get('multi_step_lr') is None:
             lr_scheduler = None
@@ -126,7 +126,7 @@ def train(train_loader, model, optimizer, params, gradient_accumulation_steps, m
     model.train()
     loss_fn = nn.L1Loss()
     if loss_fn == 'huber':
-        print("test huber")
+        print("Huber as loss fn")
         loss_fn = utils.Huber
         
     train_loss = utils.Averager()
@@ -397,11 +397,20 @@ def main(config_, save_path):
             'optimizer': optimizer_spec,
             'epoch': epoch
         }
-
         # save weights
         torch.save(sv_file, os.path.join(save_path, 'iteration-last.pth'))
+
         if gan_based is not None:
-                torch.save(model_D_.state_dict(), os.path.join(save_path, 'd_iteration-last.pth'))
+            model_spec_D = config['model_D']
+            model_spec_D['sd'] = model_D_.state_dict()
+            optimizer_spec_D = config['optimizer_D']
+            optimizer_spec_D['sd'] = optimizer_D.state_dict()
+            sv_file_D = {
+                'model': model_spec_D,
+                'optimizer': optimizer_spec_D,
+                'epoch': epoch
+            }
+            torch.save(sv_file_D, os.path.join(save_path, 'd_iteration-last.pth'))
 
         if (epoch_save is not None) and (epoch % epoch_save == 0):
             torch.save(sv_file,

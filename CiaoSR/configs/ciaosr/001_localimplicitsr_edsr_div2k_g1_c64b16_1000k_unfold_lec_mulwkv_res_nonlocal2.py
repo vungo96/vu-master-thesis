@@ -47,7 +47,7 @@ model = dict(
 # model training and testing settings
 train_cfg = None
 # test_cfg = dict(metrics=['PSNR', 'SSIM'], crop_border=val_scale, tile=128, tile_overlap=32, scale=val_scale) #, convert_to='y' val_scale+6
-test_cfg = dict(metrics=['PSNR', 'SSIM', 'LPIPS'], crop_border=val_scale, scale=val_scale) #, convert_to='y' val_scale+6
+test_cfg = dict(metrics=['PSNR', 'SSIM'], crop_border=val_scale, scale=val_scale) #, convert_to='y' val_scale+6
 
 # dataset settings
 train_dataset_type = 'SRFolderGTDataset'
@@ -89,7 +89,7 @@ valid_pipeline = [
     dict(type='RandomDownSampling', scale_min=val_scale, scale_max=val_scale),
     dict(type='RescaleToZeroOne', keys=['lq', 'gt']),
     dict(type='ImageToTensor', keys=['lq', 'gt']),
-    dict(type='GenerateCoordinateAndCell'),
+    dict(type='GenerateCoordinateAndCell', scale=val_scale),
     dict(
         type='Collect',
         keys=['lq', 'gt', 'coord', 'cell'],
@@ -110,7 +110,7 @@ test_pipeline = [
         channel_order='rgb'),
     dict(type='RescaleToZeroOne', keys=['lq', 'gt']),
     dict(type='ImageToTensor', keys=['lq', 'gt']),
-    dict(type='GenerateCoordinateAndCell', scale=val_scale),
+    dict(type='GenerateCoordinateAndCell'),
     dict(
         type='Collect',
         keys=['lq', 'gt', 'coord', 'cell'],

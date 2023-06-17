@@ -87,7 +87,7 @@ valid_pipeline = [
     dict(type='RandomDownSampling', scale_min=val_scale, scale_max=val_scale),
     dict(type='RescaleToZeroOne', keys=['lq', 'gt']),
     dict(type='ImageToTensor', keys=['lq', 'gt']),
-    dict(type='GenerateCoordinateAndCell', scale=val_scale),
+    dict(type='GenerateCoordinateAndCell'),
     dict(
         type='Collect',
         keys=['lq', 'gt', 'coord', 'cell'],

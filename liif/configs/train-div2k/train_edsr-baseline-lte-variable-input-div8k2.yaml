@@ -70,7 +70,7 @@ multi_step_lr:
   milestones: [400000, 800000, 1200000, 1600000]
   gamma: 0.5
 
-resume: "save_iter/_train_edsr-baseline-lte-variable-input-div8k2_sample-4096-scale-1toMax-inputs-48-div8k/iteration-1605856.pth"
+# resume: "save_iter/_train_edsr-baseline-lte-variable-input-div8k2_sample-4096-scale-1toMax-inputs-48-div8k/iteration-1605856.pth"
 
 iter_val: 100000
 iter_save: 100000
