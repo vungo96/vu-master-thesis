@@ -84,6 +84,8 @@ multi_step_lr_D:
   milestones: [200000, 400000, 600000, 800000]
   gamma: 0.5
 
+resume: save_iter/_train_edsr-baseline-lte-variable-input-edge5_sample-2304-scale-1toMax-inputs-48-edge-crop-edge-sample/iteration-1800000.pth
+
 iter_max: 2000000
 iter_val: 100000
 iter_save: 100000
