@@ -52,7 +52,7 @@ def make_data_loader(spec, tag=''):
     if spec['collate_batch']:
         # TODO: print stuff here as well
         loader = DataLoader(dataset, batch_size=spec['batch_size'],
-                            shuffle=(tag == 'train'), num_workers=12, collate_fn=dataset.collate_batch, pin_memory=True)
+                            shuffle=(tag == 't'), num_workers=1, collate_fn=dataset.collate_batch, pin_memory=True)
     else:
         log('{} dataset: size={}'.format(tag, len(dataset)))
         for k, v in dataset[0].items():
@@ -68,6 +68,13 @@ def make_data_loaders():
     return train_loader, val_loader
 
 def prepare_training():
+    gan_based = config.get('gan_based')
+    if gan_based is None:
+        model_D = None
+        optimizer_D = None
+        params_D = None
+        lr_scheduler_D = None
+
     if config.get('resume') is not None:
         sv_file = torch.load(config['resume'])
         model = models.make(
@@ -82,6 +89,19 @@ def prepare_training():
             lr_scheduler = MultiStepLR(optimizer, **config['multi_step_lr'])
         for _ in range(epoch_start - 1):
             lr_scheduler.step()
+            
+        if gan_based is not None:
+            sv_file_D = torch.load(config['resume_D'])
+            model_D = models.make(
+            sv_file_D['model'], load_sd=True).to(device)
+            log('model_D: #params={}'.format(utils.compute_num_params(model_D, text=True)))
+
+            params_D = list(filter(lambda p: p.requires_grad, model_D.parameters()))
+            optimizer_D = utils.make_optimizer(
+            params_D, sv_file_D['optimizer'], load_sd=True)
+            lr_scheduler_D = MultiStepLR(optimizer_D, **config['multi_step_lr_D'])
+            for _ in range(epoch_start - 1):
+                lr_scheduler_D.step()
     elif config.get('pretrained') is not None:
         print("Use pretrained model.")
         sv_file = torch.load(config['pretrained'])
@@ -96,6 +116,14 @@ def prepare_training():
         else:
             lr_scheduler = MultiStepLR(optimizer, **config['multi_step_lr'])
     else:
+        if gan_based is not None:
+            model_D = models.make(config['model_D']).to(device)
+            log('model_D: #params={}'.format(utils.compute_num_params(model_D, text=True)))
+
+            params_D = list(filter(lambda p: p.requires_grad, model_D.parameters()))
+            optimizer_D = utils.make_optimizer(params_D, config['optimizer_D'])
+            lr_scheduler_D = MultiStepLR(optimizer_D, **config['multi_step_lr_D'])
+
         model = models.make(config['model']).to(device)
         params = list(filter(lambda p: p.requires_grad, model.parameters()))
         optimizer = utils.make_optimizer(
@@ -107,7 +135,7 @@ def prepare_training():
             lr_scheduler = MultiStepLR(optimizer, **config['multi_step_lr'])
         
     log('model: #params={}'.format(utils.compute_num_params(model, text=True)))
-    return model, optimizer, epoch_start, lr_scheduler, params
+    return epoch_start, model, optimizer, params, lr_scheduler, model_D, optimizer_D, params_D, lr_scheduler_D
 
 def add_scales_to_dict(scales, scales_max):
     for scale in scales.tolist():
@@ -167,11 +195,11 @@ def train(train_loader, model, optimizer, params, gradient_accumulation_steps, m
             gt_img = gt.reshape(pred.shape[0], sample_patch_size, sample_patch_size, 3).permute(0, 3, 1, 2)
 
             # TODO: remove later only for debugging
-            #pred_img = pred_img * gt_div + gt_sub
-            #pred_img.clamp_(0, 1)
-            #gt_img = gt_img * gt_div + gt_sub
-            #gt_img.clamp(0,1)
-            #save_images_to_dir("test_images", inp, pred_img, gt_img, step=step)
+            pred_img = pred_img * gt_div + gt_sub
+            pred_img.clamp_(0, 1)
+            gt_img = gt_img * gt_div + gt_sub
+            gt_img.clamp(0,1)
+            save_images_to_dir("test_images", inp, pred_img, gt_img, step=step)
 
             e_S, d_S, _, _ = model_D(pred_img)
             e_H, d_H, _, _ = model_D(gt_img)
@@ -260,7 +288,7 @@ def train(train_loader, model, optimizer, params, gradient_accumulation_steps, m
 
             # FM loss
             loss_FMs = []
-            for f in range(4):
+            for f in range(3):
                 loss_FMs += [utils.Huber(e_Ss[f], e_Hs[f])]
                 loss_FMs += [utils.Huber(d_Ss[f], d_Hs[f])]
             loss_FM = torch.mean(torch.stack(loss_FMs)) * l_fm
@@ -324,35 +352,27 @@ def main(config_, save_path):
     epoch_save = math.floor(config.get('iter_save') / num_iter_per_epoch)
     config['multi_step_lr']['milestones'] = [math.floor(milestone / num_iter_per_epoch) for milestone in config['multi_step_lr']['milestones']]
     print('len dataset: ', len(train_loader.dataset))
-    print('epoch_max: ', epoch_max)
+    print('epoch_max:', epoch_max)
     print('epoch_val', epoch_val)
+    print('epoch_save', epoch_save)
     print('milestones', config['multi_step_lr'])
 
     # Enable running on cpu as well
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print("Run on device: ", device)
 
-    # get model, optimizer, and lr_scheduler from config
-    model, optimizer, epoch_start, lr_scheduler, params = prepare_training()
-
     gan_based = config.get('gan_based')
+    print('Gan-based:', gan_based)
 
-    # for GAN + LPIPS training
-    if gan_based is not None:
-        model_D = unetd.UnetD().to(device)
-        log('model_D: #params={}'.format(utils.compute_num_params(model, text=True)))
-
-        params_D = list(filter(lambda p: p.requires_grad, model_D.parameters()))
-        optimizer_D = utils.make_optimizer(params_D, config.get('optimizer_D'))
-        lr_scheduler_D = MultiStepLR(optimizer_D, config.get('multi_step_lr_D'))
-
-        if n_gpus > 1:
-            print("Use multiple gpus for discriminator.")
-            model_D = nn.parallel.DataParallel(model_D)
+    # get model, optimizer, and lr_scheduler from config
+    epoch_start, model, optimizer, params, lr_scheduler, model_D, optimizer_D, params_D, lr_scheduler_D = prepare_training()
 
     if n_gpus > 1:
         print("Use multiple gpus.")
         model = nn.parallel.DataParallel(model)
+        if gan_based is not None:
+            print("Use multiple gpus for discriminator.")
+            model_D = nn.parallel.DataParallel(model_D)
 
     max_val_v = -1e18
 
@@ -416,7 +436,7 @@ def main(config_, save_path):
             torch.save(sv_file,
                        os.path.join(save_path, 'iteration-{}.pth'.format(epoch*num_iter_per_epoch)))
             if gan_based is not None:
-                torch.save(model_D_.state_dict(), 
+                torch.save(sv_file_D, 
                            os.path.join(save_path, 'd_iteration-{}.pth'.format(epoch*num_iter_per_epoch)))
             # save scale_freq dict
             if scale_freq:

@@ -11,8 +11,8 @@ class UnetD(nn.Module):
 
         self.enc_b1 = DBlock(3, 64, preactivation=False)
         self.enc_b2 = DBlock(64, 128)
-        self.enc_b3 = DBlock(128, 192)
-        self.enc_b4 = DBlock(192, 256)
+        self.enc_b3 = DBlock(128, 256)
+        #self.enc_b4 = DBlock(192, 256)
         #self.enc_b5 = DBlock(256, 320)
         #self.enc_b6 = DBlock(320, 384)
 
@@ -20,10 +20,10 @@ class UnetD(nn.Module):
 
         #self.dec_b1 = GBlock(384, 320)
         #self.dec_b2 = GBlock(320*2, 256)
-        self.dec_b1 = GBlock(256, 192)
-        self.dec_b2 = GBlock(192*2, 128)
-        self.dec_b3 = GBlock(128*2, 64)
-        self.dec_b4 = GBlock(64*2, 32)
+        #self.dec_b1 = GBlock(256, 192)
+        self.dec_b1 = GBlock(256, 128)
+        self.dec_b2 = GBlock(128*2, 64)
+        self.dec_b3 = GBlock(64*2, 32)
 
         self.dec_out = nn.Conv2d(32, 1, kernel_size=1, padding=0)
 
@@ -42,11 +42,11 @@ class UnetD(nn.Module):
         e1 = self.enc_b1(x)
         e2 = self.enc_b2(e1)
         e3 = self.enc_b3(e2)
-        e4 = self.enc_b4(e3)
+        #e4 = self.enc_b4(e3)
         #e5 = self.enc_b5(e4)
         #e6 = self.enc_b6(e5)
 
-        e_out = self.enc_out(F.leaky_relu(e4, 0.1))
+        e_out = self.enc_out(F.leaky_relu(e3, 0.1))
         # print(e1.size())
         # print(e2.size())
         # print(e3.size())
@@ -54,16 +54,16 @@ class UnetD(nn.Module):
         # print(e5.size())
         # print(e6.size())
 
-        d1 = self.dec_b1(e4)
-        d2 = self.dec_b2(torch.cat([d1, e3], 1))
-        d3 = self.dec_b3(torch.cat([d2, e2], 1))
-        d4 = self.dec_b4(torch.cat([d3, e1], 1))
+        d1 = self.dec_b1(e3)
+        d2 = self.dec_b2(torch.cat([d1, e2], 1))
+        d3 = self.dec_b3(torch.cat([d2, e1], 1))
+        #d4 = self.dec_b4(torch.cat([d3, e1], 1))
         #d5 = self.dec_b5(torch.cat([d4, e2], 1))
         #d6 = self.dec_b6(torch.cat([d5, e1], 1))
 
-        d_out = self.dec_out(F.leaky_relu(d4, 0.1))
+        d_out = self.dec_out(F.leaky_relu(d3, 0.1))
 
-        return e_out, d_out, [e1,e2,e3,e4], [d1,d2,d3,d4]
+        return e_out, d_out, [e1,e2,e3], [d1,d2,d3]
     
 ### U-Net Discriminator ###
 # Residual block for the discriminator

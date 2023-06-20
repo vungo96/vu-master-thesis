@@ -11,9 +11,18 @@ from tensorboardX import SummaryWriter
 from torchmetrics.functional import structural_similarity_index_measure
 from torchmetrics.image.lpip import LearnedPerceptualImagePatchSimilarity
 from torchvision import transforms
+from matplotlib import pyplot as plt
 
 def save_image_to_dir(img, out_dir='test', step=0):
     transforms.ToPILImage()(img).save(f'{out_dir}/{step}.png')
+
+def save_edge_map_to_dir(img, edges, out_dir='edge_maps', step=0):
+    plt.subplot(121),plt.imshow(img, cmap = 'gray')
+    plt.title('Original Image'), plt.xticks([]), plt.yticks([])
+    plt.subplot(122),plt.imshow(edges,cmap = 'gray')
+    plt.title('Edge Image'), plt.xticks([]), plt.yticks([])
+    # Save both subplots in one image
+    plt.savefig(f'{out_dir}/{step}.png')
 
 class Averager():
 
@@ -239,7 +248,7 @@ def rand_bbox(size, lam):
 
     return bbx1, bby1, bbx2, bby2
    
-def get_random_coordinate_from_edges(image_tensor):
+def get_random_coordinate_from_edges(image_tensor, save_dir='test_edge_maps'):
      # Convert the image tensor to a NumPy array
     image_np = image_tensor.squeeze().permute(1, 2, 0).numpy()
 
@@ -251,6 +260,9 @@ def get_random_coordinate_from_edges(image_tensor):
 
     # Apply Canny edge detection using OpenCV
     edges = cv2.Canny(gray_image, threshold1=100, threshold2=200)
+
+    if save_dir is not None:
+        save_edge_map_to_dir(image_np, edges, save_dir)
 
     # Find the coordinates of the edge pixels
     edge_indices = np.argwhere(edges > 0)

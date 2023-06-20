@@ -15,12 +15,12 @@ train_dataset:
       sample_patch: true
       # limit_scale: 4 # change scale_min
       scale_min: 1
-      # scale_max: 2
+      scale_max: 1
       plot_scales: true
-      #crop_from_edges: true
-      #sample_from_edges: true
+      crop_from_edges: true
+      sample_from_edges: true
   collate_batch: true
-  batch_size: 4
+  batch_size: 1
 
 gan_based: true
 
@@ -68,6 +68,10 @@ model:
     # scale_aware_phase: true
     # scale_aware_mlp: true
 
+model_D:
+  name: unet-discriminator
+  args: {}
+
 optimizer:
   name: adam
   args:
@@ -84,6 +88,9 @@ multi_step_lr_D:
   milestones: [200000, 400000, 600000, 800000]
   gamma: 0.5
 
+resume: save_iter/_train_edsr-baseline-lte-variable-input-patch-gan-test_test2/iteration-50.pth
+resume_D: save_iter/_train_edsr-baseline-lte-variable-input-patch-gan-test_test2/d_iteration-50.pth
+
 iter_max: 1000000
-iter_val: 1000
-iter_save: 100000
+iter_val: 50
+iter_save: 50
