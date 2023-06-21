@@ -83,7 +83,7 @@ def prepare_training():
         model = models.make(
             sv_file['model'], load_sd=True).to(device)
         optimizer = utils.make_optimizer(
-            model.parameters(), config['optimizer'], load_sd=True)
+            model.parameters(), config['optimizer'])
         epoch_start = 1
         if config.get('multi_step_lr') is None:
             lr_scheduler = None

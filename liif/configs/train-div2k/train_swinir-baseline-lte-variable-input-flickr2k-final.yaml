@@ -12,11 +12,15 @@ train_dataset:
       inp_sizes: [48]
       augment: true
       sample_q: 2304
+      sample_patch: true
       # limit_scale: 4 # change scale_min
       scale_min: 1
+      # scale_max: 4
+      crop_from_edges: true
+      # sample_from_edges: true
       plot_scales: true
   collate_batch: true
-  batch_size: 32
+  batch_size: 128
 
 gradient_accumulation_steps: 1
 
@@ -38,7 +42,7 @@ val_dataset:
       scale_min: 1
       scale_max: 4
   collate_batch: true
-  batch_size: 32
+  batch_size: 128
 
 data_norm:
   inp: {sub: [0.5], div: [0.5]}
@@ -67,7 +71,7 @@ optimizer:
     lr: 1.e-4
 iter_max: 1000000
 multi_step_lr:
-  milestones: [200000, 400000, 600000, 800000]
+  milestones: [500000, 800000, 900000, 950000]
   gamma: 0.5
 
 iter_val: 50000

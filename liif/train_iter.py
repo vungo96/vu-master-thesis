@@ -84,7 +84,7 @@ def prepare_training():
         model = models.make(
             sv_file['model'], load_sd=True).to(device)
         optimizer = utils.make_optimizer(
-            model.parameters(), config['optimizer'], load_sd=True)
+            model.parameters(), config['optimizer'])
         epoch_start = 1
         if config.get('multi_step_lr') is None:
             lr_scheduler = None
@@ -307,7 +307,7 @@ if __name__ == '__main__':
         save_name = '_' + args.config.split('/')[-1][:-len('.yaml')]
     if args.tag is not None:
         save_name += '_' + args.tag
-    save_path = os.path.join('./save_iter', save_name)
+    save_path = os.path.join('./save', save_name)
 
     print('Tag: ', args.tag)
 

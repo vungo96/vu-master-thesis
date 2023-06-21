@@ -3,7 +3,8 @@ train_dataset:
     name: image-folder
     args:
       root_path: ./load/div2k/DIV2K_train_HR
-      repeat: 20
+      root_path2: ./load/Flickr2K/Flickr2K_HR
+      repeat: 5
       cache: in_memory
   wrapper:
     name: sr-implicit-downsampled-collate-batch
@@ -11,12 +12,15 @@ train_dataset:
       inp_sizes: [48]
       augment: true
       sample_q: 2304
+      # sample_patch: true
       # limit_scale: 4 # change scale_min
       scale_min: 1
-      scale_max: 4
+      # scale_max: 4
+      crop_from_edges: true
+      # sample_from_edges: true
       plot_scales: true
   collate_batch: true
-  batch_size: 16
+  batch_size: 32
 
 gradient_accumulation_steps: 1
 
@@ -29,23 +33,27 @@ val_dataset:
       repeat: 160
       cache: in_memory
   wrapper:
-    name: sr-implicit-downsampled
+    name: sr-implicit-downsampled-collate-batch
     args:
-      inp_size: 48
-      scale_max: 4
+      inp_sizes: [48]
+      augment: true
       sample_q: 2304
-  collate_batch: false
-  batch_size: 16
+      # limit_scale: 3
+      scale_min: 1
+      scale_max: 4
+  collate_batch: true
+  batch_size: 32
 
 data_norm:
   inp: {sub: [0.5], div: [0.5]}
   gt: {sub: [0.5], div: [0.5]}
+  # inp_scale_max: 48
 
 model:
   name: lte
   args:
     encoder_spec:
-      name: rdn
+      name: edsr-baseline
       args:
         no_upsampling: true
     imnet_spec:
@@ -54,6 +62,8 @@ model:
         out_dim: 3
         hidden_list: [256, 256, 256]
     hidden_dim: 256
+    # scale_aware_phase: true
+    # scale_aware_mlp: true
 
 optimizer:
   name: adam
@@ -64,5 +74,5 @@ multi_step_lr:
   milestones: [200000, 400000, 600000, 800000]
   gamma: 0.5
 
-iter_val: 100000
-iter_save: 100000
+iter_val: 50000
+iter_save: 50000

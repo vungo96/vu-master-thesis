@@ -2,22 +2,26 @@ train_dataset:
   dataset:
     name: image-folder
     args:
-      root_path: ./load/LSDIR/train/HR
-      repeat: 1
-      #cache: in_memory
-      sharded: true
+      root_path: ./load/div2k/DIV2K_train_HR
+      root_path2: ./load/Flickr2K/Flickr2K_HR
+      repeat: 5
+      cache: in_memory
   wrapper:
     name: sr-implicit-downsampled-collate-batch
     args:
       inp_sizes: [48]
       augment: true
-      sample_q: 4096
-      # limit_scale: 3 # change scale_min
+      sample_q: 2304
+      sample_patch: true
+      # limit_scale: 4 # change scale_min
       scale_min: 1
-      scale_max: 4
       plot_scales: true
+      crop_from_edges: true
+      sample_from_edges: true
   collate_batch: true
   batch_size: 32
+
+gan_based: true
 
 gradient_accumulation_steps: 1
 
@@ -34,17 +38,17 @@ val_dataset:
     args:
       inp_sizes: [48]
       augment: true
-      sample_q: 4096
+      sample_q: 2304
       # limit_scale: 3
       scale_min: 1
-      # scale_max: 12
+      # scale_max: 4
   collate_batch: true
   batch_size: 32
 
 data_norm:
   inp: {sub: [0.5], div: [0.5]}
   gt: {sub: [0.5], div: [0.5]}
-  # inp_scale_max: 64
+  # inp_scale_max: 48
 
 model:
   name: lte
@@ -62,15 +66,30 @@ model:
     # scale_aware_phase: true
     # scale_aware_mlp: true
 
+model_D:
+  name: unet-discriminator
+  args: {}
+
+loss_fn: huber
+
 optimizer:
   name: adam
   args:
-    lr: 1.e-4
-epoch_max: 1000
+    lr: 1.e-5
 multi_step_lr:
-  milestones: [200, 400, 600, 800]
+  milestones: [100000, 200000, 300000, 400000]
   gamma: 0.5
 
-#resume: _train_edsr-baseline-lte-variable-input-lsdir_sample-4096-scale-1to4-batch-32-inputs-48-lsdir-5M-iterations/epoch-last.pth
-epoch_val: 1
-epoch_save: 20
+optimizer_D:
+  name: adam
+  args:
+    lr: 1.e-5
+multi_step_lr_D:
+  milestones: [100000, 200000, 300000, 400000]
+  gamma: 0.5
+
+pretrained: save/_train_edsr-baseline-lte-variable-input-flickr2k2_sample-2304-scale-1toMax-inputs-48-flickr2k/iteration-993600.pth
+
+iter_val: 50000
+iter_save: 50000
+iter_max: 500000

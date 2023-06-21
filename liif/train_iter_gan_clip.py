@@ -52,7 +52,7 @@ def make_data_loader(spec, tag=''):
     if spec['collate_batch']:
         # TODO: print stuff here as well
         loader = DataLoader(dataset, batch_size=spec['batch_size'],
-                            shuffle=(tag == 't'), num_workers=1, collate_fn=dataset.collate_batch, pin_memory=True)
+                            shuffle=(tag == 'train'), num_workers=12, collate_fn=dataset.collate_batch, pin_memory=True)
     else:
         log('{} dataset: size={}'.format(tag, len(dataset)))
         for k, v in dataset[0].items():
@@ -104,12 +104,19 @@ def prepare_training():
                 lr_scheduler_D.step()
     elif config.get('pretrained') is not None:
         print("Use pretrained model.")
+        if gan_based is not None:
+            model_D = models.make(config['model_D']).to(device)
+            log('model_D: #params={}'.format(utils.compute_num_params(model_D, text=True)))
+
+            params_D = list(filter(lambda p: p.requires_grad, model_D.parameters()))
+            optimizer_D = utils.make_optimizer(params_D, config['optimizer_D'])
+            lr_scheduler_D = MultiStepLR(optimizer_D, **config['multi_step_lr_D'])
         sv_file = torch.load(config['pretrained'])
         model = models.make(
             sv_file['model'], load_sd=True).to(device)
         params = list(filter(lambda p: p.requires_grad, model.parameters()))
         optimizer = utils.make_optimizer(
-            params, config['optimizer'], load_sd=True)
+            params, config['optimizer'])
         epoch_start = 1
         if config.get('multi_step_lr') is None:
             lr_scheduler = None
@@ -195,11 +202,11 @@ def train(train_loader, model, optimizer, params, gradient_accumulation_steps, m
             gt_img = gt.reshape(pred.shape[0], sample_patch_size, sample_patch_size, 3).permute(0, 3, 1, 2)
 
             # TODO: remove later only for debugging
-            pred_img = pred_img * gt_div + gt_sub
-            pred_img.clamp_(0, 1)
-            gt_img = gt_img * gt_div + gt_sub
-            gt_img.clamp(0,1)
-            save_images_to_dir("test_images", inp, pred_img, gt_img, step=step)
+            #pred_img = pred_img * gt_div + gt_sub
+            #pred_img.clamp_(0, 1)
+            #gt_img = gt_img * gt_div + gt_sub
+            #gt_img.clamp(0,1)
+            #save_images_to_dir("test_images", inp, pred_img, gt_img, step=step)
 
             e_S, d_S, _, _ = model_D(pred_img)
             e_H, d_H, _, _ = model_D(gt_img)
@@ -369,10 +376,10 @@ def main(config_, save_path):
 
     if n_gpus > 1:
         print("Use multiple gpus.")
-        model = nn.parallel.DataParallel(model)
+        model = nn.parallel.DataParallel(model, device_ids=[0])
         if gan_based is not None:
             print("Use multiple gpus for discriminator.")
-            model_D = nn.parallel.DataParallel(model_D)
+            model_D = nn.parallel.DataParallel(model_D, device_ids=[1])
 
     max_val_v = -1e18
 
@@ -499,7 +506,7 @@ if __name__ == '__main__':
         save_name = '_' + args.config.split('/')[-1][:-len('.yaml')]
     if args.tag is not None:
         save_name += '_' + args.tag
-    save_path = os.path.join('./save_iter', save_name)
+    save_path = os.path.join('./save', save_name)
 
     print('Tag: ', args.tag)
 

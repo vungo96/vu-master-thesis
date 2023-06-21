@@ -2,23 +2,25 @@ train_dataset:
   dataset:
     name: image-folder
     args:
-      #root_path: ./load/LSDIR/train/HR
-      #repeat: 1
       root_path: ./load/div2k/DIV2K_train_HR
-      repeat: 20
-      # cache: in_memory
-      # sharded: true
+      root_path2: ./load/Flickr2K/Flickr2K_HR
+      repeat: 5
+      cache: in_memory
   wrapper:
     name: sr-implicit-downsampled-collate-batch
     args:
       inp_sizes: [48]
       augment: true
-      sample_q: 4096
-      # limit_scale: 3 # change scale_min
+      sample_q: 2304
+      sample_patch: true
+      # limit_scale: 4 # change scale_min
       scale_min: 1
+      # scale_max: 4
+      crop_from_edges: true
+      # sample_from_edges: true
       plot_scales: true
   collate_batch: true
-  batch_size: 32
+  batch_size: 128
 
 gradient_accumulation_steps: 1
 
@@ -35,17 +37,17 @@ val_dataset:
     args:
       inp_sizes: [48]
       augment: true
-      sample_q: 4096
+      sample_q: 2304
       # limit_scale: 3
       scale_min: 1
-      # scale_max: 12
+      scale_max: 4
   collate_batch: true
-  batch_size: 32
+  batch_size: 128
 
 data_norm:
   inp: {sub: [0.5], div: [0.5]}
   gt: {sub: [0.5], div: [0.5]}
-  # inp_scale_max: 64
+  # inp_scale_max: 48
 
 model:
   name: lte
@@ -67,10 +69,10 @@ optimizer:
   name: adam
   args:
     lr: 1.e-4
-iter_max: 2000000
+iter_max: 1000000
 multi_step_lr:
-  milestones: [400000, 800000, 1200000, 1600000]
+  milestones: [200000, 400000, 600000, 800000]
   gamma: 0.5
 
-iter_val: 100000
-iter_save: 100000
+iter_val: 50000
+iter_save: 50000

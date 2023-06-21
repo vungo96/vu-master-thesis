@@ -2,23 +2,25 @@ import matplotlib.pyplot as plt
 import os
 import pickle
 
-scale  = "12"
+scale  = "30"
 
-base_path = 'test_curves/psnr_lists/' + scale + '_urban100'
+base_path = 'test_curves/psnr_lists/' + scale
 
 paths = [
          base_path + '/eval_results1to4-baseline.pickle', 
          base_path + '/eval_results1to4-lsdir.pickle', 
          base_path + '/eval_results1toMax-lsdir.pickle',
+         base_path + '/eval_results1toMax-lsdir-5m-iterations.pickle',
          ]
 
 labels = [
           '1to4-baseline', 
           '1to4-lsdir',
-          '1toMax-lsdir'
+          '1toMax-lsdir',
+          '1toMax-lsdir-5m-iterations',
           ]
 
-tag = "urban100-" + scale
+tag = "div2k-" + scale
 
 psnr_lists = []
 
@@ -69,5 +71,5 @@ ax.legend(loc='lower right', bbox_to_anchor=(0.95, 0.05), borderaxespad=0.0)
 
 
 # Save plot of first file to same directory as pickle file
-plot_path = os.path.join('test_curves/psnr_curves', 'curves_' + tag + '.png')
+plot_path = os.path.join('test_curves/psnr_curves_old', 'curves_' + tag + '.png')
 plt.savefig(plot_path)
