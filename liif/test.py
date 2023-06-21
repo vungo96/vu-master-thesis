@@ -16,13 +16,7 @@ import datasets
 import models
 import utils
 
-def save_images_to_dir(out_dir, inp, pred, gt, step=0):
-    # bring pred and gt back to h x w
-    h, w = pred.shape[-2], pred.shape[-1]
-    #s = int(math.sqrt(pred.shape[1] // (h*w)))
-    #pred = pred.view(pred.shape[0], h, w, 3).permute(0, 3, 1, 2)
-    #gt = gt.view(gt.shape[0], h, w, 3).permute(0, 3, 1, 2)
-
+def save_images_to_dir(out_dir, inp, pred, gt, step=0, tag=""):
     transforms.ToPILImage()(inp[0]).save(f'{out_dir}/{step}_inp.png')
     transforms.ToPILImage()(pred[0]).save(f'{out_dir}/{step}_pred.png')
     transforms.ToPILImage()(gt[0]).save(f'{out_dir}/{step}_gt.png')
@@ -141,6 +135,7 @@ def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None, ma
             pred = pred.reshape(pred.shape[0], sample_patch_size, sample_patch_size, 3).permute(0, 3, 1, 2)
             batch['gt'] = batch['gt'].reshape(pred.shape[0], sample_patch_size, sample_patch_size, 3).permute(0, 3, 1, 2)
             
+        # TODO: remove the hardcoded 5
         if out_dir is not None and (i % 5) == 0:
             save_images_to_dir(out_dir, batch['inp'], pred, batch['gt'], step=i)
 
