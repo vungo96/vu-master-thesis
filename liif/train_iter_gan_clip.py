@@ -424,8 +424,8 @@ def main(config_, save_path):
             'optimizer': optimizer_spec,
             'epoch': epoch
         }
-        # save weights
-        torch.save(sv_file, os.path.join(save_path, 'iteration-last.pth'))
+        # TODO: chang eback --> should just be faster
+        # torch.save(sv_file, os.path.join(save_path, 'iteration-last.pth'))
 
         if gan_based is not None:
             model_spec_D = config['model_D']

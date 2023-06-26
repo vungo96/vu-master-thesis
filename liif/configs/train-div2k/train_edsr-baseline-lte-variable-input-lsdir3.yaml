@@ -2,18 +2,22 @@ train_dataset:
   dataset:
     name: image-folder
     args:
-      root_path: ./load/LSDIR/train/HR
+      root_path: ../../../mngo_datasets/load/LSDIR/train/HR
       repeat: 1
-      # cache: in_memory
+      #cache: in_memory
       sharded: true
   wrapper:
     name: sr-implicit-downsampled-collate-batch
     args:
-      inp_sizes: [24, 48, 72, 96]
+      inp_sizes: [48]
       augment: true
-      sample_q: 4096
-      # limit_scale: 3 # change scale_min
+      sample_q: 2304
+      sample_patch: true
+      # limit_scale: 4 # change scale_min
       scale_min: 1
+      # scale_max: 4
+      # crop_from_edges: true
+      # sample_from_edges: true
       plot_scales: true
   collate_batch: true
   batch_size: 32
@@ -24,7 +28,7 @@ val_dataset:
   dataset:
     name: image-folder
     args:
-      root_path: ./load/div2k/DIV2K_valid_HR
+      root_path: ../../../mngo_datasets/load/div2k/DIV2K_valid_HR
       first_k: 10
       repeat: 160
       cache: in_memory
@@ -33,10 +37,10 @@ val_dataset:
     args:
       inp_sizes: [48]
       augment: true
-      sample_q: 4096
+      sample_q: 2304
       # limit_scale: 3
       scale_min: 1
-      # scale_max: 12
+      scale_max: 4
   collate_batch: true
   batch_size: 32
 
@@ -65,11 +69,10 @@ optimizer:
   name: adam
   args:
     lr: 1.e-4
-epoch_max: 400
+iter_max: 1000000
 multi_step_lr:
-  milestones: [80, 160, 240, 320]
+  milestones: [200000, 400000, 600000, 800000]
   gamma: 0.5
 
-resume: save_test/_train_edsr-baseline-lte-variable-input-lsdir3_sample-4096-scale-1toMax-batch-64-inputs-24-48-72-96-lsdir/epoch-last.pth
-epoch_val: 1
-epoch_save: 20
+iter_val: 100000
+iter_save: 100000

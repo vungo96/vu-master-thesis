@@ -45,7 +45,7 @@ def batched_predict(model, inp, coord, cell, bsize, inp_scale=None):
     return pred
 
 
-def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None, max_scale=4,
+def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None, max_scale=32,
               verbose=False, device="cuda", writer=None, epoch=0, out_dir=None, window_size=0):
     model.eval()
 

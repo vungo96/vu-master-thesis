@@ -272,7 +272,7 @@ def get_random_coordinate_from_edges(image_tensor, save_dir=None):
         random_index = np.random.randint(len(edge_indices))
         edge_coordinate = edge_indices[random_index]
     else:
-        print('No edge found. Return random coodinate.')
+        # print('No edge found. Return random coodinate.')
         return random.randint(0, image_tensor.shape[-2]), random.randint(0, image_tensor.shape[-1])
 
     return edge_coordinate

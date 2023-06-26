@@ -2,7 +2,7 @@ train_dataset:
   dataset:
     name: image-folder
     args:
-      root_path: ./load/LSDIR/train/HR
+      root_path: ../../../mngo_datasets/load/LSDIR/train/HR
       repeat: 1
       #cache: in_memory
       sharded: true
@@ -28,7 +28,7 @@ val_dataset:
   dataset:
     name: image-folder
     args:
-      root_path: ./load/div2k/DIV2K_valid_HR
+      root_path: ../../../mngo_datasets/load/div2k/DIV2K_valid_HR
       first_k: 10
       repeat: 160
       cache: in_memory
@@ -74,5 +74,5 @@ multi_step_lr:
   milestones: [200000, 400000, 600000, 800000]
   gamma: 0.5
 
-iter_val: 50000
-iter_save: 50000
+iter_val: 100000
+iter_save: 100000

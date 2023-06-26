@@ -77,7 +77,7 @@ optimizer:
   args:
     lr: 1.e-5
 multi_step_lr:
-  milestones: [200000, 400000, 600000, 800000]
+  milestones: [100000, 200000, 300000, 400000]
   gamma: 0.5
 
 optimizer_D:
@@ -85,11 +85,11 @@ optimizer_D:
   args:
     lr: 1.e-5
 multi_step_lr_D:
-  milestones: [200000, 400000, 600000, 800000]
+  milestones: [100000, 200000, 300000, 400000]
   gamma: 0.5
 
 pretrained: save/_train_edsr-baseline-lte-variable-input-flickr2k2_sample-2304-scale-1toMax-inputs-48-flickr2k/iteration-993600.pth
 
 iter_val: 50000
 iter_save: 50000
-iter_max: 1000000
+iter_max: 500000

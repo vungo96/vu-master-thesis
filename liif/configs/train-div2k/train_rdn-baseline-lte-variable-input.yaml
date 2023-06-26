@@ -64,5 +64,7 @@ multi_step_lr:
   milestones: [200000, 400000, 600000, 800000]
   gamma: 0.5
 
+resume: save/_train_rdn-baseline-lte-variable-input_sample-2304-scale-1to4-inputs-48-baseline/iteration-600000.pth
+
 iter_val: 100000
 iter_save: 100000

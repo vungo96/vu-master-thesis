@@ -2,7 +2,7 @@ train_dataset:
   dataset:
     name: image-folder
     args:
-      root_path: ./load/DIV8K/train
+      root_path: ../../../mngo_datasets/load/DIV8K/train
       repeat: 10
       cache: in_memory
       sharded: true
@@ -24,7 +24,7 @@ val_dataset:
   dataset:
     name: image-folder
     args:
-      root_path: ./load/div2k/DIV2K_valid_HR
+      root_path: ../../../mngo_datasets/load/div2k/DIV2K_valid_HR
       first_k: 10
       repeat: 160
       cache: in_memory
@@ -72,5 +72,5 @@ multi_step_lr:
 
 # resume: "save_iter/_train_edsr-baseline-lte-variable-input-div8k2_sample-4096-scale-1toMax-inputs-48-div8k/iteration-1605856.pth"
 
-iter_val: 50000
-iter_save: 50000
+iter_val: 100000
+iter_save: 100000

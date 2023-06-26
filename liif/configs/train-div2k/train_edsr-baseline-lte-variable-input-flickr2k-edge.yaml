@@ -74,5 +74,7 @@ multi_step_lr:
   milestones: [200000, 400000, 600000, 800000]
   gamma: 0.5
 
+resume: save/_train_edsr-baseline-lte-variable-input-flickr2k-edge_sample-2304-scale-1to4-inputs-48-flickr2k-edge-crop/iteration-943920.pth
+
 iter_val: 50000
 iter_save: 50000

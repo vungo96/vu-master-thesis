@@ -2,22 +2,18 @@ train_dataset:
   dataset:
     name: image-folder
     args:
-      root_path: ../../../mngo_datasets/load/LSDIR/train/HR
-      repeat: 1
-      #cache: in_memory
+      root_path: ../../../mngo_datasets/load/DIV8K/train
+      repeat: 10
+      cache: in_memory
       sharded: true
   wrapper:
     name: sr-implicit-downsampled-collate-batch
     args:
-      inp_sizes: [48]
+      inp_sizes: [192]
       augment: true
-      sample_q: 2304
-      # sample_patch: true
-      # limit_scale: 4 # change scale_min
+      sample_q: 4096
+      # limit_scale: 3 # change scale_min
       scale_min: 1
-      # scale_max: 4
-      # crop_from_edges: true
-      # sample_from_edges: true
       plot_scales: true
   collate_batch: true
   batch_size: 32
@@ -35,12 +31,12 @@ val_dataset:
   wrapper:
     name: sr-implicit-downsampled-collate-batch
     args:
-      inp_sizes: [48]
+      inp_sizes: [64]
       augment: true
-      sample_q: 2304
+      sample_q: 4096
       # limit_scale: 3
       scale_min: 1
-      scale_max: 4
+      scale_max: 12
   collate_batch: true
   batch_size: 32
 
@@ -73,6 +69,8 @@ iter_max: 1000000
 multi_step_lr:
   milestones: [200000, 400000, 600000, 800000]
   gamma: 0.5
+
+# resume: "save_iter/_train_edsr-baseline-lte-variable-input-div8k2_sample-4096-scale-1toMax-inputs-48-div8k/iteration-1605856.pth"
 
 iter_val: 100000
 iter_save: 100000

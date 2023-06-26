@@ -15,7 +15,7 @@ train_dataset:
       # sample_patch: true
       # limit_scale: 4 # change scale_min
       scale_min: 1
-      # scale_max: 4
+      scale_max: 4
       # crop_from_edges: true
       # sample_from_edges: true
       plot_scales: true
