@@ -18,6 +18,7 @@ if __name__ == '__main__':
     parser.add_argument('--model_path')
     parser.add_argument('--scale')
     parser.add_argument('--scale_max', default='4')
+    parser.add_argument('--out_dir', default=None)
     parser.add_argument('--tag', default=None)
     parser.add_argument('--window', default=0)
     args = parser.parse_args()
@@ -66,7 +67,7 @@ if __name__ == '__main__':
                         verbose=True,
                         device=device,
                         writer=None,
-                        out_dir=None,
+                        out_dir=args.out_dir,
                         max_scale=4,
                         window_size=int(args.window)
                         )
