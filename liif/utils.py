@@ -185,29 +185,49 @@ def ssim(img1, img2):
     return ssim_map.mean()
 
 
-def calc_ssim(img1, img2):
+def calc_ssim(sr, hr, dataset=None, scale=1):
     '''calculate SSIM
     the same outputs as MATLAB's
     img1, img2: [0, 255]
     '''
+    if dataset is not None:
+        if dataset == 'benchmark':
+            shave = scale
+        elif dataset == 'div2k':
+            shave = scale + 6
+        else:
+            raise NotImplementedError
+        sr = sr[..., shave:-shave, shave:-shave]
+        hr = hr[..., shave:-shave, shave:-shave]
     # convert tensor to np array
-    img1 = img1.cpu().numpy() * 255.
-    img2 = img2.cpu().numpy() * 255.
+    sr = sr.permute(0, 2, 3, 1).cpu().numpy() * 255.
+    hr = hr.permute(0, 2, 3, 1).cpu().numpy() * 255.
+
+    ssims_list = []
     
-    if not img1.shape == img2.shape:
-        raise ValueError('Input images must have the same dimensions.')
-    if img1.ndim == 2:
-        return ssim(img1, img2)
-    elif img1.ndim == 3:
-        if img1.shape[2] == 3:
-            ssims = []
-            for i in range(3):
-                ssims.append(ssim(img1[:,:,i], img2[:,:,i]))
-            return np.array(ssims).mean()
-        elif img1.shape[2] == 1:
-            return ssim(np.squeeze(img1), np.squeeze(img2))
-    else:
-        raise ValueError('Wrong input image dimensions.')
+    for i in range(0, len(sr)):
+        img1 = sr[i]
+        img2 = hr[i]
+        if not img1.shape == img2.shape:
+            raise ValueError('Input images must have the same dimensions.')
+        if img1.ndim == 2:
+            return ssim(img1, img2)
+        elif img1.ndim == 3:
+            if img1.shape[2] == 3:
+                ssims = []
+                for i in range(3):
+                    ssims.append(ssim(img1[:,:,i], img2[:,:,i]))
+                # return np.array(ssims).mean()
+                ssims_list.append(np.array(ssims).mean())
+            elif img1.shape[2] == 1:
+                return ssim(np.squeeze(img1), np.squeeze(img2))
+        else:
+            raise ValueError('Wrong input image dimensions.')
+        
+    print("array", np.array(ssims_list).mean())
+    return np.array(ssims_list).mean()
+        
+        
 
 def calc_ssim_torch(sr, hr, dataset=None, scale=1):
     if dataset is not None:
