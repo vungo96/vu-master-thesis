@@ -3,6 +3,7 @@ train_dataset:
     name: image-folder
     args:
       root_path: ./load/div2k/DIV2K_train_HR
+      first_k: 10
       repeat: 1
       #cache: in_memory
       # sharded: true
@@ -92,5 +93,5 @@ resume: save_iter/_train_edsr-baseline-lte-variable-input-patch-gan-test_test2/i
 resume_D: save_iter/_train_edsr-baseline-lte-variable-input-patch-gan-test_test2/d_iteration-50.pth
 
 iter_max: 1000000
-iter_val: 50
-iter_save: 50
+iter_val: 10
+iter_save: 10

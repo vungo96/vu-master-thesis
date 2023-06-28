@@ -143,9 +143,9 @@ def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None, ma
         res_psnr = metric_psnr(pred, batch['gt']) 
         res_ssim = metric_ssim(pred, batch['gt'])
         res_lpips = metric_lpips(pred, batch['gt'])
-        val_res_psnr.add(res_psnr.item(), inp.shape[0])
-        val_res_ssim.add(res_ssim.item(), inp.shape[0])
-        val_res_lpips.add(res_lpips.item(), inp.shape[0])
+        val_res_psnr.add(res_psnr, inp.shape[0])
+        val_res_ssim.add(res_ssim, inp.shape[0])
+        val_res_lpips.add(res_lpips, inp.shape[0])
 
         if verbose:
             pbar.set_description('val psnr {:.4f} | ssim loss {:.4f} | lpips loss {:.4f}'.format(val_res_psnr.item(), val_res_ssim.item(), val_res_lpips.item()))

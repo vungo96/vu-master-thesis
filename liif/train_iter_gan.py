@@ -285,10 +285,10 @@ def train(train_loader, model, optimizer, params, gradient_accumulation_steps, m
             gt_img = gt.reshape(pred.shape[0], sample_patch_size, sample_patch_size, 3).permute(0, 3, 1, 2)
 
             # LPIPS loss
-            #loss_LPIPS, _ = model_LPIPS.forward_pair(batch_H*2-1, batch_S*2-1)
-            #loss_LPIPS = torch.mean(loss_LPIPS) * L_LPIPS
-            lpips = LearnedPerceptualImagePatchSimilarity(net_type='vgg').to(device)
-            loss_LPIPS = lpips(pred_img, gt_img) * l_lpips
+            lpips, _ = lpips_net.forward_pair(pred_img, gt_img) # already in [-1, 1]
+            lpips = torch.mean(lpips) * l_lpips
+            #lpips = LearnedPerceptualImagePatchSimilarity(net_type='vgg').to(device)
+            #loss_LPIPS = lpips(pred_img, gt_img) * l_lpips
 
             # FM and GAN losses
             e_S, d_S, e_Ss, d_Ss = model_D(pred_img)

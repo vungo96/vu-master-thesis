@@ -12,6 +12,7 @@ from torchmetrics.functional import structural_similarity_index_measure
 from torchmetrics.image.lpip import LearnedPerceptualImagePatchSimilarity
 from torchvision import transforms
 from matplotlib import pyplot as plt
+import LPIPS.models.dist_model as dm
 
 def save_image_to_dir(img, out_dir='test', step=0):
     transforms.ToPILImage()(img).save(f'{out_dir}/{step}.png')
@@ -158,9 +159,57 @@ def calc_psnr(sr, hr, dataset=None, scale=1, rgb_range=1):
     else:
         valid = diff
     mse = valid.pow(2).mean()
-    return -10 * torch.log10(mse)
+    psnr = -10 * torch.log10(mse)
+    return psnr.item()
 
-def calc_ssim(sr, hr, dataset=None, scale=1):
+def ssim(img1, img2):
+    C1 = (0.01 * 255)**2
+    C2 = (0.03 * 255)**2
+
+    img1 = img1.astype(np.float64)
+    img2 = img2.astype(np.float64)
+    kernel = cv2.getGaussianKernel(11, 1.5)
+    window = np.outer(kernel, kernel.transpose())
+
+    mu1 = cv2.filter2D(img1, -1, window)[5:-5, 5:-5]  # valid
+    mu2 = cv2.filter2D(img2, -1, window)[5:-5, 5:-5]
+    mu1_sq = mu1**2
+    mu2_sq = mu2**2
+    mu1_mu2 = mu1 * mu2
+    sigma1_sq = cv2.filter2D(img1**2, -1, window)[5:-5, 5:-5] - mu1_sq
+    sigma2_sq = cv2.filter2D(img2**2, -1, window)[5:-5, 5:-5] - mu2_sq
+    sigma12 = cv2.filter2D(img1 * img2, -1, window)[5:-5, 5:-5] - mu1_mu2
+
+    ssim_map = ((2 * mu1_mu2 + C1) * (2 * sigma12 + C2)) / ((mu1_sq + mu2_sq + C1) *
+                                                            (sigma1_sq + sigma2_sq + C2))
+    return ssim_map.mean()
+
+
+def calc_ssim(img1, img2):
+    '''calculate SSIM
+    the same outputs as MATLAB's
+    img1, img2: [0, 255]
+    '''
+    # convert tensor to np array
+    img1 = img1.cpu().numpy() * 255.
+    img2 = img2.cpu().numpy() * 255.
+    
+    if not img1.shape == img2.shape:
+        raise ValueError('Input images must have the same dimensions.')
+    if img1.ndim == 2:
+        return ssim(img1, img2)
+    elif img1.ndim == 3:
+        if img1.shape[2] == 3:
+            ssims = []
+            for i in range(3):
+                ssims.append(ssim(img1[:,:,i], img2[:,:,i]))
+            return np.array(ssims).mean()
+        elif img1.shape[2] == 1:
+            return ssim(np.squeeze(img1), np.squeeze(img2))
+    else:
+        raise ValueError('Wrong input image dimensions.')
+
+def calc_ssim_torch(sr, hr, dataset=None, scale=1):
     if dataset is not None:
         if dataset == 'benchmark':
             shave = scale
@@ -171,18 +220,45 @@ def calc_ssim(sr, hr, dataset=None, scale=1):
         sr = sr[..., shave:-shave, shave:-shave]
         hr = hr[..., shave:-shave, shave:-shave]
 
-        return structural_similarity_index_measure(sr, hr)
+        return structural_similarity_index_measure(sr, hr).item()
     else:
-        return structural_similarity_index_measure(sr, hr)
+        return structural_similarity_index_measure(sr, hr).item()
 
 def calc_lpips(sr, hr, dataset=None, scale=1, device='cuda'):
+    # sr and hr in range [0, 1]
+    lpips_net = dm.DistModel()
+    lpips_net.initialize(model='net-lin',net='alex',use_gpu=True)
     if dataset is not None:
         if dataset == 'benchmark':
             shave = scale
         elif dataset == 'div2k':
             shave = scale + 6
         else:
-            lpips_net = LearnedPerceptualImagePatchSimilarity(net_type='vgg').to(device)
+            with torch.no_grad():
+                lpips, _ = lpips_net.forward_pair(sr*2-1, hr*2-1)
+
+            return lpips
+        sr = sr[..., shave:-shave, shave:-shave]
+        hr = hr[..., shave:-shave, shave:-shave]
+
+        with torch.no_grad():
+            lpips, _ = lpips_net.forward_pair(sr*2-1, hr*2-1)
+
+        return lpips
+    else:
+        with torch.no_grad():
+            lpips, _ = lpips_net.forward_pair(sr*2-1, hr*2-1)
+
+        return torch.mean(lpips).item()
+
+def calc_lpips_torch(sr, hr, dataset=None, scale=1, device='cuda'):
+    lpips_net = LearnedPerceptualImagePatchSimilarity(net_type='vgg').to(device)
+    if dataset is not None:
+        if dataset == 'benchmark':
+            shave = scale
+        elif dataset == 'div2k':
+            shave = scale + 6
+        else:
             with torch.no_grad():
                 lpips = lpips_net(sr*2-1, hr*2-1)
 
@@ -190,17 +266,15 @@ def calc_lpips(sr, hr, dataset=None, scale=1, device='cuda'):
         sr = sr[..., shave:-shave, shave:-shave]
         hr = hr[..., shave:-shave, shave:-shave]
 
-        lpips_net = LearnedPerceptualImagePatchSimilarity(net_type='vgg').to(device)
         with torch.no_grad():
             lpips = lpips_net(sr*2-1, hr*2-1)
 
         return lpips
     else:
-        lpips_net = LearnedPerceptualImagePatchSimilarity(net_type='vgg').to(device)
         with torch.no_grad():
             lpips = lpips_net(sr*2-1, hr*2-1)
 
-        return lpips
+        return lpips.item()
 
 def choose_scale_exponentially(min_scale, max_scale):
     scales = list(range(min_scale, max_scale + 1))
