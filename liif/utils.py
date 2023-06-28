@@ -224,11 +224,8 @@ def calc_ssim(sr, hr, dataset=None, scale=1):
         else:
             raise ValueError('Wrong input image dimensions.')
         
-    print("array", np.array(ssims_list).mean())
     return np.array(ssims_list).mean()
         
-        
-
 def calc_ssim_torch(sr, hr, dataset=None, scale=1):
     if dataset is not None:
         if dataset == 'benchmark':
@@ -244,7 +241,7 @@ def calc_ssim_torch(sr, hr, dataset=None, scale=1):
     else:
         return structural_similarity_index_measure(sr, hr).item()
 
-def calc_lpips(sr, hr, dataset=None, scale=1, device='cuda'):
+def calc_lpips_old(sr, hr, dataset=None, scale=1, device='cuda'):
     # sr and hr in range [0, 1]
     lpips_net = dm.DistModel()
     lpips_net.initialize(model='net-lin',net='alex',use_gpu=True)
@@ -271,7 +268,7 @@ def calc_lpips(sr, hr, dataset=None, scale=1, device='cuda'):
 
         return torch.mean(lpips).item()
 
-def calc_lpips_torch(sr, hr, dataset=None, scale=1, device='cuda'):
+def calc_lpips(sr, hr, dataset=None, scale=1, device='cuda'):
     lpips_net = LearnedPerceptualImagePatchSimilarity(net_type='vgg').to(device)
     if dataset is not None:
         if dataset == 'benchmark':

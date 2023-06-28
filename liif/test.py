@@ -39,7 +39,7 @@ def batched_predict(model, inp, coord, cell, bsize, inp_scale=None):
     return pred
 
 
-def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None, max_scale=32,
+def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None, max_scale=4,
               verbose=False, device="cuda", writer=None, epoch=0, out_dir=None, window_size=0):
     model.eval()
 
@@ -157,7 +157,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--config')
     parser.add_argument('--model')
-    parser.add_argument('--scale_max', default='4')
+    parser.add_argument('--scale_max', default='32')
     parser.add_argument('--out_dir', default=None)
     parser.add_argument('--tag', default=None)
     parser.add_argument('--gpu', default='0')
@@ -208,6 +208,7 @@ if __name__ == '__main__':
                     verbose=True,
                     device=device,
                     writer=writer,
+                    max_scale=args.max_scale,
                     out_dir=args.out_dir,
                     window_size=int(args.window))
     print('result psnr: {:.4f}'.format(res_psnr))
