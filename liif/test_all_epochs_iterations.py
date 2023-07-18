@@ -17,7 +17,7 @@ if __name__ == '__main__':
     parser.add_argument('--config')
     parser.add_argument('--model_path')
     parser.add_argument('--scale')
-    parser.add_argument('--scale_max', default='4')
+    parser.add_argument('--max_scale', default='4')
     parser.add_argument('--out_dir', default=None)
     parser.add_argument('--tag', default=None)
     parser.add_argument('--window', default=0)
@@ -68,8 +68,9 @@ if __name__ == '__main__':
                         device=device,
                         writer=None,
                         out_dir=args.out_dir,
-                        max_scale=4,
-                        window_size=int(args.window)
+                        max_scale=int(args.max_scale),
+                        window_size=int(args.window),
+                        tag=file
                         )
         print('result psnr: {:.4f}'.format(res_psnr))
         print('result ssim: {:.4f}'.format(res_ssim))

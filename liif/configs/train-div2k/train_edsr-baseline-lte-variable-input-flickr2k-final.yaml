@@ -12,7 +12,7 @@ train_dataset:
       inp_sizes: [48]
       augment: true
       sample_q: 2304
-      sample_patch: true
+      # sample_patch: true
       # limit_scale: 4 # change scale_min
       scale_min: 1
       # scale_max: 4
@@ -69,10 +69,12 @@ optimizer:
   name: adam
   args:
     lr: 1.e-4
-iter_max: 1000000
 multi_step_lr:
   milestones: [200000, 400000, 600000, 800000]
   gamma: 0.5
 
+resume: save/_train_edsr-baseline-lte-variable-input-flickr2k-final_sample-2304-scale-1toMax-inputs-48-flickr2k-edge-crop-batch-128/iteration-399600.pth
+
 iter_val: 100000
 iter_save: 100000
+iter_max: 1000000

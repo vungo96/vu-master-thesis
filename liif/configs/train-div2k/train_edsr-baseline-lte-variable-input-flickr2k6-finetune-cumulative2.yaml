@@ -2,8 +2,8 @@ train_dataset:
   dataset:
     name: image-folder
     args:
-      root_path: ./load/div2k/DIV2K_train_HR
-      root_path2: ./load/Flickr2K/Flickr2K_HR
+      root_path: ../../../mngo_datasets/load/div2k/DIV2K_train_HR
+      root_path2: ../../../mngo_datasets/load/Flickr2K/Flickr2K_HR
       repeat: 5
       cache: in_memory
   wrapper:
@@ -12,10 +12,11 @@ train_dataset:
       inp_sizes: [48]
       augment: true
       sample_q: 2304
-      sample_patch: true
+      # sample_patch: true
       # limit_scale: 4 # change scale_min
       scale_min: 1
-      scale_max: 4
+      # scale_max: 12
+      crop_from_edges: true
       plot_scales: true
   collate_batch: true
   batch_size: 32
@@ -26,7 +27,7 @@ val_dataset:
   dataset:
     name: image-folder
     args:
-      root_path: ./load/div2k/DIV2K_valid_HR
+      root_path: ../../../mngo_datasets/load/div2k/DIV2K_valid_HR
       first_k: 10
       repeat: 160
       cache: in_memory
@@ -72,5 +73,8 @@ multi_step_lr:
   milestones: [200000, 400000, 600000, 800000]
   gamma: 0.5
 
-iter_val: 50000
-iter_save: 50000
+#pretrained: save/_train_edsr-baseline-lte-variable-input-flickr2k6-finetune-cumulative_sample-2304-scale-1to12-inputs-48-flickr2k-edge-crop-finetune-1to4-flickr-edge-crop-e4/iteration-999000.pth
+resume: save/_train_edsr-baseline-lte-variable-input-flickr2k6-finetune-cumulative2_sample-2304-scale-1toMax-inputs-48-flickr2k-edge-crop-finetune-1to12-flickr-edge-crop-e4/iteration-899100.pth
+
+iter_val: 100000
+iter_save: 100000

@@ -12,7 +12,7 @@ train_dataset:
       inp_sizes: [48]
       augment: true
       sample_q: 2304
-      sample_patch: true
+      # sample_patch: true
       # limit_scale: 4 # change scale_min
       scale_min: 1
       # scale_max: 4

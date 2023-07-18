@@ -158,7 +158,7 @@ def add_scales_to_dict(scales, scales_max):
         else:
             scale_max_freq[scale_max] = 1
 
-def train(train_loader, model, optimizer, params, gradient_accumulation_steps, model_D=None, optimizer_D=None, params_D=None, l_adv=0.001, l_fm=1, l_lpips=0.000001, n_mix = 0, loss_fn='l1', lpips_net=None):
+def train(train_loader, model, optimizer, params, gradient_accumulation_steps, model_D=None, optimizer_D=None, params_D=None, l_adv=0.001, l_fm=1, l_lpips=0.000001, n_mix = 0, loss_fn='l1', iteration=None):
     model.train()
     loss_fn = nn.L1Loss()
     if loss_fn == 'huber':
@@ -372,20 +372,15 @@ def main(config_, save_path):
     gan_based = config.get('gan_based')
     print('Gan-based:', gan_based)
 
-    ## LPIPS
-    lpips_net = dm.DistModel()
-    lpips_net.initialize(model='net-lin',net='alex',use_gpu=True)
-
     # get model, optimizer, and lr_scheduler from config
     epoch_start, model, optimizer, params, lr_scheduler, model_D, optimizer_D, params_D, lr_scheduler_D = prepare_training()
 
     if n_gpus > 1:
         print("Use multiple gpus.")
         model = nn.parallel.DataParallel(model)
-        if gan_based is not None:
-            print("Use multiple gpus for discriminator.")
-            model_D = nn.parallel.DataParallel(model_D)
-            lpips_net = nn.parallel.DataParallel(lpips_net)
+        #if gan_based is not None:
+        #    print("Use multiple gpus for discriminator.")
+        #    model_D = nn.parallel.DataParallel(model_D)
 
     max_val_v = -1e18
 
@@ -401,7 +396,7 @@ def main(config_, save_path):
 
         # train epoch
         if gan_based is not None:
-            train_loss = train(train_loader, model, optimizer, params, gradient_accumulation_steps, model_D, optimizer_D, params_D, loss_fn=config.get('loss_fn'), lpips_net=lpips_net)
+            train_loss = train(train_loader, model, optimizer, params, gradient_accumulation_steps, model_D, optimizer_D, params_D, l_adv=config.get('l_adv'), l_fm=config.get('l_fm'), l_lpips=config.get('l_lpips'), loss_fn=config.get('loss_fn'), iteration=epoch*num_iter_per_epoch)
         else:
             # TODO: make sure that optimizer params are correct for clip
             train_loss = train(train_loader, model, optimizer, params, gradient_accumulation_steps, loss_fn=config.get('loss_fn'))
@@ -415,12 +410,10 @@ def main(config_, save_path):
 
         if n_gpus > 1:
             model_ = model.module
-            if gan_based is not None:
-                model_D_ = model_D.module
+            #if gan_based is not None:
+            #    model_D_ = model_D.module
         else:
             model_ = model
-            if gan_based is not None:
-                model_D_ = model_D
         model_spec = config['model']
         model_spec['sd'] = model_.state_dict()
         optimizer_spec = config['optimizer']
@@ -434,6 +427,9 @@ def main(config_, save_path):
         # torch.save(sv_file, os.path.join(save_path, 'iteration-last.pth'))
 
         if gan_based is not None:
+                model_D_ = model_D
+
+        if gan_based is not None:
             model_spec_D = config['model_D']
             model_spec_D['sd'] = model_D_.state_dict()
             optimizer_spec_D = config['optimizer_D']
@@ -443,7 +439,8 @@ def main(config_, save_path):
                 'optimizer': optimizer_spec_D,
                 'epoch': epoch
             }
-            torch.save(sv_file_D, os.path.join(save_path, 'd_iteration-last.pth'))
+            # TODO: chang eback --> should just be faster
+            # torch.save(sv_file_D, os.path.join(save_path, 'd_iteration-last.pth'))
 
         if (epoch_save is not None) and (epoch % epoch_save == 0):
             torch.save(sv_file,

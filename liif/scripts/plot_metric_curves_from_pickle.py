@@ -1,8 +1,11 @@
 import matplotlib.pyplot as plt
 import os
 import pickle
+import torch
+import io
 
-scales  = ["2", "3", "4", "6", "12", "18", "24", "30"]
+scales  = ["2", "3", "4"]
+           #, "6", "12", "18", "24", "30"]
 
 metric = "psnr"
 
@@ -16,9 +19,17 @@ for scale in scales:
     base_path += scale + '/'
     tag += scale 
 
-    paths = [base_path + 'eval_results1to4-baseline.pickle',
+    paths = [base_path + 'eval_results1to4-baseline-baseline.pickle',
+             base_path + 'eval_results1to4-baseline-edge-crop.pickle',
          base_path + 'eval_results1to4-lsdir.pickle',
+         base_path + 'eval_results1to4-lsdir-edge-crop.pickle',
          base_path + 'eval_results1toMax-lsdir.pickle',
+         base_path + 'eval_results1toMax-lsdir-edge-crop.pickle',
+         # base_path + 'eval_results1to4-flickr2k.pickle',
+         base_path + 'eval_results1to4-flickr2k-edge-crop.pickle',
+         #base_path + 'eval_results1toMax-flickr2-sample-2304.pickle',
+         #base_path + 'eval_results1toMax-flickr2k-edge-crop.pickle',
+
          #base_path + '/eval_results1toMax-lsdir-exp-dist-12.pickle', 
         # base_path + '/eval_results1to4-baseline-swinir.pickle',
         # base_path + '/eval_results1toMax-lsdir-swinir.pickle',
@@ -28,14 +39,22 @@ for scale in scales:
          #base_path + '/eval_results1toMax-lsdir-sample-patch.pickle',
          #base_path + '/eval_results1to4-lsdir-inputs-64-sample-patch.pickle',
          #base_path + '/eval_results1toMax-lsdir-batch-128.pickle',
-         base_path + 'eval_results1toMax-lsdir-sample-2304.pickle',
-         base_path + 'eval_results1toMax-lsdir-sample-patch-4096.pickle',
-         base_path + 'eval_results1toMax-lsdir-sample-patch.pickle',
+         #base_path + 'eval_results1toMax-lsdir-sample-2304.pickle',
+         #base_path + 'eval_results1toMax-lsdir-sample-patch-4096.pickle',
+         #base_path + 'eval_results1toMax-lsdir-sample-patch.pickle',
          ]
 
-    labels = ['1to4-baseline',
+    labels = ['1to4-baseline-baseline',
+              '1to4-baseline-edge-crop',
             '1to4-lsdir',
+            '1to4-lsdir-edge-crop',
             '1toMax-lsdir',
+            '1toMax-lsdir-edge-crop',
+            # '1to4-flickr2k',
+            '1to4-flickr2k-edge-crop',
+            #'1toMax-flickr2k',
+            #'1toMax-flickr2k-edge-crop',
+
             # '1toMax-lsdir-exp-dist-12',
             #'1to4-baseline-swinir',
             #'1toMax-baseline-swinir',
@@ -45,9 +64,9 @@ for scale in scales:
             #'1toMax-lsdir-sample-patch',
             #'1to4-lsdir-inputs-64-sample-patch',
             #'1toMax-lsdir-batch-128',
-            '1toMax-lsdir-sample-2304',
-            '1toMax-lsdir-sample-patch-4096',
-            '1toMax-lsdir-sample-2304',
+            #'1toMax-lsdir-sample-2304',
+            #'1toMax-lsdir-sample-patch-4096',
+            #'1toMax-lsdir-sample-2304',
             ]
 
     metric_dicts = []
@@ -56,6 +75,7 @@ for scale in scales:
         # Load dictionary from first file created via pickle
         with open(path, 'rb') as f:
             metric_dicts.append(pickle.load(f))
+            #metric_dicts.append(torch.load(f, map_location=torch.device('cpu')))
 
     metric_lists = []
     for metric_dict in metric_dicts:

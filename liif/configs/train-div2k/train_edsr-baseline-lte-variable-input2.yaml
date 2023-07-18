@@ -2,7 +2,7 @@ train_dataset:
   dataset:
     name: image-folder
     args:
-      root_path: ./load/div2k/DIV2K_train_HR
+      root_path: ../../../mngo_datasets/load/div2k/DIV2K_train_HR
       repeat: 20
       cache: in_memory
   wrapper:
@@ -10,12 +10,14 @@ train_dataset:
     args:
       inp_sizes: [48]
       augment: true
-      sample_q: 4096
-      # limit_scale: 3 # change scale_min
+      sample_q: 2304
+      # sample_patch: true
+      # limit_scale: 4 # change scale_min
       scale_min: 1
+      scale_max: 4
       plot_scales: true
   collate_batch: true
-  batch_size: 32
+  batch_size: 16
 
 gradient_accumulation_steps: 1
 
@@ -23,7 +25,7 @@ val_dataset:
   dataset:
     name: image-folder
     args:
-      root_path: ./load/div2k/DIV2K_valid_HR
+      root_path: ../../../mngo_datasets//load/div2k/DIV2K_valid_HR
       first_k: 10
       repeat: 160
       cache: in_memory
@@ -32,12 +34,13 @@ val_dataset:
     args:
       inp_sizes: [48]
       augment: true
-      sample_q: 4096
+      sample_q: 2304
+      # sample_patch: true
       # limit_scale: 3
       scale_min: 1
-      # scale_max: 12
+      scale_max: 4
   collate_batch: true
-  batch_size: 32
+  batch_size: 16
 
 data_norm:
   inp: {sub: [0.5], div: [0.5]}
@@ -64,9 +67,9 @@ optimizer:
   name: adam
   args:
     lr: 1.e-4
-epoch_max: 2000
+epoch_max: 1000
 multi_step_lr:
-  milestones: [] # 400, 800, 1200, 1600
+  milestones: [200, 400, 600, 800] 
   gamma: 0.5
 
 epoch_val: 1

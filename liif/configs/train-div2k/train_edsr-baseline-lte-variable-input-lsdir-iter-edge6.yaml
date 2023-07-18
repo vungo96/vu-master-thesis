@@ -2,21 +2,22 @@ train_dataset:
   dataset:
     name: image-folder
     args:
-      root_path: ../../../mngo_datasets/load/div2k/DIV2K_train_HR
-      root_path2: ../../../mngo_datasets/load/Flickr2K/Flickr2K_HR
-      repeat: 5
-      cache: in_memory
+      root_path: ../../../mngo_datasets/load/LSDIR/train/HR
+      repeat: 1
+      #cache: in_memory
+      sharded: true
   wrapper:
     name: sr-implicit-downsampled-collate-batch
     args:
       inp_sizes: [48]
       augment: true
       sample_q: 2304
-      # sample_patch: true
+      sample_patch: true
       # limit_scale: 4 # change scale_min
       scale_min: 1
-      # scale_max: 4
-      crop_from_edges: true
+      scale_max: 4
+      #crop_from_edges: true
+      sample_from_edges: true
       plot_scales: true
   collate_batch: true
   batch_size: 32
@@ -46,7 +47,7 @@ val_dataset:
 data_norm:
   inp: {sub: [0.5], div: [0.5]}
   gt: {sub: [0.5], div: [0.5]}
-  # inp_scale_max: 48
+  # inp_scale_max: 64
 
 model:
   name: lte
@@ -72,8 +73,6 @@ iter_max: 1000000
 multi_step_lr:
   milestones: [200000, 400000, 600000, 800000]
   gamma: 0.5
-
-pretrained: save/_train_edsr-baseline-lte-variable-input-flickr2k-edge_sample-2304-scale-1to4-inputs-48-flickr2k-edge-crop-resume/iteration-993600.pth
 
 iter_val: 100000
 iter_save: 100000

@@ -12,14 +12,12 @@ train_dataset:
       inp_sizes: [48]
       augment: true
       sample_q: 2304
-      # sample_patch: true
       # limit_scale: 4 # change scale_min
-      scale_min: 1
-      # scale_max: 4
       crop_from_edges: true
+      scale_min: 1
       plot_scales: true
   collate_batch: true
-  batch_size: 32
+  batch_size: 64
 
 gradient_accumulation_steps: 1
 
@@ -41,7 +39,7 @@ val_dataset:
       scale_min: 1
       scale_max: 4
   collate_batch: true
-  batch_size: 32
+  batch_size: 64
 
 data_norm:
   inp: {sub: [0.5], div: [0.5]}
@@ -52,7 +50,7 @@ model:
   name: lte
   args:
     encoder_spec:
-      name: edsr-baseline
+      name: swinir
       args:
         no_upsampling: true
     imnet_spec:
@@ -63,17 +61,17 @@ model:
     hidden_dim: 256
     # scale_aware_phase: true
     # scale_aware_mlp: true
-
+    
 optimizer:
   name: adam
   args:
     lr: 1.e-4
-iter_max: 1000000
 multi_step_lr:
-  milestones: [200000, 400000, 600000, 800000]
+  milestones: [500000, 800000, 900000, 950000]
   gamma: 0.5
 
-pretrained: save/_train_edsr-baseline-lte-variable-input-flickr2k-edge_sample-2304-scale-1to4-inputs-48-flickr2k-edge-crop-resume/iteration-993600.pth
+resume: save/_train_swinir-baseline-lte-variable-input-flickr2k-edge_sample-2304-scale-1toMax-inputs-48-flickr2k-batch-64-edge-crop/iteration-699300.pth
 
 iter_val: 100000
 iter_save: 100000
+iter_max: 1000000

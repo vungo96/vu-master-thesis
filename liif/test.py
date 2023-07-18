@@ -17,9 +17,9 @@ import models
 import utils
 
 def save_images_to_dir(out_dir, inp, pred, gt, step=0, tag=""):
-    transforms.ToPILImage()(inp[0]).save(f'{out_dir}/{step}_inp.png')
-    transforms.ToPILImage()(pred[0]).save(f'{out_dir}/{step}_pred.png')
-    transforms.ToPILImage()(gt[0]).save(f'{out_dir}/{step}_gt.png')
+    #transforms.ToPILImage()(inp[0]).save(f'{out_dir}/epoch-{tag}-img-{step}_inp.png')
+    transforms.ToPILImage()(pred[0]).save(f'{out_dir}/epoch-{tag}-img-{step}_pred.png')
+    #transforms.ToPILImage()(gt[0]).save(f'{out_dir}/epoch-{tag}-img-{step}_gt.png')
 
 def batched_predict(model, inp, coord, cell, bsize, inp_scale=None):
     with torch.no_grad():
@@ -40,8 +40,10 @@ def batched_predict(model, inp, coord, cell, bsize, inp_scale=None):
 
 
 def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None, max_scale=4,
-              verbose=False, device="cuda", writer=None, epoch=0, out_dir=None, window_size=0):
+              verbose=False, device="cuda", writer=None, epoch=0, out_dir=None, window_size=0, tag=""):
     model.eval()
+
+    print('max_scale: ', max_scale)
 
     if data_norm is None:
         data_norm = {
@@ -135,9 +137,9 @@ def eval_psnr(loader, model, data_norm=None, eval_type=None, eval_bsize=None, ma
             pred = pred.reshape(pred.shape[0], sample_patch_size, sample_patch_size, 3).permute(0, 3, 1, 2)
             batch['gt'] = batch['gt'].reshape(pred.shape[0], sample_patch_size, sample_patch_size, 3).permute(0, 3, 1, 2)
             
-        # TODO: remove the hardcoded 5
-        if out_dir is not None and (i % 5) == 0:
-            save_images_to_dir(out_dir, batch['inp'], pred, batch['gt'], step=i)
+        # TODO: remove the hardcoded 1
+        if out_dir is not None and (i % 1) == 0:
+            save_images_to_dir(out_dir, batch['inp'], pred, batch['gt'], step=i, tag=tag)
 
         # TODO: test psnr with coordinates
         res_psnr = metric_psnr(pred, batch['gt']) 
@@ -157,7 +159,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--config')
     parser.add_argument('--model')
-    parser.add_argument('--scale_max', default='32')
+    parser.add_argument('--max_scale', default='32')
     parser.add_argument('--out_dir', default=None)
     parser.add_argument('--tag', default=None)
     parser.add_argument('--gpu', default='0')
@@ -208,7 +210,7 @@ if __name__ == '__main__':
                     verbose=True,
                     device=device,
                     writer=writer,
-                    max_scale=args.max_scale,
+                    max_scale=int(args.max_scale),
                     out_dir=args.out_dir,
                     window_size=int(args.window))
     print('result psnr: {:.4f}'.format(res_psnr))

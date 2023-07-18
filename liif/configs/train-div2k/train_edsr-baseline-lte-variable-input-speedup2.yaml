@@ -2,9 +2,8 @@ train_dataset:
   dataset:
     name: image-folder
     args:
-      root_path: ./load/div2k/DIV2K_train_HR
-      root_path2: ./load/Flickr2K/Flickr2K_HR
-      repeat: 5
+      root_path: ../../../mngo_datasets/load/div2k/DIV2K_train_HR
+      repeat: 20
       cache: in_memory
   wrapper:
     name: sr-implicit-downsampled-collate-batch
@@ -12,13 +11,15 @@ train_dataset:
       inp_sizes: [48]
       augment: true
       sample_q: 2304
-      sample_patch: true
+      # sample_patch: true
       # limit_scale: 4 # change scale_min
       scale_min: 1
-      # scale_max: 4
+      scale_max: 4
+      # crop_from_edges: true
+      # sample_from_edges: true
       plot_scales: true
   collate_batch: true
-  batch_size: 32
+  batch_size: 16
 
 gradient_accumulation_steps: 1
 
@@ -26,7 +27,7 @@ val_dataset:
   dataset:
     name: image-folder
     args:
-      root_path: ./load/div2k/DIV2K_valid_HR
+      root_path: ../../../mngo_datasets/load/div2k/DIV2K_valid_HR
       first_k: 10
       repeat: 160
       cache: in_memory
@@ -40,7 +41,7 @@ val_dataset:
       scale_min: 1
       scale_max: 4
   collate_batch: true
-  batch_size: 32
+  batch_size: 16
 
 data_norm:
   inp: {sub: [0.5], div: [0.5]}
@@ -67,10 +68,12 @@ optimizer:
   name: adam
   args:
     lr: 1.e-4
-iter_max: 1000000
+iter_max: 500000
 multi_step_lr:
-  milestones: [200000, 400000, 600000, 800000]
+  milestones: [100000, 200000, 300000, 400000]
   gamma: 0.5
+
+# resume: save/_train_edsr-baseline-lte-variable-input-flickr2k-edge_sample-2304-scale-1to4-inputs-48-flickr2k-edge-crop/iteration-943920.pth
 
 iter_val: 50000
 iter_save: 50000

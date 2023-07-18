@@ -116,7 +116,7 @@ test_pipeline = [
 ]
 
 
-data_dir = "../liif/load"
+data_dir = "../../../mngo_datasets/load"
 mydata_dir = "mydata"
 #data_dir = "data"
 #lq_path = f'{data_dir}/Classical/' + data_type + '/LRbicx'+str(val_scale)

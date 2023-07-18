@@ -12,7 +12,7 @@ train_dataset:
       inp_sizes: [48]
       augment: true
       sample_q: 2304
-      sample_patch: true
+      # sample_patch: true
       # limit_scale: 4 # change scale_min
       scale_min: 1
       # scale_max: 4
@@ -74,7 +74,7 @@ multi_step_lr:
   milestones: [500000, 800000, 900000, 950000]
   gamma: 0.5
 
-resume: save/_train_swinir-baseline-lte-variable-input-flickr2k-final_sample-2304-scale-1toMax-inputs-48-flickr2k-batch-128-edge-crop/iteration-199800.pth
+resume: save/_train_swinir-baseline-lte-variable-input-flickr2k-final_sample-2304-scale-1toMax-inputs-48-flickr2k-batch-128-edge-crop/iteration-299700.pth
 
 iter_val: 100000
 iter_save: 100000
