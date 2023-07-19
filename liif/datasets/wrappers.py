@@ -388,3 +388,163 @@ class SRImplicitDownsampled(Dataset):
                 
         return rtn_dict
     
+
+@register('sr-implicit-downsampled-collate-batch-fast')
+class SRImplicitDownsampled(Dataset):
+
+    def __init__(self, dataset, inp_sizes=None, scale_min=1, scale_max=None,
+                 augment=False, sample_q=None, plot_scales=False, limit_scale=None, 
+                 exp_dist_from=None, sample_patch=None, crop_from_edges=None, sample_from_edges=None):
+        self.dataset = dataset
+        self.inp_sizes = inp_sizes
+        self.scale_min = scale_min
+        self.scale_max = scale_max
+        self.augment = augment
+        self.sample_q = sample_q
+        self.plot_scales = plot_scales
+        self.limit_scale = limit_scale
+        self.exp_dist_from = exp_dist_from
+        self.sample_patch = sample_patch
+        self.crop_from_edges = crop_from_edges
+        self.sample_from_edges=sample_from_edges
+
+    def __len__(self):
+        return len(self.dataset)
+
+    def __getitem__(self, idx):
+        img_with_edge_map = self.dataset[idx]
+        return img_with_edge_map
+        
+    def collate_batch(self, batch):
+
+        rtn_lists = { 
+                'inp': [],
+                'coord': [],
+                'cell': [],
+                'gt': [],
+                'inp_scale': [],
+                'scale': [],
+                'scale_max': []
+            }
+        
+        inp_idx = random.randint(0, len(self.inp_sizes)-1)
+        inp_size = self.inp_sizes[inp_idx]
+
+        for img_with_edge_map in batch:
+            img = img_with_edge_map[:3]
+            edge_map = img_with_edge_map[3]
+            min_dim = min(img.size(1), img.size(2))
+            scale_max = min_dim // inp_size
+
+            # scale-adaptive
+            if scale_max > 32:
+                scale_max = 32
+            s = random.uniform(self.scale_min, scale_max)
+
+            if self.exp_dist_from is not None:
+                if scale_max > self.exp_dist_from:
+                    s_uniform = random.uniform(self.scale_min, self.exp_dist_from)
+                    s_exp = choose_scale_exponentially(self.exp_dist_from, scale_max)
+                    s = random.choice([s_uniform, s_exp])
+
+            if self.limit_scale is not None:
+                s = random.uniform(scale_max-self.limit_scale, scale_max)
+            
+            if self.scale_max is not None:
+                s = random.uniform(self.scale_min, self.scale_max)
+
+            w_lr = inp_size
+            w_hr = round(w_lr * s)
+            if self.crop_from_edges is not None:
+                coord_from_edge = get_random_coordinate_from_edges(img, edge_map=edge_map)
+                x0, y0 = get_image_crop_start_coord(img, coord_from_edge, w_hr)
+            else:
+                x0 = random.randint(0, img.shape[-2] - w_hr)
+                y0 = random.randint(0, img.shape[-1] - w_hr)
+            crop_hr = img[:, x0: x0 + w_hr, y0: y0 + w_hr]
+            crop_lr = resize_fn(crop_hr, w_lr)
+        
+            if self.augment:
+                hflip = random.random() < 0.5
+                vflip = random.random() < 0.5
+                dflip = random.random() < 0.5
+
+                def augment(x):
+                    if hflip:
+                        x = x.flip(-2)
+                    if vflip:
+                        x = x.flip(-1)
+                    if dflip:
+                        x = x.transpose(-2, -1)
+                    return x
+
+                crop_lr = augment(crop_lr)
+                crop_hr = augment(crop_hr)
+
+            hr_coord, hr_rgb = to_pixel_samples(crop_hr.contiguous())
+
+            # sample q coordinates
+            if self.sample_q is not None and self.sample_patch is None:
+                # sample_q can be set higher than inp_size^2
+                sample_q = self.sample_q
+                if self.sample_q > len(hr_coord) :
+                    sample_q = len(hr_coord)
+                sample_lst = np.random.choice(
+                    len(hr_coord), sample_q, replace=False)
+                hr_coord = hr_coord[sample_lst]
+                hr_rgb = hr_rgb[sample_lst]
+
+                # fill up coordinates with same values
+                ratio = self.sample_q / len(hr_coord)
+                if ratio > 1:
+                    hr_coord = hr_coord.repeat((self.sample_q // len(hr_coord)) + 1, 1)[:self.sample_q]
+                    hr_rgb = hr_rgb.repeat((self.sample_q // len(hr_rgb)) + 1, 1)[:self.sample_q]
+
+            if self.sample_q is not None and self.sample_patch is not None:
+                sample_q = self.sample_q
+                sample_patch_size = round(math.sqrt(sample_q))
+
+                hr_coord_reshape = hr_coord.reshape(crop_hr.shape[-2], crop_hr.shape[-1], 2)
+                hr_rgb_reshape = hr_rgb.reshape(crop_hr.shape[-2], crop_hr.shape[-1], 3)
+                
+                if self.sample_from_edges is not None:
+                    coord_from_edge = get_random_coordinate_from_edges(crop_hr)
+                    x0, y0 = get_image_crop_start_coord(crop_hr, coord_from_edge, sample_patch_size)
+                else:
+                    x0 = random.randint(0, hr_coord_reshape.shape[0] - sample_patch_size)
+                    y0 = random.randint(0, hr_coord_reshape.shape[1] - sample_patch_size)
+            
+                hr_coord = hr_coord_reshape[x0: x0 + sample_patch_size, y0: y0 + sample_patch_size, :].reshape(sample_patch_size*sample_patch_size, 2)
+                hr_rgb = hr_rgb_reshape[x0: x0 + sample_patch_size, y0: y0 + sample_patch_size, :].reshape(sample_patch_size*sample_patch_size, 3)
+
+            cell = torch.ones_like(hr_coord)
+            cell[:, 0] *= 2 / crop_hr.shape[-2]
+            cell[:, 1] *= 2 / crop_hr.shape[-1]
+
+            inp_scale = torch.ones(hr_coord.shape[-2])
+            inp_scale[:] *= s
+
+            rtn_lists['inp'].append(crop_lr)
+            rtn_lists['coord'].append(hr_coord)
+            rtn_lists['cell'].append(cell)
+            rtn_lists['gt'].append(hr_rgb)
+            rtn_lists['inp_scale'].append(inp_scale)
+
+            if self.plot_scales:
+                rtn_lists['scale'].append(s)
+                rtn_lists['scale_max'].append(scale_max)
+        
+        rtn_dict = {
+            'inp': torch.stack(rtn_lists['inp'], dim=0),
+            'coord': torch.stack(rtn_lists['coord'], dim=0),
+            'cell': torch.stack(rtn_lists['cell'], dim=0),
+            'gt': torch.stack(rtn_lists['gt'], dim=0),
+            'inp_scale': torch.stack(rtn_lists['inp_scale'], dim=0)
+        }
+        
+        if self.plot_scales:
+            rtn_dict['scale'] = torch.tensor(rtn_lists['scale'])
+            rtn_dict['scale_max'] = torch.tensor(rtn_lists['scale_max'])
+                
+        return rtn_dict
+    

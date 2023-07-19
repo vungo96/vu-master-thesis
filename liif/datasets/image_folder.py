@@ -11,15 +11,17 @@ from torchvision import transforms
 
 from datasets import register
 from PIL import ImageFile
+from utils import get_edge_map
 
 
 @register('image-folder')
 class ImageFolder(Dataset):
 
     def __init__(self, root_path, root_path2=None, split_file=None, split_key=None, first_k=None,
-                 repeat=1, cache='none', sharded=None, edge_indices=None):
+                 repeat=1, cache='none', sharded=None, edge_map=None):
         self.repeat = repeat
         self.cache = cache
+        self.edge_map = edge_map
 
         ImageFile.LOAD_TRUNCATED_IMAGES = True
 
@@ -80,8 +82,12 @@ class ImageFolder(Dataset):
                 self.files.append(bin_file)
 
             elif cache == 'in_memory':
-                self.files.append(transforms.ToTensor()(
-                    Image.open(file).convert('RGB')))
+                img = transforms.ToTensor()(
+                    Image.open(file).convert('RGB'))
+                self.files.append(img)
+                if self.edge_map is not None:
+                    self.edge_maps.append(get_edge_map(img, save_dir='test_images/'))
+
 
     def __len__(self):
         return len(self.files) * self.repeat
@@ -100,6 +106,10 @@ class ImageFolder(Dataset):
             return x
 
         elif self.cache == 'in_memory':
+            if self.edge_map is not None:
+                edge_map = self.edge_maps[idx % len(self.files)]
+                edge_map = torch.unsqueeze(torch.from_numpy(edge_map), dim=0)
+                return torch.cat([x, edge_map], dim=0)
             return x
 
 

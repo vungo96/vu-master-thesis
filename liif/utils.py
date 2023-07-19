@@ -339,7 +339,7 @@ def rand_bbox(size, lam):
 
     return bbx1, bby1, bbx2, bby2
 
-def get_edge_indices(image_tensor, save_dir=None):
+def get_edge_map(image_tensor, save_dir=None):
     # Convert the image tensor to a NumPy array
     image_np = image_tensor.squeeze().permute(1, 2, 0).numpy()
 
@@ -350,20 +350,23 @@ def get_edge_indices(image_tensor, save_dir=None):
     gray_image = np.uint8(gray_image * 255.0)
 
     # Apply Canny edge detection using OpenCV
-    edges = cv2.Canny(gray_image, threshold1=100, threshold2=200)
+    edge_map = cv2.Canny(gray_image, threshold1=100, threshold2=200)
 
     if save_dir is not None:
-        save_edge_map_to_dir(image_np, edges, save_dir)
+        save_edge_map_to_dir(image_np, edge_map, save_dir)
 
-    # Find the coordinates of the edge pixels
-    edge_indices = np.argwhere(edges > 0)
-
-    return edge_indices
+    return edge_map
 
    
-def get_random_coordinate_from_edges(image_tensor, save_dir=None):
-     
-    edge_indices = get_edge_indices(image_tensor, save_dir)
+def get_random_coordinate_from_edges(image_tensor, edge_map=None):
+    
+    if edge_map is None:
+        edge_map = get_edge_map(image_tensor)
+    else:
+        edge_map = edge_map.numpy()
+
+    # Find the coordinates of the edge pixels
+    edge_indices = np.argwhere(edge_map > 0)
 
     # Randomly select one of the edge coordinates
     if len(edge_indices) > 0:

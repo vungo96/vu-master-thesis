@@ -5,8 +5,9 @@ train_dataset:
       root_path: ./load/div2k/DIV2K_train_HR
       first_k: 10
       repeat: 1
-      #cache: in_memory
+      cache: in_memory
       # sharded: true
+      # edge_map: true
   wrapper:
     name: sr-implicit-downsampled-collate-batch
     args:
@@ -89,8 +90,8 @@ multi_step_lr_D:
   milestones: [200000, 400000, 600000, 800000]
   gamma: 0.5
 
-resume: save_iter/_train_edsr-baseline-lte-variable-input-patch-gan-test_test2/iteration-50.pth
-resume_D: save_iter/_train_edsr-baseline-lte-variable-input-patch-gan-test_test2/d_iteration-50.pth
+#resume: save_iter/_train_edsr-baseline-lte-variable-input-patch-gan-test_test2/iteration-50.pth
+#resume_D: save_iter/_train_edsr-baseline-lte-variable-input-patch-gan-test_test2/d_iteration-50.pth
 
 iter_max: 1000000
 iter_val: 10
