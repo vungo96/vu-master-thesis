@@ -17,7 +17,7 @@ from PIL import ImageFile
 class ImageFolder(Dataset):
 
     def __init__(self, root_path, root_path2=None, split_file=None, split_key=None, first_k=None,
-                 repeat=1, cache='none', sharded=None):
+                 repeat=1, cache='none', sharded=None, edge_indices=None):
         self.repeat = repeat
         self.cache = cache
 
@@ -51,6 +51,7 @@ class ImageFolder(Dataset):
             filenames = filenames[:first_k]
 
         self.files = []
+        self.edge_maps = []
         
         for i, filename in enumerate(filenames):
             if root_path2 is not None and i >= len(filenames)-len(filenames2):

@@ -338,9 +338,9 @@ def rand_bbox(size, lam):
     bby2 = np.clip(cy + cut_h // 2, 0, H)
 
     return bbx1, bby1, bbx2, bby2
-   
-def get_random_coordinate_from_edges(image_tensor, save_dir=None):
-     # Convert the image tensor to a NumPy array
+
+def get_edge_indices(image_tensor, save_dir=None):
+    # Convert the image tensor to a NumPy array
     image_np = image_tensor.squeeze().permute(1, 2, 0).numpy()
 
     # Convert the image to grayscale
@@ -357,6 +357,13 @@ def get_random_coordinate_from_edges(image_tensor, save_dir=None):
 
     # Find the coordinates of the edge pixels
     edge_indices = np.argwhere(edges > 0)
+
+    return edge_indices
+
+   
+def get_random_coordinate_from_edges(image_tensor, save_dir=None):
+     
+    edge_indices = get_edge_indices(image_tensor, save_dir)
 
     # Randomly select one of the edge coordinates
     if len(edge_indices) > 0:

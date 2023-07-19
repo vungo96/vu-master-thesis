@@ -231,7 +231,6 @@ class SRImplicitUniformVaried(Dataset):
             'gt': hr_rgb
         }
 
-
 @register('sr-implicit-downsampled-collate-batch')
 class SRImplicitDownsampled(Dataset):
 
