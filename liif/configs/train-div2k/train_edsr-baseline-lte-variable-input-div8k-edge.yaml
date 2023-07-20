@@ -6,8 +6,9 @@ train_dataset:
       repeat: 10
       cache: in_memory
       sharded: true
+      edge_map: true
   wrapper:
-    name: sr-implicit-downsampled-collate-batch
+    name: sr-implicit-downsampled-collate-batch-fast
     args:
       inp_sizes: [64]
       augment: true
