@@ -86,7 +86,7 @@ class ImageFolder(Dataset):
                     Image.open(file).convert('RGB'))
                 self.files.append(img)
                 if self.edge_map is not None:
-                    self.edge_maps.append(get_edge_map(img, save_dir='test_images/'))
+                    self.edge_maps.append(get_edge_map(img))
 
 
     def __len__(self):
