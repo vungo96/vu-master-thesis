@@ -6,13 +6,13 @@ train_dataset:
       repeat: 10
       cache: in_memory
       sharded: true
-      edge_map: true
+      # edge_map: true
   wrapper:
-    name: sr-implicit-downsampled-collate-batch-fast
+    name: sr-implicit-downsampled-collate-batch
     args:
-      inp_sizes: [64]
+      inp_sizes: [48]
       augment: true
-      sample_q: 4096
+      sample_q: 2304
       # limit_scale: 3 # change scale_min
       scale_min: 1
       scale_max: 4
@@ -34,9 +34,9 @@ val_dataset:
   wrapper:
     name: sr-implicit-downsampled-collate-batch
     args:
-      inp_sizes: [64]
+      inp_sizes: [48]
       augment: true
-      sample_q: 4096
+      sample_q: 2304
       # limit_scale: 3
       scale_min: 1
       scale_max: 4
@@ -68,9 +68,9 @@ optimizer:
   name: adam
   args:
     lr: 1.e-4
-iter_max: 2000000
+iter_max: 1000000
 multi_step_lr:
-  milestones: [400000, 800000, 1200000, 1600000]
+  milestones: [200000, 400000, 600000, 800000]
   gamma: 0.5
 
 iter_val: 100000

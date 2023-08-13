@@ -1,6 +1,6 @@
-exp_name = '001_ciaosr_swinir_div2k'
+exp_name = '001_ciaosr_swinir_urban100'
 scale_min, scale_max = 1, 4
-val_scale = 4   #TODO
+val_scale = 12   # TODO
 data_type = 'Urban100'  #TODO {Set5, Set14, BSDS100, Urban100, Manga109}
 
 from mmedited.models.restorers.ciaosr import CiaoSR
@@ -56,9 +56,9 @@ model = dict(
 # model training and testing settings
 train_cfg = None
 if val_scale <= 4:
-    test_cfg = dict(metrics=['PSNR', 'SSIM'], crop_border=val_scale, scale=val_scale, tile=192, tile_overlap=32, convert_to='y') # larger tile is better
+    test_cfg = dict(metrics=['PSNR', 'SSIM', 'LPIPS'], crop_border=val_scale, scale=val_scale, tile=192, tile_overlap=32) # larger tile is better
 else:
-    test_cfg = dict(metrics=['PSNR', 'SSIM'], crop_border=val_scale, scale=val_scale, convert_to='y') # x6, x8, x12 
+    test_cfg = dict(metrics=['PSNR', 'SSIM', 'LPIPS'], crop_border=val_scale, scale=val_scale) # x6, x8, x12 
 
 # dataset settings
 train_dataset_type = 'SRFolderGTDataset'
@@ -128,38 +128,41 @@ test_pipeline = [
         meta_keys=['gt_path'])
 ]
 
-data_dir = "data"
-lq_path = f'{data_dir}/Classical/' + data_type + '/LRbicx'+str(val_scale)
-gt_path = f'{data_dir}/Classical/' + data_type + '/GTmod12'
+data_dir = "../../../mngo_datasets/load"
+mydata_dir = "mydata"
+#lq_path = f'{data_dir}/Classical/' + data_type + '/LRbicx'+str(val_scale)
+#gt_path = f'{data_dir}/Classical/' + data_type + '/GTmod12'
 
 data = dict(
     workers_per_gpu=8,
-    train_dataloader=dict(samples_per_gpu=10, drop_last=True),
+    train_dataloader=dict(samples_per_gpu=16, drop_last=True),
     val_dataloader=dict(samples_per_gpu=1),
     test_dataloader=dict(samples_per_gpu=1),
     train=dict(
         type='RepeatDataset',
-        times=20,
+        times=1,
         dataset=dict(
             type=train_dataset_type,
-            gt_folder=f'{data_dir}/DIV2K/HR',  #f'{data_dir}/DIV2K/DIV2K_train_HR', #
+            gt_folder=f'{data_dir}/LSDIR/train/HR',  #f'{data_dir}/DIV2K/DIV2K_train_HR', #
             pipeline=train_pipeline,
             scale=scale_max)),
-    val=dict(type=val_dataset_type,
-             gt_folder=gt_path, 
-             pipeline=valid_pipeline,
-             scale=scale_max),
+    val=dict(
+        type=val_dataset_type,
+        gt_folder=f'{data_dir}/benchmark/Urban100/HR',#f'{mydata_dir}/Classical/Urban100/GTmod12',  #f'{data_dir}/testset/Urban100/HR',  #f'{data_dir}/sr_test/Urban100', #
+        pipeline=valid_pipeline,
+        scale=scale_max),
     test=dict(
-        type=test_dataset_type,
-        lq_folder=lq_path,
-        gt_folder=gt_path, 
-        pipeline=test_pipeline,  
-        scale=val_scale,
-        filename_tmpl='{}') if val_scale <= 4 else 
-            dict(type=val_dataset_type, 
-                 gt_folder=gt_path, 
-                 pipeline=valid_pipeline, 
-                 scale=val_scale)
+        # type=test_dataset_type,
+        # lq_folder=f'{data_dir}/testset/DIV2K_val/LR_bicubic/X3', #f'{mydata_dir}/Classical/Urban100/LRbicx4',  #f'{mydata_dir}/Classical/Set14/LRbicx4', #f'{mydata_dir}/Classical/BSDS100/LRbicx2',  #
+        # gt_folder=f'{data_dir}/testset/DIV2K_val/HR', #f'{mydata_dir}/Classical/Urban100/GTmod12',  #f'{mydata_dir}/Classical/Set14/GTmod12', #f'{mydata_dir}/Classical/BSDS100/GTmod12',  #
+        # pipeline=test_pipeline,
+        #scale=scale_max,
+        # filename_tmpl='{}x3'))   #x4
+        type=val_dataset_type,
+        # /div2k/DIV2K_valid_HR
+        gt_folder=f'{data_dir}/benchmark/Urban100/HR', #f'{mydata_dir}/Classical/Urban100/GTmod12',  #f'{data_dir}/testset/Set5/HR', #f'{data_dir}/testset/Urban100/HR',  #f'{data_dir}/sr_test/Set5', #
+        pipeline=valid_pipeline,
+        scale=val_scale))
 
 # optimizer
 optimizers = dict(type='Adam', lr=1.e-4)

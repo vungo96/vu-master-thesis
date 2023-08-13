@@ -275,6 +275,8 @@ class SRImplicitDownsampled(Dataset):
         for img in batch:
             min_dim = min(img.size(1), img.size(2))
             scale_max = min_dim // inp_size
+            # TODO: remove later
+            scale_max_save = scale_max
 
             # scale-adaptive
             if scale_max > 32:
@@ -372,7 +374,7 @@ class SRImplicitDownsampled(Dataset):
 
             if self.plot_scales:
                 rtn_lists['scale'].append(s)
-                rtn_lists['scale_max'].append(scale_max)
+                rtn_lists['scale_max'].append(scale_max_save)
         
         rtn_dict = {
             'inp': torch.stack(rtn_lists['inp'], dim=0),

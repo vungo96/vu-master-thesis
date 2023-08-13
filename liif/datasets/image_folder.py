@@ -59,7 +59,8 @@ class ImageFolder(Dataset):
             if root_path2 is not None and i >= len(filenames)-len(filenames2):
                 root_path = root_path2
 
-            if sharded is None:
+            file = filename
+            if sharded is None or (root_path2 is not None and i >= len(filenames)-len(filenames2)):
                 file = os.path.join(root_path, filename)
             else:
                 file = filename

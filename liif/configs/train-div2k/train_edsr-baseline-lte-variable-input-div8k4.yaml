@@ -36,7 +36,7 @@ val_dataset:
       sample_q: 4096
       # limit_scale: 3
       scale_min: 1
-      scale_max: 12
+      scale_max: 4
   collate_batch: true
   batch_size: 32
 
@@ -69,7 +69,7 @@ multi_step_lr:
   milestones: [200000, 400000, 600000, 800000]
   gamma: 0.5
 
-resume: save/_train_edsr-baseline-lte-variable-input-div8k4_sample-4096-scale-1toMax-inputs-192-div8k/iteration-399588.pth
+resume: save/_train_edsr-baseline-lte-variable-input-div8k4_sample-4096-scale-1toMax-inputs-192-div8k/iteration-599382.pth
 
 iter_val: 100000
 iter_save: 100000

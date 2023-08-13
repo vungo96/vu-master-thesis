@@ -4,6 +4,8 @@ load
 ckpts
 ckpts2
 save
+save_final
+save_final_old
 save_test
 save_iter
 save_test2

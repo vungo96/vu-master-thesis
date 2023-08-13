@@ -3,7 +3,7 @@ import os
 import pickle
 
 # Path to pickle files
-path = 'save/_train_edsr-baseline-lte-variable-input-lsdir2_sample-2304-scale-1toMax-inputs-48-lsdir/'
+path = 'save/_train_edsr-baseline-lte-variable-input-div2k-plot-distribution_plot_scale_distribution/'
 
 bins = 60
 
@@ -38,6 +38,7 @@ sorted_keys = sorted(max_scale_freq.keys())
 # bins dependent on largest scale
 bins = max(max_scale_freq.keys()) + 5
 print('highest scale:', bins - 5)
+print('lowest scale:', min(max_scale_freq.keys()))
 
 # Plot distribution of second file as a histogram
 plt.clf() # Clear previous plot

@@ -1,7 +1,7 @@
-exp_name = '001_ciaosr_edsr_div2k'
+exp_name = '001_ciaosr_edsr_urban100'
 scale_min, scale_max = 1, 4
-val_scale = 30
-# data_type = 'Urban100'  #TODO {Set5, Set14, BSDS100, Urban100, Manga109}
+val_scale = 12
+data_type = 'Urban100'  #TODO {Set5, Set14, BSDS100, Urban100, Manga109}
 
 from mmedited.models.restorers.ciaosr import CiaoSR
 from mmedited.models.backbones.sr_backbones.ciaosr_net import LocalImplicitSREDSR

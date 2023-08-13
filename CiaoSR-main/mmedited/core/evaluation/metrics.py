@@ -301,7 +301,7 @@ def calc_ssim(sr, hr, dataset=None, scale=1):
         
     return np.array(ssims_list).mean()
 
-def ssim_old(img1, img2, crop_border=0, input_order='HWC', convert_to=None):
+def ssim(img1, img2, crop_border=0, input_order='HWC', convert_to=None):
     """Calculate SSIM (structural similarity).
 
     Ref:
@@ -359,7 +359,7 @@ def ssim_old(img1, img2, crop_border=0, input_order='HWC', convert_to=None):
 
 from torchmetrics.functional import structural_similarity_index_measure
 
-def ssim(img1, img2, crop_border=0, input_order='HWC', convert_to=None):
+def ssim_notworking(img1, img2, crop_border=0, input_order='HWC', convert_to=None):
     """
     Args:
         img1 (ndarray): Images with range [0, 255].

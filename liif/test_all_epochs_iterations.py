@@ -21,6 +21,7 @@ if __name__ == '__main__':
     parser.add_argument('--out_dir', default=None)
     parser.add_argument('--tag', default=None)
     parser.add_argument('--window', default=0)
+    parser.add_argument('--dataset', default="divk2")
     args = parser.parse_args()
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -34,7 +35,7 @@ if __name__ == '__main__':
 
     print("window: ", args.window)
 
-    save_path = "test_curves/metric_lists/" + args.scale
+    save_path = "test_curves/metric_lists/" + args.scale + '_' + args.dataset
 
     spec = config['test_dataset']
     dataset = datasets.make(spec['dataset'])

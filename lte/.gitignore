@@ -5,6 +5,9 @@ save/
 ckpts/
 ckpts2/
 save_test/
+save_final/
+save_final_old/
+save_further/
 slurm/
 
 # Created by https://www.toptal.com/developers/gitignore/api/linux,python

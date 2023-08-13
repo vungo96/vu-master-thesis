@@ -239,7 +239,7 @@ def main(config_, save_path):
 
         # save weights
         # TODO: chang eback --> should just be faster
-        # torch.save(sv_file, os.path.join(save_path, 'iteration-last.pth'))
+        torch.save(sv_file, os.path.join(save_path, 'iteration-last.pth'))
 
         if (epoch_save is not None) and (epoch % epoch_save == 0):
             torch.save(sv_file,
