@@ -340,7 +340,7 @@ def rand_bbox(size, lam):
 
     return bbx1, bby1, bbx2, bby2
 
-def get_edge_map(image_tensor, save_dir=None):
+def get_edge_map(image_tensor, save_dir='test_edge_maps'):
     # Convert the image tensor to a NumPy array
     image_np = image_tensor.squeeze().permute(1, 2, 0).numpy()
 
