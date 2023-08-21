@@ -5,10 +5,17 @@ def crop_image(input_path, center_x, center_y, patch_size_x, patch_size_y, outpu
     # Open the image
     image = Image.open(input_path)
 
+    # shave = 24
+    # width, height = image.size
+    # print(image.size)
+    # cropped_image = image.crop((shave, shave, width - shave, height - shave))
+    # # shaved_image = image[..., shave:-shave, shave:-shave]
+    # print(cropped_image.size)
+
     # Calculate the coordinates for cropping the patch
     left = center_x - patch_size_x // 2
-    top = center_y - patch_size_y // 2
-    right = left + patch_size_x
+    top = center_y - patch_size_y // 2 
+    right = left + patch_size_x 
     bottom = top + patch_size_y
 
     # Crop the image
@@ -24,12 +31,13 @@ def crop_image(input_path, center_x, center_y, patch_size_x, patch_size_y, outpu
 
 if __name__ == "__main__":
     # Example usage:
-    input_path = "output.png"
-    center_x = 128  # Replace with the desired center x-coordinate of the patch
-    center_y = 128  # Replace with the desired center y-coordinate of the patch
+    #input_path = "../../../mngo_datasets/load/div2k/DIV2K_valid_HR/0821.png"
+    input_path = "test_images/interesting_comparisons2/0821-x24-div2k-edge-crop.png"
+    tag = "0821-x24-div2k-edge-crop"  # Replace with the desired tag for the cropped image
+    center_x = 175 #175  # Replace with the desired center x-coordinate of the patch
+    center_y = 860 #860  # Replace with the desired center y-coordinate of the patch
     patch_size_x = 256  # Replace with the desired patch size in the x-direction
     patch_size_y = 256  # Replace with the desired patch size in the y-direction
-    output_folder = "test_images"  # Replace with the desired output folder path
-    tag = "0-test-crop-image"  # Replace with the desired tag for the cropped image
+    output_folder = "test_images/compare_crops"  # Replace with the desired output folder path
 
     crop_image(input_path, center_x, center_y, patch_size_x, patch_size_y, output_folder, tag)

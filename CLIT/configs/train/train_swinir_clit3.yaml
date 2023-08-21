@@ -89,4 +89,4 @@ epoch_val: 1
 epoch_save: 100
 
 resume: ~
-pre_train: save/lit_swinir_sample-2304-scales-1to4--batch-32-inputs-48/epoch-1000.pth
+pre_train: save/lit_swinir_sample-2304-scales-1to4-batch-32-inputs-48-2/epoch-last.pth

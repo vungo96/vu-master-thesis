@@ -280,9 +280,10 @@ def calc_lpips(sr, hr, dataset=None, scale=1, device='cuda'):
                 lpips = lpips_net(sr*2-1, hr*2-1)
 
             return lpips
+        
         sr = sr[..., shave:-shave, shave:-shave]
         hr = hr[..., shave:-shave, shave:-shave]
-
+        
         with torch.no_grad():
             lpips = lpips_net(sr*2-1, hr*2-1)
 

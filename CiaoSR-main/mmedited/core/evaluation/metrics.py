@@ -420,6 +420,7 @@ def ndarray_to_tensor(img):
     img = img.transpose((2, 3, 0, 1))
     # Convert ndarray to tensor and normalize to [0,1]
     img_tensor = torch.from_numpy(img).float() / 255.0
+    # img_tensor.view(1, img_tensor.shape[2], img_tensor.shape[0], img_tensor.shape[1])
     return img_tensor
 
 def lpips(img1, img2, crop_border=0, input_order='HWC', convert_to=None):
@@ -459,6 +460,8 @@ def lpips(img1, img2, crop_border=0, input_order='HWC', convert_to=None):
                          '"Y" and None')
     
     if crop_border != 0:
+        # TODO: remove for not div2k
+        # crop_border += 6
         img1 = img1[crop_border:-crop_border, crop_border:-crop_border, None]
         img2 = img2[crop_border:-crop_border, crop_border:-crop_border, None]
 

@@ -33,6 +33,8 @@ if __name__ == '__main__':
         config = yaml.load(f, Loader=yaml.FullLoader)
         print(config)
 
+    print("Eval on", args.dataset)
+
     print("window: ", args.window)
 
     save_path = "test_curves/metric_lists/" + args.scale + '_' + args.dataset

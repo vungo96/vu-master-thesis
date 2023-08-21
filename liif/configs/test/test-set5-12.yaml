@@ -2,13 +2,13 @@ test_dataset:
   dataset:
     name: image-folder
     args:
-      root_path: ../../../mngo_datasets/load/benchmark/B100/HR
+      root_path: ../../../mngo_datasets/load/benchmark/Set5/HR
   wrapper:
     name: sr-implicit-downsampled
     args:
-      scale_min: 6
+      scale_min: 12
   batch_size: 1
-eval_type: benchmark-6
+eval_type: benchmark-12
 eval_bsize: 30000
 
 data_norm:

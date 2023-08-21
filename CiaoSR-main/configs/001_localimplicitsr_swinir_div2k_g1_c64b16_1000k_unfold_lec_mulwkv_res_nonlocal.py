@@ -1,7 +1,7 @@
-exp_name = '001_ciaosr_swinir_urban100'
+exp_name = '001_ciaosr_swinir_manga109'
 scale_min, scale_max = 1, 4
-val_scale = 12   # TODO
-data_type = 'Urban100'  #TODO {Set5, Set14, BSDS100, Urban100, Manga109}
+val_scale = 8   # TODO
+#data_type = 'Urban100'  #TODO {Set5, Set14, BSDS100, Urban100, Manga109}
 
 from mmedited.models.restorers.ciaosr import CiaoSR
 from mmedited.models.backbones.sr_backbones.swinir_net import SwinIR
@@ -160,7 +160,7 @@ data = dict(
         # filename_tmpl='{}x3'))   #x4
         type=val_dataset_type,
         # /div2k/DIV2K_valid_HR
-        gt_folder=f'{data_dir}/benchmark/Urban100/HR', #f'{mydata_dir}/Classical/Urban100/GTmod12',  #f'{data_dir}/testset/Set5/HR', #f'{data_dir}/testset/Urban100/HR',  #f'{data_dir}/sr_test/Set5', #
+        gt_folder=f'{data_dir}/benchmark/Manga109/HR', #f'{mydata_dir}/Classical/Urban100/GTmod12',  #f'{data_dir}/testset/Set5/HR', #f'{data_dir}/testset/Urban100/HR',  #f'{data_dir}/sr_test/Set5', #
         pipeline=valid_pipeline,
         scale=val_scale))
 

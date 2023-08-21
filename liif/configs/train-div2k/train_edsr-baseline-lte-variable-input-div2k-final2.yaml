@@ -15,7 +15,7 @@ train_dataset:
       # sample_patch: true
       # limit_scale: 4 # change scale_min
       scale_min: 1
-      # scale_max: 4
+      scale_max: 4
       crop_from_edges: true
       # sample_from_edges: true
       plot_scales: true
@@ -53,7 +53,7 @@ model:
   name: lte
   args:
     encoder_spec:
-      name: swinir
+      name: edsr-baseline
       args:
         no_upsampling: true
     imnet_spec:
@@ -68,12 +68,12 @@ model:
 optimizer:
   name: adam
   args:
-    lr: 2.e-4
+    lr: 1.e-4
 multi_step_lr:
-  milestones: [500000, 800000, 900000, 950000]
+  milestones: [200000, 400000, 600000, 800000]
   gamma: 0.5
 
-resume: save/_train_swinir-baseline-lte-variable-input-div2k-final-new-schedule_sample-2304-scale-1toMax-inputs-48-div2k-edge-crop-batch-64-new-schedule/iteration-400000.pth
+resume: save/_train_edsr-baseline-lte-variable-input-div2k-final2_sample-2304-scale-1to4-inputs-48-div2k-edge-crop-batch-64/iteration-800000.pth
 
 iter_val: 100000
 iter_save: 100000

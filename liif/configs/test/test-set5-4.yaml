@@ -1,12 +1,12 @@
 test_dataset:
   dataset:
-    name: image-folder
+    name: paired-image-folders
     args:
-      root_path: ./load/Set5/HR
+      root_path_1: ../../../mngo_datasets/load/benchmark/Set5/LR_bicubic/X4
+      root_path_2: ../../../mngo_datasets/load/benchmark/Set5/HR
   wrapper:
-    name: sr-implicit-downsampled
-    args:
-      scale_min: 4
+    name: sr-implicit-paired
+    args: {}
   batch_size: 1
 eval_type: benchmark-4
 eval_bsize: 30000
