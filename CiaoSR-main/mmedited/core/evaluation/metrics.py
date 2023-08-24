@@ -177,8 +177,64 @@ def reorder_image(img, input_order='HWC'):
         img = img.transpose(1, 2, 0)
     return img
 
-
 def psnr(img1, img2, crop_border=0, input_order='HWC', convert_to=None):
+    """
+    Args:
+        img1 (ndarray): Images with range [0, 255].
+        img2 (ndarray): Images with range [0, 255].
+        crop_border (int): Cropped pixels in each edges of an image. These
+            pixels are not involved in the SSIM calculation. Default: 0.
+        input_order (str): Whether the input order is 'HWC' or 'CHW'.
+            Default: 'HWC'.
+        convert_to (str): Whether to convert the images to other color models.
+            If None, the images are not altered. When computing for 'Y',
+            the images are assumed to be in BGR order. Options are 'Y' and
+            None. Default: None.
+
+    Returns:
+        float: lpips result.
+    """
+    assert img1.shape == img2.shape, (
+        f'Image shapes are different: {img1.shape}, {img2.shape}.')
+    if input_order not in ['HWC', 'CHW']:
+        raise ValueError(
+            f'Wrong input_order {input_order}. Supported input_orders are '
+            '"HWC" and "CHW"')
+    img1 = reorder_image(img1, input_order=input_order)
+    img2 = reorder_image(img2, input_order=input_order)
+
+    if isinstance(convert_to, str) and convert_to.lower() == 'y':
+        img1, img2 = img1.astype(np.float32), img2.astype(np.float32)
+        img1 = mmcv.bgr2ycbcr(img1 / 255., y_only=True) * 255.
+        img2 = mmcv.bgr2ycbcr(img2 / 255., y_only=True) * 255.
+        img1 = np.expand_dims(img1, axis=2)
+        img2 = np.expand_dims(img2, axis=2)
+    elif convert_to is not None:
+        raise ValueError('Wrong color model. Supported values are '
+                         '"Y" and None')
+    
+    if crop_border != 0:
+        # TODO: remove for not div2k
+        # crop_border += 6
+        img1 = img1[crop_border:-crop_border, crop_border:-crop_border, None]
+        img2 = img2[crop_border:-crop_border, crop_border:-crop_border, None]
+
+    # Get the index of the current CUDA device
+    current_device_index = torch.cuda.current_device()
+
+    # Set the device to the current CUDA device
+    device = torch.device(f'cuda:{current_device_index}')
+
+    img1 = ndarray_to_tensor(img1).to(device)
+    img2 = ndarray_to_tensor(img2).to(device)
+
+    diff = (sr - hr) / 1
+
+    mse = diff.pow(2).mean()
+    psnr = -10 * torch.log10(mse)
+    return psnr.item()
+
+def psnr_old(img1, img2, crop_border=0, input_order='HWC', convert_to=None):
     """Calculate PSNR (Peak Signal-to-Noise Ratio).
 
     Ref: https://en.wikipedia.org/wiki/Peak_signal-to-noise_ratio

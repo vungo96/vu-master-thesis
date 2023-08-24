@@ -2,8 +2,8 @@
 
 ### Start of Slurm SBATCH definitions
 #SBATCH -c 14               # Number of cores (-c)
-#SBATCH -t 0-02:00          # Runtime in D-HH:MM, minimum of t minutes
-#SBATCH -p gpu              # Partition to submit to
+#SBATCH -t 0-12:00          # Runtime in D-HH:MM, minimum of t minutes
+#SBATCH -p seas_gpu              # Partition to submit to
 #SBATCH --mem-per-cpu=20000M #M is the default and can therefore be omitted, but could also be K(ilo)|G(iga)|T(era)
 # --nodes=1              # number of nodes
 # --ntasks-per-node=2     # MPI processes per node
@@ -33,11 +33,11 @@ source activate ciaosr6
 
 export MASTER_PORT=$((12000 + $RANDOM % 20000))
 
-CONFIG=configs/001_localimplicitsr_swinir_div2k_g1_c64b16_1000k_unfold_lec_mulwkv_res_nonlocal.py
+CONFIG=configs/001_localimplicitsr_swinir_div2k_g1_c64b16_1000k_unfold_lec_mulwkv_res_nonlocal2.py
 GPUS=4
 CKPT=pretrain_model/swinir-ciaosr-baseline.pth
 
 PYTHONPATH=/bin/..:tools/..:
 PYTHONPATH="$(dirname $0)/..":$PYTHONPATH \
 python -m torch.distributed.run --nproc_per_node=$GPUS --master_port=$MASTER_PORT \
-    ./tools/test_lpips.py $CONFIG $CKPT --launcher pytorch #--save-path test_images
+    ./tools/test_lpips.py $CONFIG $CKPT --launcher pytorch --save-path test_images

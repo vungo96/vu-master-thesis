@@ -2,10 +2,10 @@ train_dataset:
   dataset:
     name: image-folder
     args:
-      root_path: load/div2k/DIV2K_train_HR
+      root_path: ../../../mngo_datasets/load/chosen_images
       #root_path2: ../../../mngo_datasets/load/Flickr2K/Flickr2K_HR
       repeat: 1
-      first_k: 100
+      first_k: 1
       # cache: in_memory
   wrapper:
     name: sr-implicit-downsampled-collate-batch
@@ -29,7 +29,7 @@ val_dataset:
   dataset:
     name: image-folder
     args:
-      root_path: load/div2k/DIV2K_valid_HR
+      root_path: ../../../mngo_datasets/load/div2k/DIV2K_valid_HR
       first_k: 10
       repeat: 160
       cache: in_memory

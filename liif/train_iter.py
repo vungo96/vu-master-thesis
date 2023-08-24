@@ -1,4 +1,4 @@
-""" Train for generating LIIF, from image to implicit representation.
+""" Train for generating LTE, from image to implicit representation.
 
     Config:
         train_dataset:

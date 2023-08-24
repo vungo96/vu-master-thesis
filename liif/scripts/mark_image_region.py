@@ -25,13 +25,14 @@ def mark_patch_with_box(input_path, center_x, center_y, patch_size_x, patch_size
 
 if __name__ == "__main__":
     # Example usage:
-    input_path = "output.png"
-    center_x = 128  # Replace with the desired center x-coordinate of the patch
-    center_y = 128  # Replace with the desired center y-coordinate of the patch
-    patch_size_x = 128  # Replace with the desired patch size in the x-direction
-    patch_size_y = 128  # Replace with the desired patch size in the y-direction
-    output_folder = "test_images"  # Replace with the desired output folder path
-    tag = "0-test-crop-image"  # Replace with the desired tag for the cropped image
-    width=4
+    input_path = "../../../mngo_datasets/load/benchmark/Manga109/HR/AkkeraKanjinchou.png"
+    # input_path = "test_images/compare_crops/001-manga109-x6-AkkeraKanjinchou-GT-big-crop.png"
+    center_x = 360 + 64 #175  
+    center_y = 64 # 860  
+    patch_size_x = 128 # 256  
+    patch_size_y = 128 # 256  
+    output_folder = "test_images"  
+    tag = "0000-test-crop-image"  
+    width=5
 
     mark_patch_with_box(input_path, center_x, center_y, patch_size_x, patch_size_y, output_folder, tag, width)

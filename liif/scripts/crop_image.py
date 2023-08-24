@@ -32,12 +32,17 @@ def crop_image(input_path, center_x, center_y, patch_size_x, patch_size_y, outpu
 if __name__ == "__main__":
     # Example usage:
     #input_path = "../../../mngo_datasets/load/div2k/DIV2K_valid_HR/0821.png"
-    input_path = "test_images/interesting_comparisons2/0821-x24-div2k-edge-crop.png"
-    tag = "0821-x24-div2k-edge-crop"  # Replace with the desired tag for the cropped image
-    center_x = 175 #175  # Replace with the desired center x-coordinate of the patch
-    center_y = 860 #860  # Replace with the desired center y-coordinate of the patch
-    patch_size_x = 256  # Replace with the desired patch size in the x-direction
-    patch_size_y = 256  # Replace with the desired patch size in the y-direction
-    output_folder = "test_images/compare_crops"  # Replace with the desired output folder path
+    #input_path = "../../../mngo_datasets/load/benchmark/Manga109/HR/AkkeraKanjinchou.png"
+    input_path = "test_images/interesting_comparisons2/001-manga109-x6-AkkeraKanjinchou-div2k-traditional.png"
+    tag = "001-manga109-x6-AkkeraKanjinchou-div2k-traditional"  
+    center_x = 360 + 64 # 175  
+    center_y = 64 # 860 
+    patch_size_x = 128  # 256
+    patch_size_y = 128 #256
+    #center_x = 400
+    #center_y = 350
+    #patch_size_x = 700  
+    #patch_size_y = 700  
+    output_folder = "test_images/compare_crops"  
 
     crop_image(input_path, center_x, center_y, patch_size_x, patch_size_y, output_folder, tag)
