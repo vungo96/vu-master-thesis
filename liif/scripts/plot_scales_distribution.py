@@ -10,6 +10,12 @@ path = 'save/_train_swinir-baseline-lte-variable-input-div2k-final_sample-2304-s
 
 bins = 60
 
+# Set default font to Times New Roman
+plt.rcParams['font.family'] = 'Times New Roman'
+
+# Set default font size
+plt.rcParams['font.size'] = 14
+
 # Load dictionary from first file created via pickle
 with open(path + 'scale_freq.pickle', 'rb') as f:
     scale_freq = pickle.load(f)
