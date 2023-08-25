@@ -31,9 +31,9 @@ def crop_image(input_path, center_x, center_y, patch_size_x, patch_size_y, outpu
 
 if __name__ == "__main__":
     # Example usage:
-    #input_path = "../../../mngo_datasets/load/div2k/DIV2K_valid_HR/0821.png"
+    input_path = "../../../mngo_datasets/load/div2k/DIV2K_valid_HR/0821.png"
     #input_path = "../../../mngo_datasets/load/benchmark/Manga109/HR/AkkeraKanjinchou.png"
-    input_path = "test_images/interesting_comparisons2/001-manga109-x6-AkkeraKanjinchou-div2k-traditional.png"
+    #input_path = "test_images/interesting_comparisons2/001-manga109-x6-AkkeraKanjinchou-div2k-traditional.png"
     tag = "001-manga109-x6-AkkeraKanjinchou-div2k-traditional"  
     center_x = 360 + 64 # 175  
     center_y = 64 # 860 
