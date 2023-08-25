@@ -41,7 +41,7 @@ def merge_images(image_folder):
     print("Merged image saved at:", output_path)
 
 # Example usage
-folder_path = "test_images/compare_crops/merge-0821-x24/"
+folder_path = "test_images/compare_crops/merge-0821-x24-ablation/"
 merge_images(folder_path)
 
 
