@@ -74,7 +74,7 @@ multi_step_lr:
   milestones: [500000, 800000, 900000, 950000]
   gamma: 0.5
 
-# resume: save/_train_swinir-baseline-lte-variable-input-lsdir-final-new-traditional_sample-2304-scale-1to4-inputs-48-lsdir-traditional/iteration-491360.pth
+resume: save/_train_swinir-baseline-lte-variable-input-lsdir-final-new-traditional2_sample-2304-scale-1to4-inputs-48-lsdir-traditional-batch-64-resume/iteration-last.pth
 
 iter_val: 100000
 iter_save: 100000
