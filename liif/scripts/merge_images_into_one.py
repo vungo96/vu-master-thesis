@@ -18,7 +18,7 @@ def merge_images(image_folder):
 
     max_images_per_row = 5
     num_rows = (num_images + max_images_per_row - 1) // max_images_per_row
-    spacing = 40  # Adjust this value to control the spacing between images
+    spacing = 20  # Adjust this value to control the spacing between images
 
     max_width = max_images_per_row * (max(img.width for _, img in images) + spacing)
     max_height = num_rows * (max(img.height for _, img in images))
@@ -41,7 +41,7 @@ def merge_images(image_folder):
     print("Merged image saved at:", output_path)
 
 # Example usage
-folder_path = "test_images/compare_crops/merge-0863-x18/"
+folder_path = "test_images/compare_crops/merge-0896-x18/"
 merge_images(folder_path)
 
 
