@@ -31,19 +31,19 @@ def crop_image(input_path, center_x, center_y, patch_size_x, patch_size_y, outpu
 
 if __name__ == "__main__":
     # Example usage:
-    #input_path = "../../../mngo_datasets/load/div2k/DIV2K_valid_HR/0859.png"
+    #input_path = "../../../mngo_datasets/load/div2k/DIV2K_valid_HR/0821.png"
     #input_path = "../../../mngo_datasets/load/benchmark/Manga109/HR/AkkeraKanjinchou.png"
-    #input_path = "test_images/compare_crops/0859-x18-GT-marked.png"
-    input_path = "test_images/interesting_comparisons2/0859-x18-div2k-edge-crop.png"
-    tag = "0859-x18-div2k-edge-crop"
+    input_path = "test_images/compare_crops/0821-x24-GT-marked.png"
+    #input_path = "test_images/interesting_comparisons2/0859-x18-div2k-edge-crop.png"
+    tag = "0821-x24-GT-big-crop"
     center_x = 400 +128 #1660 birds # 550 jaguar # 400 +128 crocodile # 360 + 64 manga109 # 175  div2k-0821
-    center_y = 970 +128 - 5 #815 # 1100 # 970 +128 #64 # 860 
+    center_y = 970 +128 - 5 #815 # 1100 # 970 +128 -5 #64 # 860 
     patch_size_x = 512 #256 # 512 # 512 #128 # 256 
     patch_size_y = 512 #256 # 512 # 512 #128 #256
-    #center_x = 500
-    #center_y = 855
-    #patch_size_x = 1000  
-    #patch_size_y = 1000  
+    center_x = 650
+    center_y = 650
+    patch_size_x = 1300  
+    patch_size_y = 1300  
     output_folder = "test_images/compare_crops"  
 
     crop_image(input_path, center_x, center_y, patch_size_x, patch_size_y, output_folder, tag)
