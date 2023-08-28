@@ -34,8 +34,8 @@ if __name__ == "__main__":
     #input_path = "../../../mngo_datasets/load/div2k/DIV2K_valid_HR/0859.png"
     #input_path = "../../../mngo_datasets/load/benchmark/Manga109/HR/AkkeraKanjinchou.png"
     #input_path = "test_images/compare_crops/0859-x18-GT-marked.png"
-    input_path = "test_images/interesting_comparisons2/0859-x18-div2k-traditional.png"
-    tag = "0859-x18-div2k-traditional"  
+    input_path = "test_images/interesting_comparisons2/0859-x18-div2k-edge-crop.png"
+    tag = "0859-x18-div2k-edge-crop"
     center_x = 400 +128 #1660 birds # 550 jaguar # 400 +128 crocodile # 360 + 64 manga109 # 175  div2k-0821
     center_y = 970 +128 - 5 #815 # 1100 # 970 +128 #64 # 860 
     patch_size_x = 512 #256 # 512 # 512 #128 # 256 
