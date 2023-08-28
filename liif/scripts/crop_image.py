@@ -32,18 +32,18 @@ def crop_image(input_path, center_x, center_y, patch_size_x, patch_size_y, outpu
 if __name__ == "__main__":
     # Example usage:
     #input_path = "../../../mngo_datasets/load/div2k/DIV2K_valid_HR/0821.png"
-    #input_path = "../../../mngo_datasets/load/benchmark/Set14/HR/monarch.png"
-    input_path = "test_images/compare_crops/0821-x18-GT-marked.png"
-    #input_path = "test_images/interesting_comparisons2/0821-x18-div2k-traditional.png"
-    tag = "0821-x18-GT-big-crop"
-    center_x = 1040 + 64 #400 monarch #128+32 set5 #1660 birds # 550 jaguar # 400 +128 crocodile # 360 + 64 manga109 # 175  div2k-0821
-    center_y = 128 + 40 - 48  #256 + 30 #128 #815 # 1100 # 970 +128 -5 #64 # 860 
-    patch_size_x = 128 + 20 #128 #128 #256 # 512 # 512 #128 # 256 
-    patch_size_y = 128 + 20 #128 #128 #256 # 512 # 512 #128 #256
-    center_x = 1000
-    center_y = 650
-    patch_size_x = 1300  
-    patch_size_y = 1300  
+    #input_path = "../../../mngo_datasets/load/benchmark/Urban100/HR/img004.png"
+    input_path = "test_images/compare_crops/img004-urban100-x4-GT-marked.png"
+    #input_path = "test_images/interesting_comparisons2/img004-urban100-x4-div2k-traditional.png"
+    tag = "img004-urban100-x4-GT-big-crop"
+    center_x = 750 # 1040 + 64 x18 0821 #400 monarch #128+32 set5 #1660 birds # 550 jaguar # 400 +128 crocodile # 360 + 64 manga109 # 175  div2k-0821
+    center_y = 500 # 128 + 40 - 48  #256 + 30 #128 #815 # 1100 # 970 +128 -5 #64 # 860 
+    patch_size_x = 200 # 128 + 20 #128 #128 #256 # 512 # 512 #128 # 256 
+    patch_size_y = 200 # 128 + 20 #128 #128 #256 # 512 # 512 #128 #256
+    center_x = 700
+    center_y = 350
+    patch_size_x = 660  
+    patch_size_y = 660  
     output_folder = "test_images/compare_crops"  
 
     crop_image(input_path, center_x, center_y, patch_size_x, patch_size_y, output_folder, tag)
