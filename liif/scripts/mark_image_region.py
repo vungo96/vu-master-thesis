@@ -25,15 +25,15 @@ def mark_patch_with_box(input_path, center_x, center_y, patch_size_x, patch_size
 
 if __name__ == "__main__":
     # Example usage:
-    #input_path = "../../../mngo_datasets/load/div2k/DIV2K_valid_HR/0821.png"
-    input_path = "../../../mngo_datasets/load/benchmark/Urban100/HR/img004.png"
+    input_path = "../../../mngo_datasets/load/div2k/DIV2K_valid_HR/0806.png"
+    #input_path = "../../../mngo_datasets/load/benchmark/Urban100/HR/img004.png"
     # input_path = "test_images/compare_crops/001-manga109-x6-AkkeraKanjinchou-GT-big-crop.png"
-    center_x = 750 # 1040 + 64# 128+32 #1660  # 550 # 528  # 360 + 64 #175  
-    center_y = 500 # 128 + 40 - 48 # 128 #815 # 1100 # 970 +128 # 64 # 860  
-    patch_size_x = 200 #128 #256 # 512 # 512 # 128 # 256
-    patch_size_y = 200 #128 #256 # 512 # 512 # 128 # 256  
+    center_x = 420 # 1040 + 64# 128+32 #1660  # 550 # 528  # 360 + 64 #175  
+    center_y = 470 # 128 + 40 - 48 # 128 #815 # 1100 # 970 +128 # 64 # 860  
+    patch_size_x = 128 #128 #256 # 512 # 512 # 128 # 256
+    patch_size_y = 128 #128 #256 # 512 # 512 # 128 # 256  
     output_folder = "test_images"  
     tag = "0000-test-crop-image"  
-    width=7
+    width=10
 
     mark_patch_with_box(input_path, center_x, center_y, patch_size_x, patch_size_y, output_folder, tag, width)

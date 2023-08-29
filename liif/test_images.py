@@ -13,9 +13,9 @@ import utils
 import os
 
 device = 'cuda'
-eval_type = 'div2k-18'
-pred_folder = '../CiaoSR-main/test_images/div2k-x'
-gt_folder = '../../../mngo_datasets/load/div2k/DIV2K_valid_HR'
+eval_type = 'div2k-4'
+pred_folder = 'test_images/compute_patch_metrics/pred'
+gt_folder = 'test_images/compute_patch_metrics/gt'
 
 transform = transforms.Compose([
         transforms.ToTensor(),
@@ -50,7 +50,8 @@ res_lpips = 0
 
 for i in range(len(pred_images)):
     sr = pred_images[i]
-    hr = gt_images[i]
+    # TODO: change?
+    hr = gt_images[0]
 
     if sr.shape != hr.shape:
         print('shave to same shape')
@@ -74,6 +75,8 @@ for i in range(len(pred_images)):
 
     sr_batch = sr.unsqueeze(0).to('cuda')
     hr_batch = hr.unsqueeze(0).to('cuda')
+    print(metric_psnr(sr_batch, hr_batch))
+    print(metric_lpips(sr_batch, hr_batch))
     res_psnr += metric_psnr(sr_batch, hr_batch)
     res_lpips += metric_lpips(sr_batch, hr_batch)
 

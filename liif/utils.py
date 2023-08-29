@@ -279,7 +279,7 @@ def calc_lpips(sr, hr, dataset=None, scale=1, device='cuda'):
             with torch.no_grad():
                 lpips = lpips_net(sr*2-1, hr*2-1)
 
-            return lpips
+            return lpips.item()
         
         sr = sr[..., shave:-shave, shave:-shave]
         hr = hr[..., shave:-shave, shave:-shave]
@@ -287,7 +287,7 @@ def calc_lpips(sr, hr, dataset=None, scale=1, device='cuda'):
         with torch.no_grad():
             lpips = lpips_net(sr*2-1, hr*2-1)
 
-        return lpips
+        return lpips.item()
     else:
         with torch.no_grad():
             lpips = lpips_net(sr*2-1, hr*2-1)
