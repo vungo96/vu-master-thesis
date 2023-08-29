@@ -1,0 +1,68 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{darkgray176}{RGB}{176,176,176}
+\definecolor{steelblue31119180}{RGB}{31,119,180}
+
+\begin{axis}[
+log basis y={10},
+tick align=outside,
+tick pos=left,
+x grid style={darkgray176},
+xmin=-2.35, xmax=49.35,
+xtick style={color=black},
+y grid style={darkgray176},
+ymin=11699.1259984203, ymax=11466155.6784766,
+ymode=log,
+ytick style={color=black}
+]
+\draw[draw=black,fill=steelblue31119180] (axis cs:0,0) rectangle (axis cs:1,0);
+\draw[draw=black,fill=steelblue31119180] (axis cs:1,0) rectangle (axis cs:2,0);
+\draw[draw=black,fill=steelblue31119180] (axis cs:2,0) rectangle (axis cs:3,0);
+\draw[draw=black,fill=steelblue31119180] (axis cs:3,0) rectangle (axis cs:4,0);
+\draw[draw=black,fill=steelblue31119180] (axis cs:4,0) rectangle (axis cs:5,0);
+\draw[draw=black,fill=steelblue31119180] (axis cs:5,0) rectangle (axis cs:6,0);
+\draw[draw=black,fill=steelblue31119180] (axis cs:6,0) rectangle (axis cs:7,0);
+\draw[draw=black,fill=steelblue31119180] (axis cs:7,0) rectangle (axis cs:8,0);
+\draw[draw=black,fill=steelblue31119180] (axis cs:8,0) rectangle (axis cs:9,0);
+\draw[draw=black,fill=steelblue31119180] (axis cs:9,0) rectangle (axis cs:10,0);
+\draw[draw=black,fill=steelblue31119180] (axis cs:10,0) rectangle (axis cs:11,0);
+\draw[draw=black,fill=steelblue31119180] (axis cs:11,0) rectangle (axis cs:12,0);
+\draw[draw=black,fill=steelblue31119180] (axis cs:12,0) rectangle (axis cs:13,0);
+\draw[draw=black,fill=steelblue31119180] (axis cs:13,0) rectangle (axis cs:14,16000);
+\draw[draw=black,fill=steelblue31119180] (axis cs:14,0) rectangle (axis cs:15,0);
+\draw[draw=black,fill=steelblue31119180] (axis cs:15,0) rectangle (axis cs:16,32000);
+\draw[draw=black,fill=steelblue31119180] (axis cs:16,0) rectangle (axis cs:17,32000);
+\draw[draw=black,fill=steelblue31119180] (axis cs:17,0) rectangle (axis cs:18,16000);
+\draw[draw=black,fill=steelblue31119180] (axis cs:18,0) rectangle (axis cs:19,48000);
+\draw[draw=black,fill=steelblue31119180] (axis cs:19,0) rectangle (axis cs:20,32000);
+\draw[draw=black,fill=steelblue31119180] (axis cs:20,0) rectangle (axis cs:21,64000);
+\draw[draw=black,fill=steelblue31119180] (axis cs:21,0) rectangle (axis cs:22,16000);
+\draw[draw=black,fill=steelblue31119180] (axis cs:22,0) rectangle (axis cs:23,64000);
+\draw[draw=black,fill=steelblue31119180] (axis cs:23,0) rectangle (axis cs:24,192000);
+\draw[draw=black,fill=steelblue31119180] (axis cs:24,0) rectangle (axis cs:25,560000);
+\draw[draw=black,fill=steelblue31119180] (axis cs:25,0) rectangle (axis cs:26,288000);
+\draw[draw=black,fill=steelblue31119180] (axis cs:26,0) rectangle (axis cs:27,352000);
+\draw[draw=black,fill=steelblue31119180] (axis cs:27,0) rectangle (axis cs:28,432000);
+\draw[draw=black,fill=steelblue31119180] (axis cs:28,0) rectangle (axis cs:29,8384000);
+\draw[draw=black,fill=steelblue31119180] (axis cs:29,0) rectangle (axis cs:30,208000);
+\draw[draw=black,fill=steelblue31119180] (axis cs:30,0) rectangle (axis cs:31,336000);
+\draw[draw=black,fill=steelblue31119180] (axis cs:31,0) rectangle (axis cs:32,144000);
+\draw[draw=black,fill=steelblue31119180] (axis cs:32,0) rectangle (axis cs:33,928000);
+\draw[draw=black,fill=steelblue31119180] (axis cs:33,0) rectangle (axis cs:34,96000);
+\draw[draw=black,fill=steelblue31119180] (axis cs:34,0) rectangle (axis cs:35,208000);
+\draw[draw=black,fill=steelblue31119180] (axis cs:35,0) rectangle (axis cs:36,32000);
+\draw[draw=black,fill=steelblue31119180] (axis cs:36,0) rectangle (axis cs:37,32000);
+\draw[draw=black,fill=steelblue31119180] (axis cs:37,0) rectangle (axis cs:38,48000);
+\draw[draw=black,fill=steelblue31119180] (axis cs:38,0) rectangle (axis cs:39,48000);
+\draw[draw=black,fill=steelblue31119180] (axis cs:39,0) rectangle (axis cs:40,0);
+\draw[draw=black,fill=steelblue31119180] (axis cs:40,0) rectangle (axis cs:41,16000);
+\draw[draw=black,fill=steelblue31119180] (axis cs:41,0) rectangle (axis cs:42,64000);
+\draw[draw=black,fill=steelblue31119180] (axis cs:42,0) rectangle (axis cs:43,112000);
+\draw[draw=black,fill=steelblue31119180] (axis cs:43,0) rectangle (axis cs:44,0);
+\draw[draw=black,fill=steelblue31119180] (axis cs:44,0) rectangle (axis cs:45,0);
+\draw[draw=black,fill=steelblue31119180] (axis cs:45,0) rectangle (axis cs:46,0);
+\draw[draw=black,fill=steelblue31119180] (axis cs:46,0) rectangle (axis cs:47,0);
+\end{axis}
+
+\end{tikzpicture}
