@@ -150,7 +150,7 @@ def train(train_loader, model, optimizer, gradient_accumulation_steps):
         pred_img.clamp_(0, 1)
         gt_img = gt_img * gt_div + gt_sub
         gt_img.clamp(0,1)
-        save_images_to_dir("test_images", inp, pred_img, gt_img, step=step)
+        save_images_to_dir("test_edge_maps", inp, pred_img, gt_img, step=step)
 
         loss = loss_fn(pred, gt)
         loss = loss / gradient_accumulation_steps
