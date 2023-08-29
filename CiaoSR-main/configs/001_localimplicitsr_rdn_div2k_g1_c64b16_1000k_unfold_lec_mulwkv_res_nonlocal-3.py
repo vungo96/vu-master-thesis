@@ -1,6 +1,6 @@
 exp_name = '001_ciaosr_rdn_div2k'
 scale_min, scale_max = 1, 4
-val_scale = 24   #TODO
+val_scale = 3   #TODO
 #data_type = 'Urban100'  #TODO {Set5, Set14, BSDS100, Urban100, Manga109}
 
 from mmedited.models.restorers.ciaosr import CiaoSR

@@ -1,6 +1,6 @@
 exp_name = '001_ciaosr_rdn_div2k'
 scale_min, scale_max = 1, 4
-val_scale = 24   #TODO
+val_scale = 12   #TODO
 #data_type = 'Urban100'  #TODO {Set5, Set14, BSDS100, Urban100, Manga109}
 
 from mmedited.models.restorers.ciaosr import CiaoSR
@@ -44,10 +44,10 @@ model = dict(
     pixel_loss=dict(type='L1Loss', loss_weight=1.0, reduction='mean'))
 # model training and testing settings
 train_cfg = None
-if val_scale <= 4:
-    test_cfg = dict(metrics=['PSNR', 'SSIM', 'LPIPS'], crop_border=val_scale, scale=val_scale, tile=192, tile_overlap=32) # larger tile is better
-else:
-    test_cfg = dict(metrics=['PSNR', 'SSIM', 'LPIPS'], crop_border=val_scale, scale=val_scale) # x6, x8, x12 
+#if val_scale <= 4:
+test_cfg = dict(metrics=['PSNR', 'SSIM', 'LPIPS'], crop_border=val_scale, scale=val_scale, tile=192, tile_overlap=32) # larger tile is better
+#else:
+#    test_cfg = dict(metrics=['PSNR', 'SSIM', 'LPIPS'], crop_border=val_scale, scale=val_scale) # x6, x8, x12 
 
 # dataset settings
 train_dataset_type = 'SRFolderGTDataset'

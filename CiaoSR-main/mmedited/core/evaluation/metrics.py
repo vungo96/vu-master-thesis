@@ -177,7 +177,7 @@ def reorder_image(img, input_order='HWC'):
         img = img.transpose(1, 2, 0)
     return img
 
-def psnr(img1, img2, crop_border=0, input_order='HWC', convert_to=None):
+def psnr_old(img1, img2, crop_border=0, input_order='HWC', convert_to=None):
     """
     Args:
         img1 (ndarray): Images with range [0, 255].
@@ -228,13 +228,13 @@ def psnr(img1, img2, crop_border=0, input_order='HWC', convert_to=None):
     img1 = ndarray_to_tensor(img1).to(device)
     img2 = ndarray_to_tensor(img2).to(device)
 
-    diff = (sr - hr) / 1
+    diff = (img1 - img2) / 1
 
     mse = diff.pow(2).mean()
     psnr = -10 * torch.log10(mse)
     return psnr.item()
 
-def psnr_old(img1, img2, crop_border=0, input_order='HWC', convert_to=None):
+def psnr(img1, img2, crop_border=0, input_order='HWC', convert_to=None):
     """Calculate PSNR (Peak Signal-to-Noise Ratio).
 
     Ref: https://en.wikipedia.org/wiki/Peak_signal-to-noise_ratio

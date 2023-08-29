@@ -17,26 +17,28 @@ plt.rcParams['font.family'] = 'Times New Roman'
 # Set default font size
 plt.rcParams['font.size'] = 14
 
-# Load dictionary from first file created via pickle
-with open(path + 'scale_freq.pickle', 'rb') as f:
-    scale_freq = pickle.load(f)
+# Load dictionary from second file created via pickle
+with open(path + 'scale_max_freq.pickle', 'rb') as f:
+    max_scale_freq = pickle.load(f)
 
 # Sort dictionary keys
-sorted_keys = sorted(scale_freq.keys())
+sorted_keys = sorted(max_scale_freq.keys())
 
 # bins dependent on largest scale
-bins = max(scale_freq.keys()) + 5
+bins = max(max_scale_freq.keys()) + 5
 print('highest scale:', bins - 5)
+print('lowest scale:', min(max_scale_freq.keys()))
 
-# Plot distribution of first file as a histogram
-plt.hist(sorted_keys, weights=[scale_freq[k] for k in sorted_keys], bins=bins, range=(0,bins), edgecolor='black')
+# Plot distribution of second file as a histogram
+plt.clf() # Clear previous plot
+plt.hist(sorted_keys, weights=[max_scale_freq[k] for k in sorted_keys], bins=bins, range=(0,bins), edgecolor='black')
 plt.xlabel('Scale')
 plt.ylabel('Frequency')
 ax = plt.gca()
 formatter = ticker.ScalarFormatter(useMathText=True)
-formatter.set_powerlimits((-2, 2))
+formatter.set_powerlimits((-2, 2))  # Adjust the power limits if needed
 ax.yaxis.set_major_formatter(formatter)
-#plt.yscale('log')  # Set y-axis scale to logarithmic
+plt.yscale('log')  # Set y-axis scale to logarithmic
 
 # Save Matplotlib figure to TikZ code using tikzplotlib
-tikzplotlib.save(os.path.join(path, 'scale_distribution.tikz'))
+tikzplotlib.save(os.path.join(path, 'max_scale_distribution.tikz'))

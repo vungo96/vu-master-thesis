@@ -1,26 +1,37 @@
-exp_name = '001_ciaosr_rdn_div2k'
+exp_name = '001_ciaosr_swinir_div2k'
 scale_min, scale_max = 1, 4
-val_scale = 24   #TODO
+val_scale = 12   # TODO
 #data_type = 'Urban100'  #TODO {Set5, Set14, BSDS100, Urban100, Manga109}
 
 from mmedited.models.restorers.ciaosr import CiaoSR
-from mmedited.models.backbones.sr_backbones.ciaosr_net import LocalImplicitSRRDN
+from mmedited.models.backbones.sr_backbones.swinir_net import SwinIR
+from mmedited.models.backbones.sr_backbones.ciaosr_net import LocalImplicitSRSWINIR
 
 
 # model settings
 model = dict(
     type=CiaoSR,
     generator=dict(
-        type=LocalImplicitSRRDN,
+        type=LocalImplicitSRSWINIR,
+        window_size=8,
         encoder=dict(
-            type='RDN',
-            in_channels=3,
-            out_channels=3,
-            mid_channels=64,
-            num_blocks=16,
-            upscale_factor=4,
-            num_layers=8,
-            channel_growth=64),
+            type=SwinIR,
+            upscale=4,
+            in_chans=3,
+            img_size=48,
+            window_size=8,
+            compress_ratio=3,
+            squeeze_factor=30,
+            conv_scale=0.01,
+            overlap_ratio=0.5,
+            img_range=1.,
+            depths=[6, 6, 6, 6, 6, 6],
+            embed_dim=180,
+            num_heads=[6, 6, 6, 6, 6, 6],
+            mlp_ratio=2,
+            upsampler='pixelshuffle',
+            resi_connection='1conv',
+            ),
         imnet_q=dict(
             type='MLPRefiner',
             in_dim=4,
@@ -44,10 +55,10 @@ model = dict(
     pixel_loss=dict(type='L1Loss', loss_weight=1.0, reduction='mean'))
 # model training and testing settings
 train_cfg = None
-if val_scale <= 4:
-    test_cfg = dict(metrics=['PSNR', 'SSIM', 'LPIPS'], crop_border=val_scale, scale=val_scale, tile=192, tile_overlap=32) # larger tile is better
-else:
-    test_cfg = dict(metrics=['PSNR', 'SSIM', 'LPIPS'], crop_border=val_scale, scale=val_scale) # x6, x8, x12 
+#if val_scale <= 4:
+test_cfg = dict(metrics=['PSNR', 'SSIM', 'LPIPS'], crop_border=val_scale, scale=val_scale, tile=192, tile_overlap=32) # larger tile is better
+#else:
+#    test_cfg = dict(metrics=['PSNR', 'SSIM', 'LPIPS'], crop_border=val_scale, scale=val_scale) # x6, x8, x12 
 
 # dataset settings
 train_dataset_type = 'SRFolderGTDataset'
@@ -79,7 +90,6 @@ train_pipeline = [
         meta_keys=['gt_path'])
 ]
 
-
 valid_pipeline = [
     dict(
         type='LoadImageFromFile',
@@ -87,16 +97,15 @@ valid_pipeline = [
         key='gt',
         flag='color',
         channel_order='rgb'),
-    dict(type='RandomDownSampling', scale_min=val_scale, scale_max=val_scale),  
+    dict(type='RandomDownSampling', scale_min=val_scale, scale_max=val_scale),
     dict(type='RescaleToZeroOne', keys=['lq', 'gt']),
     dict(type='ImageToTensor', keys=['lq', 'gt']),
-    dict(type='GenerateCoordinateAndCell', scale=val_scale),  
+    dict(type='GenerateCoordinateAndCell'),
     dict(
         type='Collect',
         keys=['lq', 'gt', 'coord', 'cell'],
         meta_keys=['gt_path'])
 ]
-
 test_pipeline = [
     dict(
         type='LoadImageFromFile',
@@ -118,7 +127,6 @@ test_pipeline = [
         keys=['lq', 'gt', 'coord', 'cell'],
         meta_keys=['gt_path'])
 ]
-
 
 data_dir = "../../../mngo_datasets/load"
 mydata_dir = "mydata"
@@ -154,8 +162,7 @@ data = dict(
         # /div2k/DIV2K_valid_HR
         gt_folder=f'{data_dir}/div2k/DIV2K_valid_HR', #f'{mydata_dir}/Classical/Urban100/GTmod12',  #f'{data_dir}/testset/Set5/HR', #f'{data_dir}/testset/Urban100/HR',  #f'{data_dir}/sr_test/Set5', #
         pipeline=valid_pipeline,
-        scale=val_scale)
-    ) 
+        scale=val_scale))
 
 # optimizer
 optimizers = dict(type='Adam', lr=1.e-4)
