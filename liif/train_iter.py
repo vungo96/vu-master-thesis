@@ -36,7 +36,7 @@ from torch.optim.lr_scheduler import MultiStepLR
 import datasets
 import models
 import utils
-from test import eval_psnr
+from test import eval_psnr, save_images_to_dir
 
 
 def make_data_loader(spec, tag=''):
@@ -49,7 +49,7 @@ def make_data_loader(spec, tag=''):
     if spec['collate_batch']:
         # TODO: print stuff here as well
         loader = DataLoader(dataset, batch_size=spec['batch_size'],
-                            shuffle=(tag == 'train'), num_workers=12, collate_fn=dataset.collate_batch, pin_memory=True)
+                            shuffle=(tag == 'todo'), num_workers=12, collate_fn=dataset.collate_batch, pin_memory=True)
     else:
         log('{} dataset: size={}'.format(tag, len(dataset)))
         for k, v in dataset[0].items():
@@ -139,6 +139,19 @@ def train(train_loader, model, optimizer, gradient_accumulation_steps):
         pred = model(inp, batch['coord'], batch['cell'])            
 
         gt = (batch['gt'] - gt_sub) / gt_div
+
+        # prep data for saving patches
+        # TODO: remove later only for debugging
+        sample_patch_size = round(math.sqrt(pred.shape[-2]))
+        pred_img = pred.reshape(pred.shape[0], sample_patch_size, sample_patch_size, 3).permute(0, 3, 1, 2)
+        gt_img = gt.reshape(pred.shape[0], sample_patch_size, sample_patch_size, 3).permute(0, 3, 1, 2)
+
+        pred_img = pred_img * gt_div + gt_sub
+        pred_img.clamp_(0, 1)
+        gt_img = gt_img * gt_div + gt_sub
+        gt_img.clamp(0,1)
+        save_images_to_dir("test_images", inp, pred_img, gt_img, step=step)
+
         loss = loss_fn(pred, gt)
         loss = loss / gradient_accumulation_steps
         loss.backward()
