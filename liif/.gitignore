@@ -7,4 +7,5 @@ save_test
 save_iter
 .vscode
 test_images
+cluster_data
 test_images-x
