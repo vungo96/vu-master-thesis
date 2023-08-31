@@ -1,6 +1,6 @@
-exp_name = '001_ciaosr_swinir_div2k'
+exp_name = '001_ciaosr_swinir_chosen'
 scale_min, scale_max = 1, 4
-val_scale = 4   # TODO
+val_scale = 6   # TODO
 #data_type = 'Urban100'  #TODO {Set5, Set14, BSDS100, Urban100, Manga109}
 
 from mmedited.models.restorers.ciaosr import CiaoSR
@@ -160,7 +160,7 @@ data = dict(
         # filename_tmpl='{}x3'))   #x4
         type=val_dataset_type,
         # /div2k/DIV2K_valid_HR
-        gt_folder=f'{data_dir}/benchmark/Urban100/HR', #f'{mydata_dir}/Classical/Urban100/GTmod12',  #f'{data_dir}/testset/Set5/HR', #f'{data_dir}/testset/Urban100/HR',  #f'{data_dir}/sr_test/Set5', #
+        gt_folder=f'{data_dir}/chosen_images', #f'{mydata_dir}/Classical/Urban100/GTmod12',  #f'{data_dir}/testset/Set5/HR', #f'{data_dir}/testset/Urban100/HR',  #f'{data_dir}/sr_test/Set5', #
         pipeline=valid_pipeline,
         scale=val_scale))
 

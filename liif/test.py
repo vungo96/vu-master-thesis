@@ -18,8 +18,8 @@ import utils
 
 def save_images_to_dir(out_dir, inp, pred, gt, step=0, tag=""):
     #transforms.ToPILImage()(inp[0]).save(f'{out_dir}/epoch-{tag}-img-{step}_inp.png')
-    #transforms.ToPILImage()(pred[0]).save(f'{out_dir}/epoch-{tag}-img-{step}_pred.png')
-    transforms.ToPILImage()(gt[0]).save(f'{out_dir}/epoch-{tag}-img-{step}_gt.png')
+    transforms.ToPILImage()(pred[0]).save(f'{out_dir}/{tag}/epoch-img-{step}_pred.png')
+    #transforms.ToPILImage()(gt[0]).save(f'{out_dir}/epoch-{tag}-img-{step}_gt.png')
 
 def batched_predict(model, inp, coord, cell, bsize, inp_scale=None):
     with torch.no_grad():
@@ -212,7 +212,8 @@ if __name__ == '__main__':
                     writer=writer,
                     max_scale=int(args.max_scale),
                     out_dir=args.out_dir,
-                    window_size=int(args.window))
+                    window_size=int(args.window),
+                    tag=save_name)
     print('result psnr: {:.4f}'.format(res_psnr))
     print('result ssim: {:.4f}'.format(res_ssim))
     print('result lpips: {:.4f}'.format(res_lpips))

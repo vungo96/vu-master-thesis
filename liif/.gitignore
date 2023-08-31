@@ -16,3 +16,12 @@ test_images
 test_images2
 test_curves
 test_edge_maps
+test_images-x2
+test_images-x3
+test_images-x4
+test_images-x6
+test_images-x8
+test_images-x12
+test_images-x18
+test_images-x24
+test_images-x30

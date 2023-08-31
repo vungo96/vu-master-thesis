@@ -52,7 +52,7 @@ def merge_images(image_folder):
     images.sort(key=lambda x: x[0])  # Sort images based on filenames
     
     # TODO: rmeove
-    images = sort_by_edginess(images)
+    #images = sort_by_edginess(images)
 
     max_images_per_row = 6
     num_rows = (num_images + max_images_per_row - 1) // max_images_per_row
@@ -79,6 +79,6 @@ def merge_images(image_folder):
     print("Merged image saved at:", output_path)
 
 # Example usage
-#folder_path = "test_images/compare_crops/merge-0859-x18/"
-folder_path = "test_edge_maps/patches-eb3"
+folder_path = "test_images/compare_crops/merge-0859-x18/"
+#folder_path = "test_edge_maps/patches-eb3"
 merge_images(folder_path)
