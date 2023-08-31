@@ -12,7 +12,6 @@ from torchmetrics.functional import structural_similarity_index_measure
 from torchmetrics.image.lpip import LearnedPerceptualImagePatchSimilarity
 from torchvision import transforms
 from matplotlib import pyplot as plt
-import LPIPS.models.dist_model as dm
 
 def save_image_to_dir(img, out_dir='test', step=0):
     transforms.ToPILImage()(img).save(f'{out_dir}/{step}.png')
@@ -240,33 +239,6 @@ def calc_ssim_torch(sr, hr, dataset=None, scale=1):
         return structural_similarity_index_measure(sr, hr).item()
     else:
         return structural_similarity_index_measure(sr, hr).item()
-
-def calc_lpips_old(sr, hr, dataset=None, scale=1, device='cuda'):
-    # sr and hr in range [0, 1]
-    lpips_net = dm.DistModel()
-    lpips_net.initialize(model='net-lin',net='alex',use_gpu=True)
-    if dataset is not None:
-        if dataset == 'benchmark':
-            shave = scale
-        elif dataset == 'div2k':
-            shave = scale + 6
-        else:
-            with torch.no_grad():
-                lpips, _ = lpips_net.forward_pair(sr*2-1, hr*2-1)
-
-            return lpips
-        sr = sr[..., shave:-shave, shave:-shave]
-        hr = hr[..., shave:-shave, shave:-shave]
-
-        with torch.no_grad():
-            lpips, _ = lpips_net.forward_pair(sr*2-1, hr*2-1)
-
-        return lpips
-    else:
-        with torch.no_grad():
-            lpips, _ = lpips_net.forward_pair(sr*2-1, hr*2-1)
-
-        return torch.mean(lpips).item()
 
 def calc_lpips(sr, hr, dataset=None, scale=1, device='cuda'):
     lpips_net = LearnedPerceptualImagePatchSimilarity(net_type='vgg').to(device)
