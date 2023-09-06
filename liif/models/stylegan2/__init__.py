@@ -1,1 +1,0 @@
-from .generator_discriminator import (StyleGAN2Discriminator, StyleGANv2Generator)
